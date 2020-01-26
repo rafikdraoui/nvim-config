@@ -1,17 +1,11 @@
 " vim: foldmethod=marker
 
-" Settings {{{1
+" Options {{{1
 
 let g:mapleader = ','
 
 set termguicolors
 colorscheme gruvbox-custom
-
-set ignorecase  " Searches are case insensitive...
-set smartcase   " ... unless they contain at least one capital letter
-
-set relativenumber  " Use relative line numbers...
-set number          " ... but display absolute number on current line
 
 " Indentation
 set expandtab
@@ -28,17 +22,21 @@ set foldlevel=99  " start unfolded by default
 set foldmethod=indent
 set helpheight=1000  " maximize help window
 set hidden  " allow switching buffers even if there are unsaved changes
+set ignorecase smartcase  " case-insensitive search, unless query has capital letter
 set inccommand=nosplit  " show preview of :substitute action interactively
 set lazyredraw  " only redraw screen when necessary
 set list listchars=tab:▸·,extends:❯,precedes:❮,nbsp:⌴
 set matchpairs+=«:»
 set nojoinspaces  " put only a single space after periods when joining lines
-set noshowmode  " we can see the mode from lightline status line
 set noswapfile directory=''  " disable swapfile
 set notimeout
 set path-=/usr/include
+set relativenumber number  " use relative line number, but display absolute number on current line
 set scrolloff=3
+set splitbelow splitright
+set tagcase=smart
 set title
+set wildmode=longest:full,full
 
 " Speedup loading by explicitly setting python provider
 let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
@@ -46,10 +44,10 @@ let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
 
 " Mappings {{{1
 
+" See also: plugin/navigation_mappings.vim
+
 " Buffers
 nnoremap <leader><leader> <c-^>
-nnoremap <silent> <leader>n :bnext<cr>
-nnoremap <silent> <leader>N :bprevious<cr>
 nnoremap <silent> <leader><bs> :bdelete<cr>
 nnoremap <leader>b :ls<cr>:b<space>
 
@@ -65,6 +63,9 @@ nnoremap <silent> <M-l> <C-w>>
 nnoremap <silent> <M-j> <C-W>-
 nnoremap <silent> <M-k> <C-W>+
 nnoremap <silent> <M-=> <C-W>=
+
+" Redraw screen (since ctrl-l has been remapped for window movements)
+nnoremap <c-n> <c-l>
 
 " Use ctrl-s to save file
 nnoremap <silent> <c-s> :update<cr>
@@ -99,9 +100,6 @@ nnoremap <space> za
 nnoremap <leader>/ :%s/
 xnoremap <leader>/ :s/
 
-" Clear command-line message
-nnoremap <esc> :echo<cr>
-
 " Insert empty line below current line (leaving cursor at same position)
 nnoremap <silent> <leader><cr> m':put =''<cr>g`'
 
@@ -128,35 +126,21 @@ nnoremap Q @:
 nnoremap zs :echo "sort" <bar> set opfunc=opfunc#sort<cr>g@
 xnoremap <silent> zs :<c-u>call opfunc#sort(visualmode())<cr>
 
+" open browser at url under cursor
+nnoremap <silent> gx :call browse#url()<cr>
+
+" close preview window
+nnoremap <silent> <leader>x :pclose<cr>
+
 " Toggle spellcheck and spelllang
-nnoremap <silent> cos :call spellcheck#toggle() <cr>
-nnoremap <silent> cof :call spellcheck#switch() <cr>
+nnoremap <silent> cos :set spell! <cr>
+nnoremap <silent> cof :execute 'setlocal spelllang=' . (&spelllang ==# 'en' ? 'fr' : 'en') <cr>
 
 " Toggle cursorline
 nnoremap <silent> col :set cursorline! <cr>
 
 " Toggle wrap
 nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
-
-" Navigate quickfix and location lists
-nnoremap <silent> [q :cprevious <cr>
-nnoremap <silent> ]q :cnext <cr>
-nnoremap <silent> [Q :cfirst <cr>
-nnoremap <silent> ]Q :clast <cr>
-nnoremap <silent> [l :lprevious <cr>
-nnoremap <silent> ]l :lnext <cr>
-nnoremap <silent> [L :lfirst <cr>
-nnoremap <silent> ]L :llast <cr>
-
-" Navigate tag matchlist
-nnoremap <silent> [t :tprevious <cr>
-nnoremap <silent> ]t :tnext <cr>
-nnoremap <silent> [T :tfirst <cr>
-nnoremap <silent> ]T :tlast <cr>
-
-" Navigate between git conflicts markers
-nnoremap <silent> [c :call git#next_conflict(1)<cr>
-nnoremap <silent> ]c :call git#next_conflict(0)<cr>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
@@ -224,11 +208,14 @@ command! -nargs=1 EditRegister call scratch#edit_register(<q-args>)
 command! Clipboard EditRegister +
 
 " minpac plugin manager
-command! PackUpdate call pack#init() | call minpac#update() | call minpac#status()
+command! PackUpdate call pack#init() | call minpac#update() | call minpac#status({'open': 'tab'})
 command! PackClean call pack#init() | call minpac#clean()
 
 " copy last yank to system clipboard
 command! ToSystemClipboard let @+ = @@
+
+" cd to root of git repo (if applicable)
+command! CdRoot call git#cd_root()
 
 
 " Autocommands {{{1
@@ -250,6 +237,27 @@ autocmd vimrc FileChangedShellPost * echohl WarningMsg | echo "File changed on d
 
 " Make terminal start in insert mode
 autocmd vimrc TermOpen * startinsert
+
+
+" Status line {{{1
+
+" Custom highlight for filename.
+" This is the same as StatusLine, but with the addition of the bold attribute.
+highlight User1 guifg=#504945 guibg=#ebdbb2 gui=inverse,bold
+
+let &statusline = ''
+
+" filename, modified flag, and filetype
+let &statusline .= '%1*%f%*%m %y '
+
+" git branch and change stats
+let &statusline .= '%{git#statusline()} '
+
+" spell checking
+let &statusline .= '%{&spell ? "[spell=" . &spelllang . "]" : ""}'
+
+" line/column numbers
+let &statusline .= '%= %p%% %4l/%L:%-2c'
 
 
 " Plugins configuration {{{1
@@ -301,41 +309,10 @@ let g:ale_fix_on_save = 1
 let g:ale_sh_shfmt_options = '-i 2 -ci'
 let g:ale_elm_format_options = '--elm-version=0.19 --yes'
 
-nnoremap <silent> <leader>c :ALELint <cr>
-nmap <c-c> <plug>(ale_next_wrap)
-nmap <c-x> <plug>(ale_previous_wrap)
-nnoremap <silent> <leader>r :ALEResetBuffer<cr>
+nmap <leader>c <plug>(ale_lint)
+nmap <leader>r <plug>(ale_reset)
+nnoremap coa :ALEToggle <bar> let g:ale_enabled <cr>
 nnoremap cox :let g:ale_fix_on_save = !g:ale_fix_on_save <bar> let g:ale_fix_on_save <cr>
-
-
-" lightline {{{2
-
-let g:lightline = {}
-let g:lightline.colorscheme = 'gruvbox_custom'
-let g:lightline.enable = {'tabline': 0}  " disable tabline
-
-" Define components
-let g:lightline.component = {'lineinfo': '%3l/%L:%-2c'}
-let g:lightline.component_function = {
-\   'git': 'statusline#git',
-\   'filename': 'statusline#filename',
-\}
-let g:lightline.component_expand = {'spell': 'statusline#spell'}
-let g:lightline.component_type = {'spell': 'warning'}  " make `spell` component yellow
-
-" Configure active components
-let g:lightline.active = {}
-let g:lightline.active.left = [
-\ [ 'mode', 'paste' ],
-\ [ 'git' ],
-\ [ 'spell' ],
-\ [ 'filename' ],
-\]
-let g:lightline.active.right  = [
-\ [ 'lineinfo' ],
-\ [ 'percent' ],
-\ [ 'fileencoding', 'filetype' ],
-\]
 
 
 " fzf  {{{2
@@ -392,16 +369,18 @@ xmap gs <plug>(GrepperOperator)
 
 " others {{{2
 
+" disable netrw plugin, but still allow its autoloaded functions to be used,
+" so that fugitive's `:Gbrowse` continue to work.
+let g:loaded_netrwPlugin = 1
+
+" dirvish
+autocmd vimrc FileType dirvish setlocal statusline=%y\ %f
+
 " miniyank
 map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 map <leader>p <Plug>(miniyank-cycle)
 map <leader>P <Plug>(miniyank-cycleback)
-
-" netrw file explorer
-let g:netrw_home = stdpath('data')  " where to keep .netrwhist file
-let g:netrw_banner = 0  " disable banner
-let g:netrw_liststyle = 3  " tree style
 
 " gutentags
 let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}
@@ -428,6 +407,7 @@ let g:vim_json_syntax_conceal = 1
 
 " vim-fugitive
 nnoremap <silent> <leader>g :Gstatus<cr>
+nnoremap gh :Gbrowse<cr>
 
 " vim-mundo
 nnoremap <silent> cou :MundoToggle<cr>

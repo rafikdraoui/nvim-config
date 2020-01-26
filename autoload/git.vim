@@ -13,6 +13,28 @@ function! git#next_conflict(direction) abort
 endfunction
 
 function! git#repo_root() abort
-  let git_dir = fugitive#extract_git_dir(expand('%:p:h'))
+  let git_dir = FugitiveExtractGitDir(expand('%:p:h'))
   return empty(git_dir) ? '' : fnamemodify(git_dir, ':h')
+endfunction
+
+function! git#cd_root() abort
+  let root = git#repo_root()
+  if !empty(root)
+    execute 'cd ' . root
+  endif
+endfunction
+
+function! git#statusline() abort
+  let branch = ''
+  if exists('*fugitive#head')
+    let branch_name = fugitive#head(6)
+    let branch = empty(branch_name) ? '' : '[⌥ '. branch_name . ']'
+  endif
+
+  let stats = ''
+  if exists('*sy#repo#get_stats_decorated')
+    let stats = tr(sy#repo#get_stats_decorated(), '~', '•')
+  endif
+
+  return branch . stats
 endfunction

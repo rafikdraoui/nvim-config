@@ -11,8 +11,6 @@ function! s:add_conceal_match()
   end
 endfunction
 
-autocmd vimrc BufWinEnter quickfix call s:add_conceal_match()
-
 function s:toggle_filename_conceal()
   if &l:conceallevel > 0
     setlocal conceallevel& concealcursor&
@@ -21,4 +19,9 @@ function s:toggle_filename_conceal()
   endif
 endfunction
 
+autocmd vimrc BufWinEnter quickfix call s:add_conceal_match()
 nnoremap <buffer> <silent> <leader><space> :call <sid>toggle_filename_conceal()<cr>
+
+let &l:statusline = '%t '
+let &l:statusline .= '%{exists("w:quickfix_title") ? fnamemodify(w:quickfix_title, ":~:.") : ""} '
+let &l:statusline .= '%= %l/%L'
