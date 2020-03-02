@@ -16,7 +16,7 @@ set shiftround  " indent to a multiple of 'shiftwidth'
 " Line Wrapping
 set linebreak
 set breakindent  " keep indentation when wrapping lines
-set cpoptions+=n breakindentopt=sbr | let &showbreak='   ⋯'  " display `⋯` symbol within the line number column to denote wrapped lines
+set cpoptions+=n breakindentopt=sbr | let &showbreak='  ⋯'  " display `⋯` symbol within the line number column to denote wrapped lines
 
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
@@ -65,7 +65,7 @@ nnoremap <silent> <M-k> <C-W>+
 nnoremap <silent> <M-=> <C-W>=
 
 " Redraw screen (since ctrl-l has been remapped for window movements)
-nnoremap <c-n> <c-l>
+nnoremap <c-space> <c-l>
 
 " Use ctrl-s to save file
 nnoremap <silent> <c-s> :update<cr>
@@ -198,8 +198,8 @@ onoremap <silent> ae :call textobj#entire#around()<cr>
 
 command! TrimWhitespace call whitespace#trim()
 
-" Delete all buffers except current one
-command! Bonly call buffers#bonly()
+" Delete other buffers
+command! -bang Bonly call buffers#bonly(<bang>0)
 
 " Scratch buffer
 command! Scratch call scratch#create([])
@@ -214,8 +214,11 @@ command! PackClean call pack#init() | call minpac#clean()
 " copy last yank to system clipboard
 command! ToSystemClipboard let @+ = @@
 
-" cd to root of git repo (if applicable)
+" set pwd to root of git repo (if applicable)
 command! CdRoot call git#cd_root()
+
+" set pwd to the directory containing the file loaded in buffer
+command! CdBuffer cd %:p:h
 
 
 " Autocommands {{{1
@@ -319,7 +322,7 @@ nnoremap cox :let g:ale_fix_on_save = !g:ale_fix_on_save <bar> let g:ale_fix_on_
 if has('mac')
   set runtimepath+=/usr/local/opt/fzf
 endif
-nnoremap <c-p> :GFiles <cr>
+nnoremap <c-f> :GFiles <cr>
 nnoremap <leader>t :Tags <cr>
 nnoremap <leader>h :Helptags <cr>
 
@@ -379,8 +382,8 @@ autocmd vimrc FileType dirvish setlocal statusline=%y\ %f
 " miniyank
 map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
-map <leader>p <Plug>(miniyank-cycle)
-map <leader>P <Plug>(miniyank-cycleback)
+map <c-p> <Plug>(miniyank-cycle)
+map <c-n> <Plug>(miniyank-cycleback)
 
 " gutentags
 let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}

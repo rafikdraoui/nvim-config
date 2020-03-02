@@ -11,10 +11,10 @@ nnoremap <buffer> <leader>d Obreakpoint()<esc>
 "   except Exception as exc:
 "       breakpoint()
 "       raise
-nnoremap <buffer> <leader>e :call python#wrap_exception()<cr>
+nnoremap <silent> <buffer> <leader>e :call python#wrap_exception()<cr>
 
 " Undo try-except wrapping
-nnoremap <buffer> <leader>u :call python#unwrap_exception()<cr>
+nnoremap <silent> <buffer> <leader>u :call python#unwrap_exception()<cr>
 
 let s:project_root = git#repo_root()
 if !empty(s:project_root)

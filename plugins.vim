@@ -26,7 +26,7 @@ call minpac#add('dense-analysis/ale')
 " Wrappers around git
 call minpac#add('junegunn/gv.vim')
 call minpac#add('mhinz/vim-signify')
-call minpac#add('rhysd/git-messenger.vim', {'rev': '6282cae117c'})  " pinned until https://github.com/rhysd/git-messenger.vim/issues/50 gets fixed
+call minpac#add('rhysd/git-messenger.vim')
 call minpac#add('tpope/vim-fugitive')
 call minpac#add('tpope/vim-rhubarb')
 

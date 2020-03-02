@@ -5,5 +5,5 @@ function! browse#url() abort
   end
 
   let open_cmd = has('mac') ? 'open' : 'xdg-open'
-  call system([open_cmd, url])
+  call jobstart([open_cmd, url], {'detach': 1})
 endfunction
