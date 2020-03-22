@@ -13,7 +13,10 @@ function! git#next_conflict(direction) abort
 endfunction
 
 function! git#repo_root() abort
-  let git_dir = FugitiveExtractGitDir(expand('%:p:h'))
+  let git_dir = ''
+  if exists('*FugitiveExtractGitDir')
+    let git_dir = FugitiveExtractGitDir(expand('%:p:h'))
+  endif
   return empty(git_dir) ? '' : fnamemodify(git_dir, ':h')
 endfunction
 

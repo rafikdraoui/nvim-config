@@ -16,6 +16,16 @@ nnoremap <silent> <buffer> <leader>e :call python#wrap_exception()<cr>
 " Undo try-except wrapping
 nnoremap <silent> <buffer> <leader>u :call python#unwrap_exception()<cr>
 
+function s:toggle_foldmethod() abort
+  if &l:foldmethod ==# 'expr'
+    setlocal foldmethod=indent
+  else
+    setlocal foldmethod=expr
+  endif
+endfunction
+nnoremap <silent> cof :call <sid>toggle_foldmethod() <cr>
+
+
 let s:project_root = git#repo_root()
 if !empty(s:project_root)
   execute 'setlocal path+=' . s:project_root . '/*'

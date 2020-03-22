@@ -43,6 +43,7 @@ call minpac#add('romainl/vim-cool')
 
 " Misc
 call minpac#add('justinmk/vim-dirvish')
+call minpac#add('kalekundert/vim-coiled-snake')
 call minpac#add('romainl/vim-qf')
 call minpac#add('romainl/vim-qlist')
 call minpac#add('tpope/vim-characterize')

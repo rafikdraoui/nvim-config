@@ -82,6 +82,10 @@ nnoremap <c-x> <nop>
 " Make ctrl-g print the full path and buffer number by default
 nnoremap <c-g> 2<c-g>
 
+" Allow undoing readline-style deletion
+inoremap <c-u> <c-g>u<c-u>
+inoremap <c-w> <c-g>u<c-w>
+
 " Yank and put from system clipboard
 " Recursive maps to so that miniyank plugin mappings are preserved
 nmap gy "+y
@@ -102,6 +106,9 @@ xnoremap <leader>/ :s/
 
 " Insert empty line below current line (leaving cursor at same position)
 nnoremap <silent> <leader><cr> m':put =''<cr>g`'
+
+" Visually select last changed or yanked text
+nnoremap gl `[v`]
 
 " Consider already entered text as prefix when navigating command-line history
 " The `wildmenumode()` guard is needed to preserve ctrl-n/ctrl-p behaviour
@@ -250,14 +257,17 @@ highlight User1 guifg=#504945 guibg=#ebdbb2 gui=inverse,bold
 
 let &statusline = ''
 
-" filename, modified flag, and filetype
-let &statusline .= '%1*%f%*%m %y '
+" filename, modified flag, preview flag, and filetype
+let &statusline .= '%1*%f%*%m%w %y '
 
 " git branch and change stats
 let &statusline .= '%{git#statusline()} '
 
 " spell checking
-let &statusline .= '%{&spell ? "[spell=" . &spelllang . "]" : ""}'
+let &statusline .= '%{&spell ? "[spell=" . &spelllang . "]" : ""} '
+
+" linting
+let &statusline .= '%{g:ale_is_running ? "[linting]" : ""} '
 
 " line/column numbers
 let &statusline .= '%= %p%% %4l/%L:%-2c'
@@ -293,7 +303,7 @@ let g:ale_linters = {
 \ 'javascript': ['standard'],
 \ 'json': ['jsonlint'],
 \ 'markdown': ['markdownlint'],
-\ 'python': ['cdroot_flake8', 'pylint'],
+\ 'python': ['cdroot_flake8', 'pylint', 'mypy'],
 \ 'sh': ['shellcheck'],
 \}
 let g:ale_python_flake8_change_directory = 0
@@ -314,8 +324,14 @@ let g:ale_elm_format_options = '--elm-version=0.19 --yes'
 
 nmap <leader>c <plug>(ale_lint)
 nmap <leader>r <plug>(ale_reset)
+nmap ]e <plug>(ale_next)
+nmap [e <plug>(ale_previous)
 nnoremap coa :ALEToggle <bar> let g:ale_enabled <cr>
 nnoremap cox :let g:ale_fix_on_save = !g:ale_fix_on_save <bar> let g:ale_fix_on_save <cr>
+
+let g:ale_is_running = v:false
+autocmd vimrc User ALELintPre let g:ale_is_running = v:true | redrawstatus
+autocmd vimrc User ALELintPost let g:ale_is_running = v:false | redrawstatus
 
 
 " fzf  {{{2
@@ -376,6 +392,9 @@ xmap gs <plug>(GrepperOperator)
 " so that fugitive's `:Gbrowse` continue to work.
 let g:loaded_netrwPlugin = 1
 
+" vim-markdown
+let g:markdown_folding = 1
+
 " dirvish
 autocmd vimrc FileType dirvish setlocal statusline=%y\ %f
 
@@ -390,7 +409,7 @@ let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}
 let g:gutentags_cache_dir = expand('~/.cache/tags')
 
 " vim-polyglot
-let g:polyglot_disabled = ['markdown']
+let g:polyglot_disabled = ['markdown']  " use default vim-markdown plugin instead
 let g:elm_format_autosave = 0  " from `elm-vim`, not needed since `ale` takes care of this
 let g:python_highlight_space_errors = 0  " from `vim-python/python-syntax`
 
@@ -420,6 +439,9 @@ nnoremap <silent> com :call marks#toggle()<cr>
 
 " targets.vim
 let g:targets_nl = ["\<Space>n", "\<Space>l"]
+
+" coiled snake
+let g:coiled_snake_foldtext_flags = ['static']
 
 
 " Varia {{{1
