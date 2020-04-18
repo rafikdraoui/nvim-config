@@ -315,6 +315,7 @@ let g:ale_fixers = {
 \ 'javascript': ['standard'],
 \ 'json': ['jq'],
 \ 'python': ['black'],
+\ 'rust': ['rustfmt'],
 \ 'sh': ['shfmt'],
 \ 'yaml': ['prettier'],
 \}
@@ -430,6 +431,7 @@ let g:vim_json_syntax_conceal = 1
 " vim-fugitive
 nnoremap <silent> <leader>g :Gstatus<cr>
 nnoremap gh :Gbrowse<cr>
+vnoremap gh :Gbrowse<cr>
 
 " vim-mundo
 nnoremap <silent> cou :MundoToggle<cr>
@@ -442,6 +444,9 @@ let g:targets_nl = ["\<Space>n", "\<Space>l"]
 
 " coiled snake
 let g:coiled_snake_foldtext_flags = ['static']
+
+" vim-pythonsense
+let g:is_pythonsense_alternate_motion_keymaps = 1
 
 
 " Varia {{{1

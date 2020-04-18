@@ -1,3 +1,13 @@
+" Wrap a line in a try-except block with a pdb `breakpoint`
+" Eg. the line:
+"   x = func()
+"
+" will be replaced by:
+"   try:  # debug
+"       x = func()
+"   except Exception as exc:
+"       breakpoint()
+"       raise
 function! python#wrap_exception() abort
   normal! m'
   normal! Otry:  # debug
@@ -8,6 +18,7 @@ function! python#wrap_exception() abort
   normal! g''
 endfunction
 
+" Undo try-except wrapping
 function! python#unwrap_exception() abort
   if (!search('^\s*\zstry:  # debug$', 'c'))
     return
