@@ -20,12 +20,13 @@ set cpoptions+=n breakindentopt=sbr | let &showbreak='  ⋯'  " display `⋯` sy
 
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
+set grepprg=rg\ --vimgrep grepformat^=%f:%l:%c:%m
 set helpheight=1000  " maximize help window
 set hidden  " allow switching buffers even if there are unsaved changes
 set ignorecase smartcase  " case-insensitive search, unless query has capital letter
 set inccommand=nosplit  " show preview of :substitute action interactively
 set lazyredraw  " only redraw screen when necessary
-set list listchars=tab:▸·,extends:❯,precedes:❮,nbsp:⌴
+set list listchars=tab:▸·,extends:❯,precedes:❮,nbsp:⁓
 set matchpairs+=«:»
 set nojoinspaces  " put only a single space after periods when joining lines
 set noswapfile directory=''  " disable swapfile
@@ -48,8 +49,10 @@ let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
 
 " Buffers
 nnoremap <leader><leader> <c-^>
-nnoremap <silent> <leader><bs> :bdelete<cr>
 nnoremap <leader>b :ls<cr>:b<space>
+" close quickfix window before `bdelete`, to avoid prematurely quitting vim
+" (cf. g:qf_auto_quit)
+nnoremap <silent> <leader><bs> :cclose <bar> :lclose <bar> :bdelete<cr>
 
 " Easier navigation between split windows
 nnoremap <c-j> <c-w>j
@@ -104,9 +107,6 @@ nnoremap <space> za
 nnoremap <leader>/ :%s/
 xnoremap <leader>/ :s/
 
-" Insert empty line below current line (leaving cursor at same position)
-nnoremap <silent> <leader><cr> m':put =''<cr>g`'
-
 " Visually select last changed or yanked text
 nnoremap gl `[v`]
 
@@ -148,6 +148,14 @@ nnoremap <silent> col :set cursorline! <cr>
 
 " Toggle wrap
 nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
+
+nnoremap <leader>t :terminal<cr>
+
+" use <esc> to exit terminal mode
+tnoremap <esc> <c-\><c-n>
+
+" Emulate i_CTRL-R
+tnoremap <expr> <c-r> '<c-\><c-n>"'.nr2char(getchar()).'pi'
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
@@ -245,8 +253,8 @@ autocmd vimrc BufWritePre * TrimWhitespace
 autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * if empty(getcmdwintype()) | checktime | endif
 autocmd vimrc FileChangedShellPost * echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
-" Make terminal start in insert mode
-autocmd vimrc TermOpen * startinsert
+" Make terminal start in insert mode, and disable its line numbering
+autocmd vimrc TermOpen * startinsert | setlocal nonumber norelativenumber
 
 
 " Status line {{{1
@@ -323,6 +331,7 @@ let g:ale_fix_on_save = 1
 let g:ale_sh_shfmt_options = '-i 2 -ci'
 let g:ale_elm_format_options = '--elm-version=0.19 --yes'
 
+nmap <leader>m <plug>(ale_detail)
 nmap <leader>c <plug>(ale_lint)
 nmap <leader>r <plug>(ale_reset)
 nmap ]e <plug>(ale_next)
@@ -340,7 +349,6 @@ if has('mac')
   set runtimepath+=/usr/local/opt/fzf
 endif
 nnoremap <c-f> :GFiles <cr>
-nnoremap <leader>t :Tags <cr>
 nnoremap <leader>h :Helptags <cr>
 
 
@@ -365,15 +373,11 @@ autocmd vimrc BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
 " vim-sneak {{{2
 map f <Plug>Sneak_f
 map F <Plug>Sneak_F
-
-map <leader>f <Plug>Sneak_s
-map <leader>F <Plug>Sneak_S
-
 map t <Plug>Sneak_t
 map T <Plug>Sneak_T
-
+map <leader>f <Plug>Sneak_s
+map <leader>F <Plug>Sneak_S
 let g:sneak#s_next = 1
-let g:sneak#absolute_dir = 1
 
 
 " vim-grepper {{{2
@@ -385,6 +389,7 @@ let g:grepper.searchreg = 1  " add query to last-search register
 nnoremap <leader>s :Grepper <cr>
 nmap gs <plug>(GrepperOperator)
 xmap gs <plug>(GrepperOperator)
+nmap gss gsiw
 
 
 " others {{{2
@@ -395,6 +400,9 @@ let g:loaded_netrwPlugin = 1
 
 " vim-markdown
 let g:markdown_folding = 1
+
+" vim-rust
+let g:rust_fold = 1
 
 " dirvish
 autocmd vimrc FileType dirvish setlocal statusline=%y\ %f
@@ -436,9 +444,6 @@ vnoremap gh :Gbrowse<cr>
 " vim-mundo
 nnoremap <silent> cou :MundoToggle<cr>
 
-" vim-signature
-nnoremap <silent> com :call marks#toggle()<cr>
-
 " targets.vim
 let g:targets_nl = ["\<Space>n", "\<Space>l"]
 
@@ -449,7 +454,8 @@ let g:coiled_snake_foldtext_flags = ['static']
 let g:is_pythonsense_alternate_motion_keymaps = 1
 
 
-" Varia {{{1
+" Abbreviations {{{1
 
 iabbrev Quebec Québec
 iabbrev Montreal Montréal
+cabbrev Q! q!

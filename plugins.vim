@@ -6,7 +6,6 @@ call minpac#add('tpope/vim-repeat')
 
 " Motions
 call minpac#add('justinmk/vim-sneak')
-call minpac#add('kshenoy/vim-signature', {'type': 'opt'})
 
 " Text objects
 call minpac#add('jeetsukumaran/vim-pythonsense')
