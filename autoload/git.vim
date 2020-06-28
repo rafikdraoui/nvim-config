@@ -41,3 +41,14 @@ function! git#statusline() abort
 
   return branch . stats
 endfunction
+
+function git#jump(...)
+  if a:0 == 0
+    let cmd = 'diff'
+  elseif a:1 ==? 'staged'
+    let cmd = 'diff --cached'
+  else
+    let cmd = join(a:000)
+  endif
+  cexpr system('git jump ' . cmd)
+endfunction

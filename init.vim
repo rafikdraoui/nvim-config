@@ -32,7 +32,7 @@ set nojoinspaces  " put only a single space after periods when joining lines
 set noswapfile directory=''  " disable swapfile
 set notimeout
 set path-=/usr/include
-set relativenumber number  " use relative line number, but display absolute number on current line
+set relativenumber number numberwidth=1 " use relative line number, but display absolute number on current line
 set scrolloff=3
 set splitbelow splitright
 set tagcase=smart
@@ -157,6 +157,9 @@ tnoremap <esc> <c-\><c-n>
 " Emulate i_CTRL-R
 tnoremap <expr> <c-r> '<c-\><c-n>"'.nr2char(getchar()).'pi'
 
+" Apply first spelling suggestion to current or next misspelled word
+nnoremap Z ge]s1z=
+
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
 nnoremap Ç }
@@ -235,6 +238,13 @@ command! CdRoot call git#cd_root()
 " set pwd to the directory containing the file loaded in buffer
 command! CdBuffer cd %:p:h
 
+" `git jump` from within vim
+" need to use a patched version of git's contrib `git-jump` script
+" https://gist.github.com/romainl/a3ddb1d08764b93183260f8cdf0f524f
+command! -nargs=* -complete=custom,GitJumpComplete Jump call git#jump(<f-args>)
+function GitJumpComplete(...)
+  return join(['diff', 'staged', 'merge'], "\n")
+endfunction
 
 " Autocommands {{{1
 
@@ -244,7 +254,9 @@ augroup vimrc
 augroup END
 
 " highlight yank
-autocmd vimrc TextYankPost * call highlight_yank#highlight(v:event.operator, v:event.regtype, v:event.inclusive)
+if has('nvim-0.5')
+  autocmd vimrc TextYankPost * lua require'vim.highlight'.on_yank()
+endif
 
 " Trim whitespace on save
 autocmd vimrc BufWritePre * TrimWhitespace
@@ -349,7 +361,6 @@ if has('mac')
   set runtimepath+=/usr/local/opt/fzf
 endif
 nnoremap <c-f> :GFiles <cr>
-nnoremap <leader>h :Helptags <cr>
 
 
 " vim-sandwich {{{2
