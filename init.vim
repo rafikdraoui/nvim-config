@@ -16,7 +16,7 @@ set shiftround  " indent to a multiple of 'shiftwidth'
 " Line Wrapping
 set linebreak
 set breakindent  " keep indentation when wrapping lines
-set cpoptions+=n breakindentopt=sbr | let &showbreak='  ⋯'  " display `⋯` symbol within the line number column to denote wrapped lines
+set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the line number column
 
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
@@ -34,18 +34,21 @@ set notimeout
 set path-=/usr/include
 set relativenumber number numberwidth=1 " use relative line number, but display absolute number on current line
 set scrolloff=3
+set signcolumn=yes
 set splitbelow splitright
 set tagcase=smart
 set title
 set wildmode=longest:full,full
 
-" Speedup loading by explicitly setting python provider
+" Speed up loading by explicitly setting python provider
 let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
 
 
 " Mappings {{{1
 
-" See also: plugin/navigation_mappings.vim
+" See also:
+"   plugin/navigation_mappings.vim
+"   plugin/window_mappings.vim
 
 " Buffers
 nnoremap <leader><leader> <c-^>
@@ -53,22 +56,6 @@ nnoremap <leader>b :ls<cr>:b<space>
 " close quickfix window before `bdelete`, to avoid prematurely quitting vim
 " (cf. g:qf_auto_quit)
 nnoremap <silent> <leader><bs> :cclose <bar> :lclose <bar> :bdelete<cr>
-
-" Easier navigation between split windows
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-
-" Resize windows using <alt> and h,j,k,l
-nnoremap <silent> <M-h> <C-w><
-nnoremap <silent> <M-l> <C-w>>
-nnoremap <silent> <M-j> <C-W>-
-nnoremap <silent> <M-k> <C-W>+
-nnoremap <silent> <M-=> <C-W>=
-
-" Redraw screen (since ctrl-l has been remapped for window movements)
-nnoremap <c-space> <c-l>
 
 " Use ctrl-s to save file
 nnoremap <silent> <c-s> :update<cr>
@@ -90,7 +77,7 @@ inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <c-g>u<c-w>
 
 " Yank and put from system clipboard
-" Recursive maps to so that miniyank plugin mappings are preserved
+" Recursive maps so that miniyank plugin mappings are preserved
 nmap gy "+y
 xmap gy "+y
 nmap gp "+p
@@ -133,10 +120,10 @@ nnoremap Q @:
 nnoremap zs :echo "sort" <bar> set opfunc=opfunc#sort<cr>g@
 xnoremap <silent> zs :<c-u>call opfunc#sort(visualmode())<cr>
 
-" open browser at url under cursor
+" Open browser at url under cursor
 nnoremap <silent> gx :call browse#url()<cr>
 
-" close preview window
+" Close preview window
 nnoremap <silent> <leader>x :pclose<cr>
 
 " Toggle spellcheck and spelllang
@@ -149,16 +136,22 @@ nnoremap <silent> col :set cursorline! <cr>
 " Toggle wrap
 nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
 
-nnoremap <leader>t :terminal<cr>
+" Switch to terminal buffer
+nnoremap <silent> <leader>t :call buffers#get_terminal()<cr>
 
-" use <esc> to exit terminal mode
+" Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
 tnoremap <esc> <c-\><c-n>
+tnoremap <a-[> <esc>
 
 " Emulate i_CTRL-R
-tnoremap <expr> <c-r> '<c-\><c-n>"'.nr2char(getchar()).'pi'
+tnoremap <expr> <a-r> '<c-\><c-n>"'.nr2char(getchar()).'pi'
 
 " Apply first spelling suggestion to current or next misspelled word
 nnoremap Z ge]s1z=
+
+" Use git-jump from within vim. Can pass a count of 1, 2, or 3 for `diff`,
+" `staged`, and `merge` variants.
+nnoremap <silent> <leader>j :Jump<cr>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
@@ -241,10 +234,11 @@ command! CdBuffer cd %:p:h
 " `git jump` from within vim
 " need to use a patched version of git's contrib `git-jump` script
 " https://gist.github.com/romainl/a3ddb1d08764b93183260f8cdf0f524f
-command! -nargs=* -complete=custom,GitJumpComplete Jump call git#jump(<f-args>)
-function GitJumpComplete(...)
+command! -count=0 -nargs=* -complete=custom,GitJumpComplete Jump call git#jump(<f-args>)
+function! GitJumpComplete(...)
   return join(['diff', 'staged', 'merge'], "\n")
 endfunction
+
 
 " Autocommands {{{1
 
@@ -265,8 +259,12 @@ autocmd vimrc BufWritePre * TrimWhitespace
 autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * if empty(getcmdwintype()) | checktime | endif
 autocmd vimrc FileChangedShellPost * echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
-" Make terminal start in insert mode, and disable its line numbering
-autocmd vimrc TermOpen * startinsert | setlocal nonumber norelativenumber
+" Make terminal start in insert mode, and disable number and sign columns
+autocmd vimrc TermOpen * startinsert | setlocal nonumber norelativenumber signcolumn=auto
+
+" Set 'showbreak' symbol so that it aligns to the right of the line number
+" column (whose width varies depending on the number of lines in the buffer.)
+autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * let &showbreak=repeat(' ', float2nr(floor(log10(line('$'))))) . '⋯'
 
 
 " Status line {{{1
@@ -284,10 +282,17 @@ let &statusline .= '%1*%f%*%m%w %y '
 let &statusline .= '%{git#statusline()} '
 
 " spell checking
-let &statusline .= '%{&spell ? "[spell=" . &spelllang . "]" : ""} '
+let &statusline .= '%{&spell ? printf("[spell=%s]", &spelllang) : ""} '
 
 " linting
-let &statusline .= '%{g:ale_is_running ? "[linting]" : ""} '
+function! LintStatus() abort
+  if g:ale_is_running
+    return '[linting]'
+  endif
+  let num_errors = ale#statusline#Count(bufnr())['total']
+  return num_errors > 0 ? printf('[lint: %d]', num_errors) : ''
+endfunction
+let &statusline .= '%{LintStatus()} '
 
 " line/column numbers
 let &statusline .= '%= %p%% %4l/%L:%-2c'
@@ -314,8 +319,9 @@ xmap ic <plug>(signify-motion-inner-visual)
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
-let g:ale_open_list = 1
-let g:ale_set_signs = 0
+let g:ale_sign_error = '»'
+let g:ale_sign_warning = '»'
+let g:ale_echo_msg_format = '[%linter%]% code:% %s'
 
 let g:ale_linters = {
 \ 'fish': [],
@@ -350,6 +356,7 @@ nmap ]e <plug>(ale_next)
 nmap [e <plug>(ale_previous)
 nnoremap coa :ALEToggle <bar> let g:ale_enabled <cr>
 nnoremap cox :let g:ale_fix_on_save = !g:ale_fix_on_save <bar> let g:ale_fix_on_save <cr>
+nnoremap coz :let g:ale_open_list = !g:ale_open_list <bar> let g:ale_open_list <cr>
 
 let g:ale_is_running = v:false
 autocmd vimrc User ALELintPre let g:ale_is_running = v:true | redrawstatus
@@ -361,6 +368,7 @@ if has('mac')
   set runtimepath+=/usr/local/opt/fzf
 endif
 nnoremap <c-f> :GFiles <cr>
+nnoremap <c-h> :Helptags<cr>
 
 
 " vim-sandwich {{{2
@@ -450,7 +458,7 @@ let g:vim_json_syntax_conceal = 1
 " vim-fugitive
 nnoremap <silent> <leader>g :Gstatus<cr>
 nnoremap gh :Gbrowse<cr>
-vnoremap gh :Gbrowse<cr>
+xnoremap gh :Gbrowse<cr>
 
 " vim-mundo
 nnoremap <silent> cou :MundoToggle<cr>

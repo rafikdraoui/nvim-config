@@ -15,10 +15,10 @@ nnoremap <silent> [Q :cfirst <cr>
 nnoremap <silent> ]Q :clast <cr>
 
 " Location list
-nnoremap <silent> [l :lprevious <cr>
-nnoremap <silent> ]l :lnext <cr>
-nnoremap <silent> [L :lfirst <cr>
-nnoremap <silent> ]L :llast <cr>
+nnoremap <silent> [z :lprevious <cr>
+nnoremap <silent> ]z :lnext <cr>
+nnoremap <silent> [Z :lfirst <cr>
+nnoremap <silent> ]Z :llast <cr>
 
 " Tag matchlist
 nnoremap <silent> [t :tprevious <cr>

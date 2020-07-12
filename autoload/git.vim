@@ -42,13 +42,26 @@ function! git#statusline() abort
   return branch . stats
 endfunction
 
-function git#jump(...)
-  if a:0 == 0
-    let cmd = 'diff'
-  elseif a:1 ==? 'staged'
-    let cmd = 'diff --cached'
+function! git#jump(...) abort
+  if v:count > 0
+    if v:count == 1
+      let cmd = 'diff'
+    elseif v:count == 2
+      let cmd = 'diff --cached'
+    elseif v:count == 3
+      let cmd = 'merge'
+    else
+      echohl WarningMsg | echo 'Invalid count for :Jump' | echohl None
+      return
+    endif
   else
-    let cmd = join(a:000)
+    if a:0 == 0
+      let cmd = 'diff'
+    elseif a:1 ==? 'staged'
+      let cmd = 'diff --cached'
+    else
+      let cmd = join(a:000)
+    endif
   endif
   cexpr system('git jump ' . cmd)
 endfunction
