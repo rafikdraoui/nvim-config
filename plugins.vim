@@ -1,11 +1,12 @@
 " Actions
 call minpac#add('machakann/vim-sandwich')
+call minpac#add('svermeulen/vim-subversive')
 call minpac#add('tommcdo/vim-exchange')
 call minpac#add('tpope/vim-commentary')
 call minpac#add('tpope/vim-repeat')
 
 " Motions
-call minpac#add('justinmk/vim-sneak')
+call minpac#add('rhysd/clever-f.vim')
 
 " Text objects
 call minpac#add('jeetsukumaran/vim-pythonsense')
@@ -41,10 +42,13 @@ call minpac#add('rafikdraoui/gruvbox-custom')
 call minpac#add('romainl/vim-cool')
 
 " Misc
+call minpac#add('RRethy/vim-hexokinase', {'type': 'opt', 'do': 'make hexokinase'})
 call minpac#add('justinmk/vim-dirvish')
 call minpac#add('kalekundert/vim-coiled-snake')
+call minpac#add('rbong/vim-buffest')
 call minpac#add('romainl/vim-qf')
 call minpac#add('tpope/vim-characterize')
 call minpac#add('tpope/vim-projectionist')
 call minpac#add('tpope/vim-scriptease')
 call minpac#add('tweekmonster/startuptime.vim')
+call minpac#add('vimwiki/vimwiki', {'type': 'opt'})

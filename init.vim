@@ -18,6 +18,7 @@ set linebreak
 set breakindent  " keep indentation when wrapping lines
 set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the line number column
 
+let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
 set grepprg=rg\ --vimgrep grepformat^=%f:%l:%c:%m
@@ -53,6 +54,7 @@ let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
 " Buffers
 nnoremap <leader><leader> <c-^>
 nnoremap <leader>b :ls<cr>:b<space>
+nnoremap <leader>B :ls<cr>:sb<space>
 " close quickfix window before `bdelete`, to avoid prematurely quitting vim
 " (cf. g:qf_auto_quit)
 nnoremap <silent> <leader><bs> :cclose <bar> :lclose <bar> :bdelete<cr>
@@ -136,11 +138,15 @@ nnoremap <silent> col :set cursorline! <cr>
 " Toggle wrap
 nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
 
+" Toggle relativenumber
+nnoremap <silent> con :set relativenumber! <bar> set relativenumber? <cr>
+
 " Switch to terminal buffer
 nnoremap <silent> <leader>t :call buffers#get_terminal()<cr>
+nnoremap <silent> <leader>T :split term://$SHELL<cr>
 
 " Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
-tnoremap <esc> <c-\><c-n>
+tnoremap <expr> <esc> &ft == 'fzf' ? "<c-c>" : "<c-\><c-n>"
 tnoremap <a-[> <esc>
 
 " Emulate i_CTRL-R
@@ -152,6 +158,11 @@ nnoremap Z ge]s1z=
 " Use git-jump from within vim. Can pass a count of 1, 2, or 3 for `diff`,
 " `staged`, and `merge` variants.
 nnoremap <silent> <leader>j :Jump<cr>
+
+" Trigger insert mode completions
+inoremap ,f <c-x><c-f>
+inoremap ,l <c-x><c-l>
+inoremap ,t <c-x><c-]>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
@@ -269,9 +280,18 @@ autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * let &showbreak=repea
 
 " Status line {{{1
 
-" Custom highlight for filename.
+" Custom highlights:
+" Using `hl-User{N}` for better interaction with StatusLineNC.
+" We can't define the values in the colorscheme and just `hi link` them, since
+" doing so seem to not make highlights work properly on statusline of
+" non-active windows.
+
+" 'bold status line', used for filename
 " This is the same as StatusLine, but with the addition of the bold attribute.
 highlight User1 guifg=#504945 guibg=#ebdbb2 gui=inverse,bold
+
+" 'bold yellow', used for linting status
+highlight User2 guifg=#504945 guibg=#fabd2f gui=inverse,bold
 
 let &statusline = ''
 
@@ -290,9 +310,9 @@ function! LintStatus() abort
     return '[linting]'
   endif
   let num_errors = ale#statusline#Count(bufnr())['total']
-  return num_errors > 0 ? printf('[lint: %d]', num_errors) : ''
+  return num_errors > 0 ? printf('[lint:%d]', num_errors) : ''
 endfunction
-let &statusline .= '%{LintStatus()} '
+let &statusline .= '%2*%{LintStatus()}%* '
 
 " line/column numbers
 let &statusline .= '%= %p%% %4l/%L:%-2c'
@@ -329,10 +349,11 @@ let g:ale_linters = {
 \ 'javascript': ['standard'],
 \ 'json': ['jsonlint'],
 \ 'markdown': ['markdownlint'],
-\ 'python': ['cdroot_flake8', 'pylint', 'mypy'],
+\ 'python': ['flake8', 'pylint', 'mypy'],
 \ 'sh': ['shellcheck'],
+\ 'vimwiki': [],
 \}
-let g:ale_python_flake8_change_directory = 0
+let g:ale_python_flake8_change_directory = 'project'
 
 let g:ale_fixers = {
 \ 'elm': ['elm-format'],
@@ -363,6 +384,34 @@ autocmd vimrc User ALELintPre let g:ale_is_running = v:true | redrawstatus
 autocmd vimrc User ALELintPost let g:ale_is_running = v:false | redrawstatus
 
 
+" vimwiki {{{2
+let s:wiki = {}
+let s:wiki.path = $NOTES_DIR
+let s:wiki.syntax = 'markdown'
+let s:wiki.ext = '.md'
+let s:wiki.links_space_char = '-'
+let s:wiki.auto_tags = 1
+let g:vimwiki_list = [s:wiki]
+
+let g:vimwiki_folding = 'expr'
+let g:vimwiki_global_ext = 0
+let g:vimwiki_key_mappings = {
+\ 'headers': 1,
+\ 'links': 1,
+\ 'lists': 1,
+\ 'global': 0,
+\ 'html': 0,
+\ 'mouse': 0,
+\ 'table_format': 0,
+\ 'table_mappings': 0,
+\ 'text_objs': 0,
+\}
+
+nnoremap <silent> <leader>ww :edit $NOTES_DIR/index.md<cr>
+nnoremap <leader>n :Files $NOTES_DIR<cr>
+autocmd vimrc BufReadPre $NOTES_DIR/* if !exists('g:loaded_vimiki') | packadd vimwiki | endif
+
+
 " fzf  {{{2
 if has('mac')
   set runtimepath+=/usr/local/opt/fzf
@@ -372,9 +421,6 @@ nnoremap <c-h> :Helptags<cr>
 
 
 " vim-sandwich {{{2
-
-" Disable single `s` to avoid conflict with vim-sandwich mappings
-nnoremap s <nop>
 
 let g:textobj_sandwich_no_default_key_mappings = 1
 xmap is <Plug>(textobj-sandwich-auto-i)
@@ -389,16 +435,6 @@ let s:extra_recipes = [
 autocmd vimrc BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
 
 
-" vim-sneak {{{2
-map f <Plug>Sneak_f
-map F <Plug>Sneak_F
-map t <Plug>Sneak_t
-map T <Plug>Sneak_T
-map <leader>f <Plug>Sneak_s
-map <leader>F <Plug>Sneak_S
-let g:sneak#s_next = 1
-
-
 " vim-grepper {{{2
 let g:grepper = {}
 let g:grepper.dir = 'repo'
@@ -409,6 +445,16 @@ nnoremap <leader>s :Grepper <cr>
 nmap gs <plug>(GrepperOperator)
 xmap gs <plug>(GrepperOperator)
 nmap gss gsiw
+
+
+" vim-subversive {{{2
+nmap s <plug>(SubversiveSubstitute)
+nmap ss <plug>(SubversiveSubstituteLine)
+
+nmap cs <plug>(SubversiveSubstituteRange)
+xmap cs <plug>(SubversiveSubstituteRange)
+nmap css <plug>(SubversiveSubstituteWordRange)
+let g:subversiveCurrentTextRegister = 's'
 
 
 " others {{{2
@@ -471,6 +517,12 @@ let g:coiled_snake_foldtext_flags = ['static']
 
 " vim-pythonsense
 let g:is_pythonsense_alternate_motion_keymaps = 1
+
+" clever-f
+nmap <leader>f <Plug>(clever-f-reset)
+
+" vim-hexokinase
+nnoremap <silent> coh :packadd vim-hexokinase <bar> HexokinaseToggle <cr>
 
 
 " Abbreviations {{{1
