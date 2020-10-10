@@ -9,7 +9,6 @@ call minpac#add('tpope/vim-repeat')
 call minpac#add('rhysd/clever-f.vim')
 
 " Text objects
-call minpac#add('jeetsukumaran/vim-pythonsense')
 call minpac#add('wellle/targets.vim')
 
 " Editing
@@ -18,7 +17,7 @@ call minpac#add('simnalamburt/vim-mundo')
 call minpac#add('tpope/vim-rsi')
 
 " Language-specific utilities (syntax highlighting, indentation, etc.)
-call minpac#add('sheerun/vim-polyglot')
+call minpac#add('sheerun/vim-polyglot', {'type': 'opt'})
 
 " Code linting and formatting
 call minpac#add('dense-analysis/ale')
@@ -36,10 +35,17 @@ call minpac#add('junegunn/fzf.vim')
 call minpac#add('ludovicchabant/vim-gutentags')
 call minpac#add('mhinz/vim-grepper')
 call minpac#add('tpope/vim-eunuch')
+call minpac#add('vim-test/vim-test')
 
 " UI
-call minpac#add('rafikdraoui/gruvbox-custom')
+call minpac#add('git@github.com:rafikdraoui/couleurs.vim.git')
+call minpac#add('rafikdraoui/gruvbox-custom', {'type': 'opt'})
 call minpac#add('romainl/vim-cool')
+
+" Tree-sitter
+call minpac#add('nvim-treesitter/nvim-treesitter', {'type': 'opt'})
+call minpac#add('nvim-treesitter/nvim-treesitter-textobjects', {'type': 'opt'})
+call minpac#add('nvim-treesitter/nvim-treesitter-refactor', {'type': 'opt'})
 
 " Misc
 call minpac#add('RRethy/vim-hexokinase', {'type': 'opt', 'do': 'make hexokinase'})

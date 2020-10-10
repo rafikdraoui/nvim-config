@@ -6,7 +6,7 @@
 "     version = 1.2.3
 "
 " will be: 'package: hello'
-function TableArrayFoldText()
+function! TableArrayFoldText() abort
   let lines = getline(v:foldstart, v:foldend)
   let header = trim(get(lines, 0), '[]')
 
@@ -22,5 +22,10 @@ function TableArrayFoldText()
   return header . ': ' . label
 endfunction
 
-setlocal foldmethod=syntax
+function! TableArrayFoldExpr() abort
+  return getline(v:lnum) =~? '^[[' ? '>1' : '='
+endfunction
+
+setlocal foldmethod=expr
+setlocal foldexpr=TableArrayFoldExpr()
 setlocal foldtext=TableArrayFoldText()

@@ -4,9 +4,6 @@
 
 let g:mapleader = ','
 
-set termguicolors
-colorscheme gruvbox-custom
-
 " Indentation
 set expandtab
 set shiftwidth=2
@@ -38,11 +35,17 @@ set scrolloff=3
 set signcolumn=yes
 set splitbelow splitright
 set tagcase=smart
+set termguicolors
 set title
+set updatetime=1000
 set wildmode=longest:full,full
 
 " Speed up loading by explicitly setting python provider
 let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
+
+" Allow syntax highlighting of embedded lua in vimscript files
+" c.f. $VIMRUNTIME/syntax/vim.vim
+let g:vimsyn_embed= 'l'
 
 
 " Mappings {{{1
@@ -278,20 +281,27 @@ autocmd vimrc TermOpen * startinsert | setlocal nonumber norelativenumber signco
 autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * let &showbreak=repeat(' ', float2nr(floor(log10(line('$'))))) . '⋯'
 
 
+" Colors {{{1
+function! StatusLineUserHighlights() abort
+  " Custom highlights for status line, using `hl-User{N}` for better
+  " interaction with StatusLineNC.
+  " We can't define the values in the colorscheme and just `hi link` them,
+  " since doing so seem to not make highlights work properly on statusline of
+  " non-active windows.
+
+  " 'bold status line', used for filename
+  " This is the same as StatusLine, but with the addition of the bold attribute.
+  highlight User1 guifg=#504945 guibg=#ebdbb2 gui=inverse,bold
+
+  " 'bold yellow', used for linting status
+  highlight User2 guifg=#504945 guibg=#fabd2f gui=inverse,bold
+endfunction
+autocmd vimrc ColorScheme couleurs call StatusLineUserHighlights()
+
+colorscheme couleurs
+
+
 " Status line {{{1
-
-" Custom highlights:
-" Using `hl-User{N}` for better interaction with StatusLineNC.
-" We can't define the values in the colorscheme and just `hi link` them, since
-" doing so seem to not make highlights work properly on statusline of
-" non-active windows.
-
-" 'bold status line', used for filename
-" This is the same as StatusLine, but with the addition of the bold attribute.
-highlight User1 guifg=#504945 guibg=#ebdbb2 gui=inverse,bold
-
-" 'bold yellow', used for linting status
-highlight User2 guifg=#504945 guibg=#fabd2f gui=inverse,bold
 
 let &statusline = ''
 
@@ -339,6 +349,7 @@ xmap ic <plug>(signify-motion-inner-visual)
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
+let g:ale_lint_on_filetype_changed = 0
 let g:ale_sign_error = '»'
 let g:ale_sign_warning = '»'
 let g:ale_echo_msg_format = '[%linter%]% code:% %s'
@@ -457,13 +468,34 @@ nmap css <plug>(SubversiveSubstituteWordRange)
 let g:subversiveCurrentTextRegister = 's'
 
 
+" vim-test
+let g:test#strategy = 'neovim'
+let g:test#python#runner = 'pytest'
+nnoremap <silent> t<c-n> :TestNearest<cr>
+nnoremap <silent> t<c-f> :TestFile<cr>
+nnoremap <silent> t<c-s> :TestSuite<cr>
+nnoremap <silent> t<c-l> :TestLast<cr>
+nnoremap <silent> t<c-g> :TestVisit<cr>
+
+
+" nvim-treesitter {{{2
+if has('nvim-0.5')
+  packadd! nvim-treesitter
+  packadd! nvim-treesitter-textobjects
+  packadd! nvim-treesitter-refactor
+  lua require'treesitter_setup'
+
+  nnoremap <silent> g: <cmd>lua require'ts_location'.print_ts_location()<cr>
+endif
+
+
 " others {{{2
 
 " disable netrw plugin, but still allow its autoloaded functions to be used,
 " so that fugitive's `:Gbrowse` continue to work.
 let g:loaded_netrwPlugin = 1
 
-" vim-markdown
+" vim-markdown (from default $VIMRUNTIME)
 let g:markdown_folding = 1
 
 " vim-rust
@@ -483,7 +515,6 @@ let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}
 let g:gutentags_cache_dir = expand('~/.cache/tags')
 
 " vim-polyglot
-let g:polyglot_disabled = ['markdown']  " use default vim-markdown plugin instead
 let g:elm_format_autosave = 0  " from `elm-vim`, not needed since `ale` takes care of this
 let g:python_highlight_space_errors = 0  " from `vim-python/python-syntax`
 
@@ -496,10 +527,6 @@ nmap gb <Plug>(git-messenger)
 " vim-qf
 nmap <leader>q <plug>(qf_qf_toggle_stay)
 nmap <leader>z <plug>(qf_loc_toggle_stay)
-
-" vim-json
-" see also `after/ftplugin/json.vim`
-let g:vim_json_syntax_conceal = 1
 
 " vim-fugitive
 nnoremap <silent> <leader>g :Gstatus<cr>
@@ -514,9 +541,6 @@ let g:targets_nl = ["\<Space>n", "\<Space>l"]
 
 " coiled snake
 let g:coiled_snake_foldtext_flags = ['static']
-
-" vim-pythonsense
-let g:is_pythonsense_alternate_motion_keymaps = 1
 
 " clever-f
 nmap <leader>f <Plug>(clever-f-reset)
