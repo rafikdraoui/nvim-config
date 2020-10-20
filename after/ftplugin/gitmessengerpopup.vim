@@ -1,1 +1,1 @@
-nnoremap <buffer> <silent> <leader>b :call git#browse_hash()<cr>
+nnoremap <buffer> <silent> gh :call git#browse_hash()<cr>

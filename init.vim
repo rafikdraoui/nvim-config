@@ -16,6 +16,7 @@ set breakindent  " keep indentation when wrapping lines
 set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the line number column
 
 let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
+set commentstring=#\ %s
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
 set grepprg=rg\ --vimgrep grepformat^=%f:%l:%c:%m
@@ -357,7 +358,7 @@ let g:ale_echo_msg_format = '[%linter%]% code:% %s'
 let g:ale_linters = {
 \ 'fish': [],
 \ 'haskell': ['hdevtools'],
-\ 'javascript': ['standard'],
+\ 'javascript': ['eslint'],
 \ 'json': ['jsonlint'],
 \ 'markdown': ['markdownlint'],
 \ 'python': ['flake8', 'pylint', 'mypy'],
@@ -365,12 +366,14 @@ let g:ale_linters = {
 \ 'vimwiki': [],
 \}
 let g:ale_python_flake8_change_directory = 'project'
+let g:ale_javascript_eslint_suppress_eslintignore = 1
+let g:ale_javascript_eslint_suppress_missing_config = 1
 
 let g:ale_fixers = {
 \ 'elm': ['elm-format'],
 \ 'fish': ['autofix#fish'],
 \ 'haskell': ['hfmt'],
-\ 'javascript': ['standard'],
+\ 'javascript': ['prettier'],
 \ 'json': ['jq'],
 \ 'python': ['black'],
 \ 'rust': ['rustfmt'],
@@ -387,8 +390,7 @@ nmap <leader>r <plug>(ale_reset)
 nmap ]e <plug>(ale_next)
 nmap [e <plug>(ale_previous)
 nnoremap coa :ALEToggle <bar> let g:ale_enabled <cr>
-nnoremap cox :let g:ale_fix_on_save = !g:ale_fix_on_save <bar> let g:ale_fix_on_save <cr>
-nnoremap coz :let g:ale_open_list = !g:ale_open_list <bar> let g:ale_open_list <cr>
+nnoremap cox :call autofix#toggle() <cr>
 
 let g:ale_is_running = v:false
 autocmd vimrc User ALELintPre let g:ale_is_running = v:true | redrawstatus
@@ -485,7 +487,7 @@ if has('nvim-0.5')
   packadd! nvim-treesitter-refactor
   lua require'treesitter_setup'
 
-  nnoremap <silent> g: <cmd>lua require'ts_location'.print_ts_location()<cr>
+  nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
 endif
 
 
@@ -513,10 +515,6 @@ map <c-n> <Plug>(miniyank-cycleback)
 " gutentags
 let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}
 let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-" vim-polyglot
-let g:elm_format_autosave = 0  " from `elm-vim`, not needed since `ale` takes care of this
-let g:python_highlight_space_errors = 0  " from `vim-python/python-syntax`
 
 " git-messenger
 " see also `after/ftplugin/gitmessengerpopup.vim`

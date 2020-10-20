@@ -16,9 +16,6 @@ call minpac#add('bfredl/nvim-miniyank')
 call minpac#add('simnalamburt/vim-mundo')
 call minpac#add('tpope/vim-rsi')
 
-" Language-specific utilities (syntax highlighting, indentation, etc.)
-call minpac#add('sheerun/vim-polyglot', {'type': 'opt'})
-
 " Code linting and formatting
 call minpac#add('dense-analysis/ale')
 
@@ -48,6 +45,7 @@ call minpac#add('nvim-treesitter/nvim-treesitter-textobjects', {'type': 'opt'})
 call minpac#add('nvim-treesitter/nvim-treesitter-refactor', {'type': 'opt'})
 
 " Misc
+call minpac#add('MTDL9/vim-log-highlighting')
 call minpac#add('RRethy/vim-hexokinase', {'type': 'opt', 'do': 'make hexokinase'})
 call minpac#add('justinmk/vim-dirvish')
 call minpac#add('kalekundert/vim-coiled-snake')
