@@ -45,6 +45,8 @@ require'nvim-treesitter.configs'.setup {
     navigation = {
         enable = true,
         keymaps = {
+          -- FIXME: figure out why `goto_definition_lsp_fallback` doesn't work on buffers without LSP
+          -- goto_definition_lsp_fallback = "gd",
           goto_definition = "gd",
           goto_next_usage = "<a-n>",
           goto_previous_usage = "<a-N>",

@@ -17,6 +17,7 @@ set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the lin
 
 let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
 set commentstring=#\ %s
+set completeopt-=preview
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
 set grepprg=rg\ --vimgrep grepformat^=%f:%l:%c:%m
@@ -167,6 +168,7 @@ nnoremap <silent> <leader>j :Jump<cr>
 inoremap ,f <c-x><c-f>
 inoremap ,l <c-x><c-l>
 inoremap ,t <c-x><c-]>
+inoremap ,<tab> <c-x><c-o>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
@@ -357,6 +359,7 @@ let g:ale_echo_msg_format = '[%linter%]% code:% %s'
 
 let g:ale_linters = {
 \ 'fish': [],
+\ 'go': ['gobuild', 'revive', 'golangci-lint'],
 \ 'haskell': ['hdevtools'],
 \ 'javascript': ['eslint'],
 \ 'json': ['jsonlint'],
@@ -365,18 +368,24 @@ let g:ale_linters = {
 \ 'sh': ['shellcheck'],
 \ 'vimwiki': [],
 \}
+let g:ale_go_golangci_lint_options = ''
+let g:ale_go_golangci_lint_package = 1
+let g:ale_go_revive_options = '-config $HOME/.config/revive.toml'
 let g:ale_python_flake8_change_directory = 'project'
 let g:ale_javascript_eslint_suppress_eslintignore = 1
 let g:ale_javascript_eslint_suppress_missing_config = 1
 
 let g:ale_fixers = {
+\ 'css': ['prettier'],
 \ 'elm': ['elm-format'],
 \ 'fish': ['autofix#fish'],
+\ 'go': ['goimports'],
 \ 'haskell': ['hfmt'],
 \ 'javascript': ['prettier'],
 \ 'json': ['jq'],
 \ 'python': ['black'],
 \ 'rust': ['rustfmt'],
+\ 'scss': ['prettier'],
 \ 'sh': ['shfmt'],
 \ 'yaml': ['prettier'],
 \}
@@ -431,6 +440,7 @@ if has('mac')
 endif
 nnoremap <c-f> :GFiles <cr>
 nnoremap <c-h> :Helptags<cr>
+let g:fzf_preview_window = []
 
 
 " vim-sandwich {{{2
@@ -491,6 +501,13 @@ if has('nvim-0.5')
 endif
 
 
+" nvim-lspconfig {{{2
+if has('nvim-0.5')
+  packadd! nvim-lspconfig
+  lua require'lsp_setup'
+endif
+
+
 " others {{{2
 
 " disable netrw plugin, but still allow its autoloaded functions to be used,
@@ -530,6 +547,18 @@ nmap <leader>z <plug>(qf_loc_toggle_stay)
 nnoremap <silent> <leader>g :Gstatus<cr>
 nnoremap gh :Gbrowse<cr>
 xnoremap gh :Gbrowse<cr>
+
+" vim-projectionist
+let g:projectionist_heuristics = {
+\ 'go.mod': {
+\   '*.go': {'alternate': '{}_test.go'},
+\   '*_test.go': {'type': 'test', 'alternate': '{}.go'},
+\  }
+\}
+
+" vim-delve
+let g:delve_new_command = 'new'
+let g:delve_sign_priority = 50  " higher than signify and ale signs
 
 " vim-mundo
 nnoremap <silent> cou :MundoToggle<cr>
