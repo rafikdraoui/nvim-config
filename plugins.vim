@@ -27,7 +27,6 @@ call minpac#add('tpope/vim-fugitive')
 call minpac#add('tpope/vim-rhubarb')
 
 " Wrappers around other external programs
-call minpac#add('bitc/vim-hdevtools')
 call minpac#add('junegunn/fzf.vim')
 call minpac#add('ludovicchabant/vim-gutentags')
 call minpac#add('mhinz/vim-grepper')
@@ -37,8 +36,7 @@ call minpac#add('tpope/vim-eunuch')
 call minpac#add('vim-test/vim-test')
 
 " UI
-call minpac#add('git@github.com:rafikdraoui/couleurs.vim.git')
-call minpac#add('rafikdraoui/gruvbox-custom', {'type': 'opt'})
+call minpac#add('rafikdraoui/couleurs.vim')
 call minpac#add('romainl/vim-cool')
 
 " Tree-sitter
@@ -51,6 +49,7 @@ call minpac#add('MTDL9/vim-log-highlighting')
 call minpac#add('RRethy/vim-hexokinase', {'type': 'opt', 'do': 'make hexokinase'})
 call minpac#add('justinmk/vim-dirvish')
 call minpac#add('kalekundert/vim-coiled-snake')
+call minpac#add('neovimhaskell/haskell-vim')
 call minpac#add('rbong/vim-buffest')
 call minpac#add('romainl/vim-qf')
 call minpac#add('tpope/vim-characterize')

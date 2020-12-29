@@ -40,6 +40,7 @@ set tagcase=smart
 set termguicolors
 set title
 set updatetime=1000
+set wildcharm=<c-z>
 set wildmode=longest:full,full
 
 " Speed up loading by explicitly setting python provider
@@ -109,6 +110,13 @@ nnoremap gl `[v`]
 " when using completion menu.
 cnoremap <expr> <c-n> wildmenumode() ? "<c-n>" : "<down>"
 cnoremap <expr> <c-p> wildmenumode() ? "<c-p>" : "<up>"
+
+" Navigate between search matches while searching
+cnoremap <expr> <tab> getcmdtype() =~ '[?/]' ? "<c-g>" : "<c-z>"
+cnoremap <expr> <s-tab> getcmdtype() =~ '[?/]' ? "<c-t>" : "<s-tab>"
+
+" Insert the path of the directory of the current buffer
+cnoremap <expr> <c-r>< expand('%:h').'/'
 
 " Join all lines in a paragraph (and make it repeatable through vim-repeat)
 nnoremap <silent> gJ vipJ :call repeat#set('gJ')<cr>
@@ -360,7 +368,6 @@ let g:ale_echo_msg_format = '[%linter%]% code:% %s'
 let g:ale_linters = {
 \ 'fish': [],
 \ 'go': ['gobuild', 'revive', 'golangci-lint'],
-\ 'haskell': ['hdevtools'],
 \ 'javascript': ['eslint'],
 \ 'json': ['jsonlint'],
 \ 'markdown': ['markdownlint'],
@@ -380,7 +387,7 @@ let g:ale_fixers = {
 \ 'elm': ['elm-format'],
 \ 'fish': ['autofix#fish'],
 \ 'go': ['goimports'],
-\ 'haskell': ['hfmt'],
+\ 'haskell': ['ormolu'],
 \ 'javascript': ['prettier'],
 \ 'json': ['jq'],
 \ 'python': ['black'],
