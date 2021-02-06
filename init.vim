@@ -385,8 +385,8 @@ let g:ale_javascript_eslint_suppress_missing_config = 1
 let g:ale_fixers = {
 \ 'css': ['prettier'],
 \ 'elm': ['elm-format'],
-\ 'fish': ['autofix#fish'],
-\ 'go': ['goimports'],
+\ 'fish': ['fish_indent'],
+\ 'go': ['gofmt'],
 \ 'haskell': ['ormolu'],
 \ 'javascript': ['prettier'],
 \ 'json': ['jq'],
@@ -397,14 +397,17 @@ let g:ale_fixers = {
 \ 'yaml': ['prettier'],
 \}
 let g:ale_fix_on_save = 1
-let g:ale_sh_shfmt_options = '-i 2 -ci'
-let g:ale_elm_format_options = '--elm-version=0.19 --yes'
+let g:ale_sh_shfmt_options = '-i 2'
+let g:ale_go_gofmt_executable = 'gofumpt'
 
 nmap <leader>m <plug>(ale_detail)
 nmap <leader>c <plug>(ale_lint)
 nmap <leader>r <plug>(ale_reset)
-nmap ]e <plug>(ale_next)
 nmap [e <plug>(ale_previous)
+nmap ]e <plug>(ale_next)
+nmap [E <plug>(ale_first)
+nmap ]E <plug>(ale_last)
+
 nnoremap coa :ALEToggle <bar> let g:ale_enabled <cr>
 nnoremap cox :call autofix#toggle() <cr>
 
