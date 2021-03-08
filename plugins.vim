@@ -22,7 +22,9 @@ call minpac#add('dense-analysis/ale')
 " Wrappers around git
 call minpac#add('junegunn/gv.vim')
 call minpac#add('mhinz/vim-signify')
+call minpac#add('rhysd/conflict-marker.vim')
 call minpac#add('rhysd/git-messenger.vim')
+call minpac#add('samoshkin/vim-mergetool')
 call minpac#add('tpope/vim-fugitive')
 call minpac#add('tpope/vim-rhubarb')
 

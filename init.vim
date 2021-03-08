@@ -131,6 +131,12 @@ nnoremap # ?\<<c-r>=expand('<cword>')<cr>\><cr>
 " Repeat the last command-line command
 nnoremap Q @:
 
+" Run recorded macro on visual selection
+function! ExecuteMacroOnSelection()
+  execute ":'<,'>normal @" . nr2char(getchar())
+endfunction
+xnoremap @ :<c-u>call ExecuteMacroOnSelection()<cr>
+
 " Sort operator
 nnoremap zs :echo "sort" <bar> set opfunc=opfunc#sort<cr>g@
 xnoremap <silent> zs :<c-u>call opfunc#sort(visualmode())<cr>
@@ -364,10 +370,12 @@ let g:ale_lint_on_filetype_changed = 0
 let g:ale_sign_error = '»'
 let g:ale_sign_warning = '»'
 let g:ale_echo_msg_format = '[%linter%]% code:% %s'
+let g:ale_detail_to_floating_preview = 1
+let g:ale_hover_cursor = 0
 
 let g:ale_linters = {
 \ 'fish': [],
-\ 'go': ['gobuild', 'revive', 'golangci-lint'],
+\ 'go': ['gobuild', 'golangci-lint'],
 \ 'javascript': ['eslint'],
 \ 'json': ['jsonlint'],
 \ 'markdown': ['markdownlint'],
@@ -377,7 +385,6 @@ let g:ale_linters = {
 \}
 let g:ale_go_golangci_lint_options = ''
 let g:ale_go_golangci_lint_package = 1
-let g:ale_go_revive_options = '-config $HOME/.config/revive.toml'
 let g:ale_python_flake8_change_directory = 'project'
 let g:ale_javascript_eslint_suppress_eslintignore = 1
 let g:ale_javascript_eslint_suppress_missing_config = 1
@@ -386,7 +393,7 @@ let g:ale_fixers = {
 \ 'css': ['prettier'],
 \ 'elm': ['elm-format'],
 \ 'fish': ['fish_indent'],
-\ 'go': ['gofmt'],
+\ 'go': ['goimports', 'gofmt'],
 \ 'haskell': ['ormolu'],
 \ 'javascript': ['prettier'],
 \ 'json': ['jq'],
@@ -400,9 +407,9 @@ let g:ale_fix_on_save = 1
 let g:ale_sh_shfmt_options = '-i 2'
 let g:ale_go_gofmt_executable = 'gofumpt'
 
-nmap <leader>m <plug>(ale_detail)
-nmap <leader>c <plug>(ale_lint)
-nmap <leader>r <plug>(ale_reset)
+nmap <leader>cc <plug>(ale_lint)
+nmap <leader>cd <plug>(ale_detail)
+nmap <leader>cr <plug>(ale_reset)
 nmap [e <plug>(ale_previous)
 nmap ]e <plug>(ale_next)
 nmap [E <plug>(ale_first)
@@ -557,6 +564,17 @@ nmap <leader>z <plug>(qf_loc_toggle_stay)
 nnoremap <silent> <leader>g :Gstatus<cr>
 nnoremap gh :Gbrowse<cr>
 xnoremap gh :Gbrowse<cr>
+
+" vim-mergetool
+function! s:disable_python_folding(split) abort
+  " disable vim-coiled-snake in mergetool mode to maintain `foldmethod=diff`
+  autocmd! CoiledSnake * <buffer>
+  setlocal foldtext<
+endfunction
+let g:MergetoolSetLayoutCallback = function('s:disable_python_folding')
+
+nmap <leader>mt <plug>(MergetoolToggle)
+nnoremap <silent> <leader>mb :call mergetool#toggle_layout('mr,b')<CR>
 
 " vim-projectionist
 let g:projectionist_heuristics = {

@@ -25,7 +25,3 @@ nnoremap <silent> [t :tprevious <cr>
 nnoremap <silent> ]t :tnext <cr>
 nnoremap <silent> [T :tfirst <cr>
 nnoremap <silent> ]T :tlast <cr>
-
-" Git conflicts markers
-nnoremap <silent> [c :call git#next_conflict(1)<cr>
-nnoremap <silent> ]c :call git#next_conflict(0)<cr>

@@ -5,13 +5,6 @@ function! git#browse_hash() abort
   execute 'Gbrowse ' . @@
 endfunction
 
-function! git#next_conflict(direction) abort
-  " direction = 0 -> forward, direction = 1 -> backward
-  let flags = a:direction == 1 ? 'Wb' : 'W'
-  let pattern = '<<<<<<<\_.\{-\}\zs=======\ze\_.\{-\}>>>>>>>'
-  call search(pattern, flags)
-endfunction
-
 function! git#repo_root() abort
   let git_dir = ''
   if exists('*FugitiveExtractGitDir')

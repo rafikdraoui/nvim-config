@@ -1,13 +1,12 @@
 local buffer_setup = function(client)
-  local set_mapping = function(key, cmd, modes)
-    modes  = modes or {'n'}
-    for _, mode in pairs(modes) do
-      vim.api.nvim_buf_set_keymap(0, mode, key, cmd, {noremap = true})
-    end
+  local set_mapping = function(key, cmd, mode)
+    mode = mode or 'n'
+    vim.api.nvim_buf_set_keymap(0, mode, key, cmd, {noremap = true})
   end
   set_mapping('K', '<cmd>lua vim.lsp.buf.hover()<cr>')
   set_mapping('<c-]>', '<cmd>lua vim.lsp.buf.definition()<cr>')
-  set_mapping('<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', {'n', 'i'})
+  set_mapping('<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>')
+  set_mapping('<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', 'i')
   set_mapping('gO', '<cmd>lua vim.lsp.buf.document_symbol()<cr>')
   set_mapping('grr', '<cmd>lua vim.lsp.buf.rename()<cr>')
   set_mapping('grf', '<cmd>lua vim.lsp.buf.references()<cr>')
@@ -21,6 +20,22 @@ end
 -- Disable diagnostics
 vim.lsp.handlers["textDocument/publishDiagnostics"] = nil
 
+-- Fallback to using tags if `vim.lsp.buf.definition()` doesn't find anything
+local default_definition_handler = vim.lsp.handlers["textDocument/definition"]
+local definition_with_fallback = function(_, method, result)
+  if result ~= nil then
+    default_definition_handler(nil, method, result)
+  else
+    vim.cmd([[execute "silent! normal! \<c-]>"]])
+  end
+end
+vim.lsp.handlers["textDocument/definition"] = definition_with_fallback
+
+
 require'lspconfig'.gopls.setup{
+  on_attach = buffer_setup,
+}
+
+require'lspconfig'.pyright.setup{
   on_attach = buffer_setup,
 }
