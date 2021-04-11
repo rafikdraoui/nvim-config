@@ -528,7 +528,7 @@ endif
 " others {{{2
 
 " disable netrw plugin, but still allow its autoloaded functions to be used,
-" so that fugitive's `:Gbrowse` continue to work.
+" so that fugitive's `:GBrowse` continue to work.
 let g:loaded_netrwPlugin = 1
 
 " vim-markdown (from default $VIMRUNTIME)
@@ -557,13 +557,14 @@ let g:git_messenger_no_default_mappings = v:true
 nmap gb <Plug>(git-messenger)
 
 " vim-qf
+" see also: after/ftplugin/qf.vim
 nmap <leader>q <plug>(qf_qf_toggle_stay)
 nmap <leader>z <plug>(qf_loc_toggle_stay)
 
 " vim-fugitive
 nnoremap <silent> <leader>g :Gstatus<cr>
-nnoremap gh :Gbrowse<cr>
-xnoremap gh :Gbrowse<cr>
+nnoremap gh :GBrowse<cr>
+xnoremap gh :GBrowse<cr>
 
 " vim-mergetool
 function! s:disable_python_folding(split) abort

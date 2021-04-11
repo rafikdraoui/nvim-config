@@ -1,3 +1,13 @@
+" Display title or command of quickfix results in statusline, along with the
+" number of items.
+" e.g
+" |[Quickfix List] rg --vimgrep packages                           4/35|
+" |[Quickfix List] go build                                         1/1|
+" |[Quickfix List] Language Server                                  1/4|
+let &l:statusline = '%t '
+let &l:statusline .= '%{exists("w:quickfix_title") ? fnamemodify(w:quickfix_title, ":~:.") : ""} '
+let &l:statusline .= '%= %l/%L'
+
 let s:filename_pat = '^[^|]*'
 
 function! s:is_concealed_match(idx, match)
@@ -22,6 +32,8 @@ endfunction
 autocmd vimrc BufWinEnter quickfix call s:add_conceal_match()
 nnoremap <buffer> <silent> <leader><space> :call <sid>toggle_filename_conceal()<cr>
 
-let &l:statusline = '%t '
-let &l:statusline .= '%{exists("w:quickfix_title") ? fnamemodify(w:quickfix_title, ":~:.") : ""} '
-let &l:statusline .= '%= %l/%L'
+" from vim-qf plugin
+nmap <buffer> <left> <plug>(qf_older)
+nmap <buffer> <right> <plug>(qf_newer)
+nmap <buffer> { <plug>(qf_previous_file)
+nmap <buffer> } <plug>(qf_next_file)

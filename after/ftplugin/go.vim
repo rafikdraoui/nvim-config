@@ -43,3 +43,32 @@ function! GoDocFromLSPHover() abort
   wincmd p
 endfunction
 nnoremap <silent> <buffer> <leader>D <cmd>call GoDocFromLSPHover()<cr>
+
+
+iabbrev <buffer> testf! func TestF(t *testing.T) {<cr>// TODO<cr>}
+
+lua <<
+vim.b.testt = [[
+testCases := []struct {
+name string
+}{
+{
+name: "NAME",
+},
+}
+
+for _, tc := range testCases {
+t.Run(tc.name, func(t *testing.T) {
+// TODO
+})
+}]]
+.
+iabbrev <buffer> testt! <c-r>=b:testt<cr>
+
+lua <<
+vim.b.tcmp = [[
+if diff := cmp.Diff(want, got); diff != "" {
+t.Errorf("mismatch (-want +got):\n%s", diff)
+}]]
+.
+iabbrev <buffer> tcmp! <c-r>=b:tcmp<cr>

@@ -18,7 +18,8 @@ local buffer_setup = function(client)
 end
 
 -- Disable diagnostics
-vim.lsp.handlers["textDocument/publishDiagnostics"] = nil
+local no_op = function() end
+vim.lsp.handlers["textDocument/publishDiagnostics"] = no_op
 
 -- Fallback to using tags if `vim.lsp.buf.definition()` doesn't find anything
 local default_definition_handler = vim.lsp.handlers["textDocument/definition"]
