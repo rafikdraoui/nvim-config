@@ -2,7 +2,7 @@ function! git#browse_hash() abort
   normal! gg0
   call search('\x\{6,\}')
   normal! yiW
-  execute 'Gbrowse ' . @@
+  execute 'GBrowse ' . @@
 endfunction
 
 function! git#repo_root() abort

@@ -4,6 +4,8 @@
 
 let g:mapleader = ','
 
+colorscheme couleurs
+
 " Indentation
 set expandtab
 set shiftwidth=2
@@ -84,10 +86,14 @@ nnoremap <c-g> 2<c-g>
 inoremap <c-u> <c-g>u<c-u>
 inoremap <c-w> <c-g>u<c-w>
 
+" Make `Y` behaviour more consistent with other 'capital-letter commands'
+nnoremap Y y$
+
 " Yank and put from system clipboard
 " Recursive maps so that miniyank plugin mappings are preserved
 nmap gy "+y
 xmap gy "+y
+nmap gY "+Y
 nmap gp "+p
 xmap gp "+p
 nmap gP "+P
@@ -159,6 +165,9 @@ nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
 
 " Toggle relativenumber
 nnoremap <silent> con :set relativenumber! <bar> set relativenumber? <cr>
+
+" Toggle dark/light background
+nnoremap <silent> cob :execute 'set bg=' . (&bg ==# 'dark' ? 'light' : 'dark') <cr>
 
 " Switch to terminal buffer
 nnoremap <silent> <leader>t :call buffers#get_terminal()<cr>
@@ -297,25 +306,8 @@ autocmd vimrc TermOpen * startinsert | setlocal nonumber norelativenumber signco
 " column (whose width varies depending on the number of lines in the buffer.)
 autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * let &showbreak=repeat(' ', float2nr(floor(log10(line('$'))))) . '⋯'
 
-
-" Colors {{{1
-function! StatusLineUserHighlights() abort
-  " Custom highlights for status line, using `hl-User{N}` for better
-  " interaction with StatusLineNC.
-  " We can't define the values in the colorscheme and just `hi link` them,
-  " since doing so seem to not make highlights work properly on statusline of
-  " non-active windows.
-
-  " 'bold status line', used for filename
-  " This is the same as StatusLine, but with the addition of the bold attribute.
-  highlight User1 guifg=#504945 guibg=#ebdbb2 gui=inverse,bold
-
-  " 'bold yellow', used for linting status
-  highlight User2 guifg=#504945 guibg=#fabd2f gui=inverse,bold
-endfunction
-autocmd vimrc ColorScheme couleurs call StatusLineUserHighlights()
-
-colorscheme couleurs
+" Set status line custom highlights when colorscheme is changed
+autocmd vimrc ColorScheme * call statusline#set_highlights()
 
 
 " Status line {{{1
@@ -349,11 +341,9 @@ let &statusline .= '%= %p%% %4l/%L:%-2c'
 
 " signify {{{2
 let g:signify_vcs_list = ['git']
-let s:signify_sign = '•'
-let g:signify_sign_add = s:signify_sign
-let g:signify_sign_change = s:signify_sign
-let g:signify_sign_changedelete = s:signify_sign
-let g:signify_sign_delete = s:signify_sign
+let g:signify_sign_add = '▍'
+let g:signify_sign_change = '▍'
+let g:signify_sign_delete = '_'
 let g:signify_sign_delete_first_line = '‾'
 
 nmap gj <plug>(signify-next-hunk)
@@ -370,7 +360,6 @@ let g:ale_lint_on_filetype_changed = 0
 let g:ale_sign_error = '»'
 let g:ale_sign_warning = '»'
 let g:ale_echo_msg_format = '[%linter%]% code:% %s'
-let g:ale_detail_to_floating_preview = 1
 let g:ale_hover_cursor = 0
 
 let g:ale_linters = {
@@ -500,6 +489,7 @@ let g:subversiveCurrentTextRegister = 's'
 " vim-test
 let g:test#strategy = 'neovim'
 let g:test#python#runner = 'pytest'
+let g:test#go#gotest#executable = 'gotest'
 nnoremap <silent> t<c-n> :TestNearest<cr>
 nnoremap <silent> t<c-f> :TestFile<cr>
 nnoremap <silent> t<c-s> :TestSuite<cr>
@@ -562,7 +552,8 @@ nmap <leader>q <plug>(qf_qf_toggle_stay)
 nmap <leader>z <plug>(qf_loc_toggle_stay)
 
 " vim-fugitive
-nnoremap <silent> <leader>g :Gstatus<cr>
+let g:fugitive_legacy_commands = 0
+nnoremap <silent> <leader>g <cmd>Git<cr>
 nnoremap gh :GBrowse<cr>
 xnoremap gh :GBrowse<cr>
 
