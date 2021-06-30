@@ -9,3 +9,20 @@ function! opfunc#sort(type) abort
     execute "'[,']sort"
   endif
 endfunction
+
+function! opfunc#search(type) abort
+  let regsave = @@
+
+  if a:type =~? 'v'
+    silent execute 'normal! gvy'
+  elseif a:type ==# 'line'
+    silent execute "normal! '[V']y"
+  else
+    silent execute 'normal! `[v`]y'
+  endif
+
+  call grep#run(0, @@)
+  call histadd('cmd', 'Grep ' . @@)
+
+  let @@ = regsave
+endfunction

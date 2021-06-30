@@ -143,6 +143,14 @@ function! ExecuteMacroOnSelection()
 endfunction
 xnoremap @ :<c-u>call ExecuteMacroOnSelection()<cr>
 
+nnoremap <leader>s :Grep<space>
+nnoremap <leader>S :Grep!<space>
+
+" Search operator
+nnoremap <silent> gs :set opfunc=opfunc#search<cr>g@
+xnoremap <silent> gs :<c-u>call opfunc#search(visualmode())<cr>
+nmap gss gsiw
+
 " Sort operator
 nnoremap zs :echo "sort" <bar> set opfunc=opfunc#sort<cr>g@
 xnoremap <silent> zs :<c-u>call opfunc#sort(visualmode())<cr>
@@ -255,8 +263,6 @@ command! -bang Bonly call buffers#bonly(<bang>0)
 " Scratch buffer
 command! Scratch call scratch#create([])
 command! -nargs=1 -complete=command Redir silent call scratch#redir(<q-args>)
-command! -nargs=1 EditRegister call scratch#edit_register(<q-args>)
-command! Clipboard EditRegister +
 
 " minpac plugin manager
 command! PackUpdate call pack#init() | call minpac#update() | call minpac#status({'open': 'tab'})
@@ -279,6 +285,10 @@ function! GitJumpComplete(...)
   return join(['diff', 'staged', 'merge'], "\n")
 endfunction
 
+" Use ripgrep to search for a term in the current git repository. When [!] is
+" added, the search is done in the pwd instead.
+" The query is added to the vim search register and search history.
+command! -nargs=+ -bang -complete=tag Grep call grep#run(<bang>0, <f-args>)
 
 " Autocommands {{{1
 
@@ -462,18 +472,6 @@ let s:extra_recipes = [
 \ {'buns': ['(', ')'], 'input': ['p', 'b'], 'nesting': 1},
 \]
 autocmd vimrc BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
-
-
-" vim-grepper {{{2
-let g:grepper = {}
-let g:grepper.dir = 'repo'
-let g:grepper.tools = ['rg', 'git', 'grep']
-let g:grepper.searchreg = 1  " add query to last-search register
-
-nnoremap <leader>s :Grepper <cr>
-nmap gs <plug>(GrepperOperator)
-xmap gs <plug>(GrepperOperator)
-nmap gss gsiw
 
 
 " vim-subversive {{{2

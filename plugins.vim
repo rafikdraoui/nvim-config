@@ -31,7 +31,6 @@ call minpac#add('tpope/vim-rhubarb')
 " Wrappers around other external programs
 call minpac#add('junegunn/fzf.vim')
 call minpac#add('ludovicchabant/vim-gutentags')
-call minpac#add('mhinz/vim-grepper')
 call minpac#add('neovim/nvim-lspconfig', {'type': 'opt'})
 call minpac#add('sebdah/vim-delve')
 call minpac#add('tpope/vim-eunuch')

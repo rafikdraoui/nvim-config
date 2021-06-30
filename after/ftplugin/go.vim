@@ -36,11 +36,11 @@ nnoremap <silent> <buffer> <leader>k <cmd>GoDoc<cr>
 " the LSP hover window.
 " This assumes that a LSP hover window is currently opened.
 function! GoDocFromLSPHover() abort
-  wincmd p
+  wincmd w
   if search('https://pkg.go.dev/')
     call browse#url()
   end
-  wincmd p
+  wincmd w
 endfunction
 nnoremap <silent> <buffer> <leader>D <cmd>call GoDocFromLSPHover()<cr>
 
