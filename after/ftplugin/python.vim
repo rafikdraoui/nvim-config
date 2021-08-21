@@ -1,21 +1,19 @@
 " Insert a pdb `breakpoint` call on the line above
 nnoremap <buffer> <leader>d Obreakpoint()<esc>
 
-" try-except wrapping
-nnoremap <silent> <buffer> <leader>e :call python#wrap_exception()<cr>
-nnoremap <silent> <buffer> <leader>u :call python#unwrap_exception()<cr>
+nnoremap <silent> <buffer> <leader>k <cmd>PyDoc<cr>
 
-" Toggle 'coiled-snake' and plain 'indent' folding
+" Toggle 'coiled-snake' and treesitter folding
 function s:toggle_foldmethod() abort
-  if &l:foldmethod ==# 'expr'
-    setlocal foldmethod=indent
+  if &l:foldexpr =~# 'coiledsnake#'
+    setlocal foldexpr=nvim_treesitter#foldexpr()
   else
-    setlocal foldmethod=expr
+    setlocal foldexpr=coiledsnake#FoldExpr(v:lnum)
   endif
 endfunction
 nnoremap <silent> cof :call <sid>toggle_foldmethod() <cr>
 
-" Toggle activation of `mypy` in ale linting
+" Toggle activation of `mypy` in ALE linting
 function! s:toggle_mypy() abort
   let idx = index(g:ale_linters['python'], 'mypy')
   if idx == -1

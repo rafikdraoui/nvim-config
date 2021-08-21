@@ -2,10 +2,6 @@
 
 " Options {{{1
 
-let g:mapleader = ','
-
-colorscheme couleurs
-
 " Indentation
 set expandtab
 set shiftwidth=2
@@ -20,17 +16,15 @@ set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the lin
 let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
 set commentstring=#\ %s
 set completeopt-=preview
+set cursorline cursorlineopt=number  " highlight current line number
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
 set grepprg=rg\ --vimgrep grepformat^=%f:%l:%c:%m
 set helpheight=1000  " maximize help window
-set hidden  " allow switching buffers even if there are unsaved changes
 set ignorecase smartcase  " case-insensitive search, unless query has capital letter
-set inccommand=nosplit  " show preview of :substitute action interactively
 set lazyredraw  " only redraw screen when necessary
 set list listchars=tab:▸·,extends:❯,precedes:❮,nbsp:⁓
 set matchpairs+=«:»
-set nojoinspaces  " put only a single space after periods when joining lines
 set noswapfile directory=''  " disable swapfile
 set notimeout
 set path-=/usr/include
@@ -59,6 +53,8 @@ let g:vimsyn_embed= 'l'
 "   plugin/navigation_mappings.vim
 "   plugin/window_mappings.vim
 
+let g:mapleader = ','
+
 " Buffers
 nnoremap <leader><leader> <c-^>
 nnoremap <leader>b :ls<cr>:b<space>
@@ -81,13 +77,6 @@ nnoremap <c-x> <nop>
 
 " Make ctrl-g print the full path and buffer number by default
 nnoremap <c-g> 2<c-g>
-
-" Allow undoing readline-style deletion
-inoremap <c-u> <c-g>u<c-u>
-inoremap <c-w> <c-g>u<c-w>
-
-" Make `Y` behaviour more consistent with other 'capital-letter commands'
-nnoremap Y y$
 
 " Yank and put from system clipboard
 " Recursive maps so that miniyank plugin mappings are preserved
@@ -158,28 +147,21 @@ xnoremap <silent> zs :<c-u>call opfunc#sort(visualmode())<cr>
 " Open browser at url under cursor
 nnoremap <silent> gx :call browse#url()<cr>
 
-" Close preview window
-nnoremap <silent> <leader>x :pclose<cr>
-
 " Toggle spellcheck and spelllang
 nnoremap <silent> cos :set spell! <cr>
 nnoremap <silent> cof :execute 'setlocal spelllang=' . (&spelllang ==# 'en' ? 'fr' : 'en') <cr>
 
-" Toggle cursorline
-nnoremap <silent> col :set cursorline! <cr>
+" Toggle cursorline highlighting
+nnoremap <silent> col <cmd>execute 'set cursorlineopt=' . (&culopt ==# 'number' ? 'both' : 'number')<cr>
 
 " Toggle wrap
 nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
 
 " Toggle relativenumber
-nnoremap <silent> con :set relativenumber! <bar> set relativenumber? <cr>
+nnoremap <silent> con :set relativenumber!<cr>
 
 " Toggle dark/light background
 nnoremap <silent> cob :execute 'set bg=' . (&bg ==# 'dark' ? 'light' : 'dark') <cr>
-
-" Switch to terminal buffer
-nnoremap <silent> <leader>t :call buffers#get_terminal()<cr>
-nnoremap <silent> <leader>T :split term://$SHELL<cr>
 
 " Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
 tnoremap <expr> <esc> &ft == 'fzf' ? "<c-c>" : "<c-\><c-n>"
@@ -200,6 +182,9 @@ inoremap ,f <c-x><c-f>
 inoremap ,l <c-x><c-l>
 inoremap ,t <c-x><c-]>
 inoremap ,<tab> <c-x><c-o>
+
+" load packer.nvim plugin
+nnoremap <silent> cop <cmd>lua require("plugins")<cr>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
@@ -264,9 +249,7 @@ command! -bang Bonly call buffers#bonly(<bang>0)
 command! Scratch call scratch#create([])
 command! -nargs=1 -complete=command Redir silent call scratch#redir(<q-args>)
 
-" minpac plugin manager
-command! PackUpdate call pack#init() | call minpac#update() | call minpac#status({'open': 'tab'})
-command! PackClean call pack#init() | call minpac#clean()
+command! PackSync lua require "plugins"; vim.cmd[[PackerSync]]
 
 " copy last yank to system clipboard
 command! ToSystemClipboard let @+ = @@
@@ -276,6 +259,14 @@ command! CdRoot call git#cd_root()
 
 " set pwd to the directory containing the file loaded in buffer
 command! CdBuffer cd %:p:h
+
+" Open web browser at given URL (or url under cursor if no argument given)
+" This is mostly needed to support Fugitive's `:GBrowse`
+command! -nargs=? Browse call browse#url(<f-args>)
+
+" Browse documentation
+command! -nargs=* PyDoc call docs#python(<f-args>)
+command! -nargs=* GoDoc call docs#golang(<f-args>)
 
 " `git jump` from within vim
 " need to use a patched version of git's contrib `git-jump` script
@@ -290,6 +281,7 @@ endfunction
 " The query is added to the vim search register and search history.
 command! -nargs=+ -bang -complete=tag Grep call grep#run(<bang>0, <f-args>)
 
+
 " Autocommands {{{1
 
 " define autocmd group `vimrc` and initialize
@@ -298,9 +290,7 @@ augroup vimrc
 augroup END
 
 " highlight yank
-if has('nvim-0.5')
-  autocmd vimrc TextYankPost * lua require'vim.highlight'.on_yank()
-endif
+autocmd vimrc TextYankPost * lua require'vim.highlight'.on_yank()
 
 " Trim whitespace on save
 autocmd vimrc BufWritePre * TrimWhitespace
@@ -316,8 +306,17 @@ autocmd vimrc TermOpen * startinsert | setlocal nonumber norelativenumber signco
 " column (whose width varies depending on the number of lines in the buffer.)
 autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * let &showbreak=repeat(' ', float2nr(floor(log10(line('$'))))) . '⋯'
 
+" Run :PackerCompile whenever plugins config is saved
+" Uses `*` instead of `$HOME` in the file pattern so that it also works when
+" editing the original file in the dotfiles repository.
+autocmd vimrc BufWritePost */.config/nvim/lua/plugins.lua source <afile> | PackerCompile
+
+
+" Color scheme {{{1
+
 " Set status line custom highlights when colorscheme is changed
 autocmd vimrc ColorScheme * call statusline#set_highlights()
+colorscheme couleurs
 
 
 " Status line {{{1
@@ -348,19 +347,153 @@ let &statusline .= '%= %p%% %4l/%L:%-2c'
 
 
 " Plugins configuration {{{1
+" See also:
+"   lua/plugins.lua
+"   lua/config/*.lua
 
-" signify {{{2
-let g:signify_vcs_list = ['git']
-let g:signify_sign_add = '▍'
-let g:signify_sign_change = '▍'
-let g:signify_sign_delete = '_'
-let g:signify_sign_delete_first_line = '‾'
+" disable netrw plugin
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
 
-nmap gj <plug>(signify-next-hunk)
-nmap gk <plug>(signify-prev-hunk)
-omap ic <plug>(signify-motion-inner-pending)
-xmap ic <plug>(signify-motion-inner-visual)
+" markdown ftplugin (from default $VIMRUNTIME)
+let g:markdown_folding = 1
 
+" rust ftplugin (from default $VIMRUNTIME)
+let g:rust_fold = 1
+
+" vimwiki
+let s:wiki = {}
+let s:wiki.path = $NOTES_DIR
+let s:wiki.syntax = 'markdown'
+let s:wiki.ext = '.md'
+let s:wiki.links_space_char = '-'
+let s:wiki.auto_tags = 1
+let g:vimwiki_list = [s:wiki]
+let g:vimwiki_folding = 'expr'
+let g:vimwiki_global_ext = 0
+let g:vimwiki_key_mappings = {
+\ 'headers': 1,
+\ 'links': 1,
+\ 'lists': 1,
+\ 'global': 0,
+\ 'html': 0,
+\ 'mouse': 0,
+\ 'table_format': 0,
+\ 'table_mappings': 0,
+\ 'text_objs': 0,
+\}
+nnoremap <silent> <leader>ww :edit $NOTES_DIR/index.md<cr>
+nnoremap <leader>n :Files $NOTES_DIR<cr>
+
+" fzf
+if has('mac')
+  set runtimepath+=/usr/local/opt/fzf
+endif
+nnoremap <c-f> :GFiles <cr>
+nnoremap <c-h> :Helptags<cr>
+let g:fzf_preview_window = []
+
+" vim-sandwich
+let g:textobj_sandwich_no_default_key_mappings = 1
+xmap is <Plug>(textobj-sandwich-auto-i)
+omap is <Plug>(textobj-sandwich-auto-i)
+xmap as <Plug>(textobj-sandwich-auto-a)
+omap as <Plug>(textobj-sandwich-auto-a)
+let s:extra_recipes = [
+\ {'buns': ['«', '»'], 'input': ['g']},
+\ {'buns': ['(', ')'], 'input': ['p', 'b'], 'nesting': 1},
+\]
+autocmd vimrc BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
+
+" vim-subversive
+nmap s <plug>(SubversiveSubstitute)
+nmap ss <plug>(SubversiveSubstituteLine)
+nmap cs <plug>(SubversiveSubstituteRange)
+xmap cs <plug>(SubversiveSubstituteRange)
+nmap css <plug>(SubversiveSubstituteWordRange)
+let g:subversiveCurrentTextRegister = 's'
+
+" vim-test
+let g:test#strategy = 'neovim'
+let g:test#python#runner = 'pytest'
+let g:test#go#gotest#executable = 'gotest'
+nnoremap <silent> t<c-n> :TestNearest<cr>
+nnoremap <silent> t<c-f> :TestFile<cr>
+nnoremap <silent> t<c-s> :TestSuite<cr>
+nnoremap <silent> t<c-l> :TestLast<cr>
+nnoremap <silent> t<c-g> :TestVisit<cr>
+
+" dirvish
+autocmd vimrc FileType dirvish setlocal statusline=%y\ %f
+
+" miniyank
+map p <Plug>(miniyank-autoput)
+map P <Plug>(miniyank-autoPut)
+map <c-p> <Plug>(miniyank-cycle)
+map <c-n> <Plug>(miniyank-cycleback)
+
+" gutentags
+let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}
+let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" git-messenger
+" see also: after/ftplugin/gitmessengerpopup.vim
+let g:git_messenger_always_into_popup = v:true
+let g:git_messenger_no_default_mappings = v:true
+nmap gb <Plug>(git-messenger)
+
+" vim-qf
+" see also: after/ftplugin/qf.vim
+nmap <leader>q <plug>(qf_qf_toggle_stay)
+nmap <leader>z <plug>(qf_loc_toggle_stay)
+
+" vim-fugitive
+let g:fugitive_legacy_commands = 0
+nnoremap <silent> <leader>g <cmd>Git<cr>
+nnoremap gh :GBrowse<cr>
+xnoremap gh :GBrowse<cr>
+
+" vim-mergetool
+function! s:disable_python_folding(split) abort
+  " disable vim-coiled-snake in mergetool mode to maintain `foldmethod=diff`
+  if exists('#CoiledSnake')
+    autocmd! CoiledSnake * <buffer>
+    setlocal foldtext<
+  endif
+endfunction
+let g:MergetoolSetLayoutCallback = function('s:disable_python_folding')
+nmap <leader>mt <plug>(MergetoolToggle)
+nnoremap <silent> <leader>mb :call mergetool#toggle_layout('mr,b')<CR>
+
+" vim-projectionist
+let g:projectionist_heuristics = {
+\ 'go.mod': {
+\   '*.go': {'alternate': '{}_test.go'},
+\   '*_test.go': {'type': 'test', 'alternate': '{}.go'},
+\  }
+\}
+
+" vim-delve
+let g:delve_new_command = 'new'
+let g:delve_sign_priority = 50  " higher than gitsigns and ale
+
+" vim-mundo
+nnoremap <silent> cou :MundoToggle<cr>
+
+" targets.vim
+let g:targets_nl = ["\<Space>n", "\<Space>l"]
+
+" coiled snake
+let g:coiled_snake_foldtext_flags = ['static']
+
+" clever-f
+nmap <leader>f <Plug>(clever-f-reset)
+
+" nvim-colorizer
+nnoremap <silent> coh <cmd>ColorizerToggle<cr>
+
+" nvim-treesitter
+nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
 
 " ALE {{{2
 let g:ale_lint_on_enter = 0
@@ -396,6 +529,7 @@ let g:ale_fixers = {
 \ 'haskell': ['ormolu'],
 \ 'javascript': ['prettier'],
 \ 'json': ['jq'],
+\ 'lua': ['stylua'],
 \ 'python': ['black'],
 \ 'rust': ['rustfmt'],
 \ 'scss': ['prettier'],
@@ -405,6 +539,7 @@ let g:ale_fixers = {
 let g:ale_fix_on_save = 1
 let g:ale_sh_shfmt_options = '-i 2'
 let g:ale_go_gofmt_executable = 'gofumpt'
+let g:ale_lua_stylua_options = '--search-parent-directories'
 
 nmap <leader>cc <plug>(ale_lint)
 nmap <leader>cd <plug>(ale_detail)
@@ -420,178 +555,6 @@ nnoremap cox :call autofix#toggle() <cr>
 let g:ale_is_running = v:false
 autocmd vimrc User ALELintPre let g:ale_is_running = v:true | redrawstatus
 autocmd vimrc User ALELintPost let g:ale_is_running = v:false | redrawstatus
-
-
-" vimwiki {{{2
-let s:wiki = {}
-let s:wiki.path = $NOTES_DIR
-let s:wiki.syntax = 'markdown'
-let s:wiki.ext = '.md'
-let s:wiki.links_space_char = '-'
-let s:wiki.auto_tags = 1
-let g:vimwiki_list = [s:wiki]
-
-let g:vimwiki_folding = 'expr'
-let g:vimwiki_global_ext = 0
-let g:vimwiki_key_mappings = {
-\ 'headers': 1,
-\ 'links': 1,
-\ 'lists': 1,
-\ 'global': 0,
-\ 'html': 0,
-\ 'mouse': 0,
-\ 'table_format': 0,
-\ 'table_mappings': 0,
-\ 'text_objs': 0,
-\}
-
-nnoremap <silent> <leader>ww :edit $NOTES_DIR/index.md<cr>
-nnoremap <leader>n :Files $NOTES_DIR<cr>
-autocmd vimrc BufReadPre $NOTES_DIR/* if !exists('g:loaded_vimiki') | packadd vimwiki | endif
-
-
-" fzf  {{{2
-if has('mac')
-  set runtimepath+=/usr/local/opt/fzf
-endif
-nnoremap <c-f> :GFiles <cr>
-nnoremap <c-h> :Helptags<cr>
-let g:fzf_preview_window = []
-
-
-" vim-sandwich {{{2
-
-let g:textobj_sandwich_no_default_key_mappings = 1
-xmap is <Plug>(textobj-sandwich-auto-i)
-omap is <Plug>(textobj-sandwich-auto-i)
-xmap as <Plug>(textobj-sandwich-auto-a)
-omap as <Plug>(textobj-sandwich-auto-a)
-
-let s:extra_recipes = [
-\ {'buns': ['«', '»'], 'input': ['g']},
-\ {'buns': ['(', ')'], 'input': ['p', 'b'], 'nesting': 1},
-\]
-autocmd vimrc BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
-
-
-" vim-subversive {{{2
-nmap s <plug>(SubversiveSubstitute)
-nmap ss <plug>(SubversiveSubstituteLine)
-
-nmap cs <plug>(SubversiveSubstituteRange)
-xmap cs <plug>(SubversiveSubstituteRange)
-nmap css <plug>(SubversiveSubstituteWordRange)
-let g:subversiveCurrentTextRegister = 's'
-
-
-" vim-test
-let g:test#strategy = 'neovim'
-let g:test#python#runner = 'pytest'
-let g:test#go#gotest#executable = 'gotest'
-nnoremap <silent> t<c-n> :TestNearest<cr>
-nnoremap <silent> t<c-f> :TestFile<cr>
-nnoremap <silent> t<c-s> :TestSuite<cr>
-nnoremap <silent> t<c-l> :TestLast<cr>
-nnoremap <silent> t<c-g> :TestVisit<cr>
-
-
-" nvim-treesitter {{{2
-if has('nvim-0.5')
-  packadd! nvim-treesitter
-  packadd! nvim-treesitter-textobjects
-  packadd! nvim-treesitter-refactor
-  lua require'treesitter_setup'
-
-  nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
-endif
-
-
-" nvim-lspconfig {{{2
-if has('nvim-0.5')
-  packadd! nvim-lspconfig
-  lua require'lsp_setup'
-endif
-
-
-" others {{{2
-
-" disable netrw plugin, but still allow its autoloaded functions to be used,
-" so that fugitive's `:GBrowse` continue to work.
-let g:loaded_netrwPlugin = 1
-
-" vim-markdown (from default $VIMRUNTIME)
-let g:markdown_folding = 1
-
-" vim-rust
-let g:rust_fold = 1
-
-" dirvish
-autocmd vimrc FileType dirvish setlocal statusline=%y\ %f
-
-" miniyank
-map p <Plug>(miniyank-autoput)
-map P <Plug>(miniyank-autoPut)
-map <c-p> <Plug>(miniyank-cycle)
-map <c-n> <Plug>(miniyank-cycleback)
-
-" gutentags
-let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}
-let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-" git-messenger
-" see also `after/ftplugin/gitmessengerpopup.vim`
-let g:git_messenger_always_into_popup = v:true
-let g:git_messenger_no_default_mappings = v:true
-nmap gb <Plug>(git-messenger)
-
-" vim-qf
-" see also: after/ftplugin/qf.vim
-nmap <leader>q <plug>(qf_qf_toggle_stay)
-nmap <leader>z <plug>(qf_loc_toggle_stay)
-
-" vim-fugitive
-let g:fugitive_legacy_commands = 0
-nnoremap <silent> <leader>g <cmd>Git<cr>
-nnoremap gh :GBrowse<cr>
-xnoremap gh :GBrowse<cr>
-
-" vim-mergetool
-function! s:disable_python_folding(split) abort
-  " disable vim-coiled-snake in mergetool mode to maintain `foldmethod=diff`
-  autocmd! CoiledSnake * <buffer>
-  setlocal foldtext<
-endfunction
-let g:MergetoolSetLayoutCallback = function('s:disable_python_folding')
-
-nmap <leader>mt <plug>(MergetoolToggle)
-nnoremap <silent> <leader>mb :call mergetool#toggle_layout('mr,b')<CR>
-
-" vim-projectionist
-let g:projectionist_heuristics = {
-\ 'go.mod': {
-\   '*.go': {'alternate': '{}_test.go'},
-\   '*_test.go': {'type': 'test', 'alternate': '{}.go'},
-\  }
-\}
-
-" vim-delve
-let g:delve_new_command = 'new'
-let g:delve_sign_priority = 50  " higher than signify and ale signs
-
-" vim-mundo
-nnoremap <silent> cou :MundoToggle<cr>
-
-" targets.vim
-let g:targets_nl = ["\<Space>n", "\<Space>l"]
-
-" coiled snake
-let g:coiled_snake_foldtext_flags = ['static']
-
-" clever-f
-nmap <leader>f <Plug>(clever-f-reset)
-
-" vim-hexokinase
-nnoremap <silent> coh :packadd vim-hexokinase <bar> HexokinaseToggle <cr>
 
 
 " Abbreviations {{{1

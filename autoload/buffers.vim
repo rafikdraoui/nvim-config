@@ -14,13 +14,3 @@ function! buffers#bonly(bang) abort
     execute 'bdelete ' . join(to_delete)
   end
 endfunction
-
-" Switch to terminal buffer, creating a new one if none exists
-function! buffers#get_terminal() abort
-  let terminal_buffers = getbufinfo('term://')
-  if empty(terminal_buffers)
-    terminal
-  else
-    execute 'buffer ' . terminal_buffers[0].bufnr
-  endif
-endfunction

@@ -1,3 +1,3 @@
 nnoremap <buffer> <cr> <c-]>
 nnoremap <buffer> <bs> <c-t>
-nnoremap <silent> <buffer> q :q<cr>
+nnoremap <silent> <buffer> gq :q<cr>

@@ -21,15 +21,15 @@ function! git#cd_root() abort
 endfunction
 
 function! git#statusline() abort
-  let branch = ''
-  if exists('*fugitive#head')
-    let branch_name = fugitive#head(6)
-    let branch = empty(branch_name) ? '' : '[⌥ '. branch_name . ']'
+  if empty(get(b:, 'gitsigns_status_dict', {}))
+    return ''
   endif
 
-  let stats = ''
-  if exists('*sy#repo#get_stats_decorated')
-    let stats = tr(sy#repo#get_stats_decorated(), '~', '•')
+  let branch = printf('[⌥ %s]', b:gitsigns_head)
+
+  let stats = tr(b:gitsigns_status, '~', '•')
+  if !empty(stats)
+    let stats = printf('[%s]', stats)
   endif
 
   return branch . stats

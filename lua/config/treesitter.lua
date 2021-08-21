@@ -1,4 +1,4 @@
-require'nvim-treesitter.configs'.setup {
+require("nvim-treesitter.configs").setup({
   highlight = {
     enable = true,
   },
@@ -44,14 +44,12 @@ require'nvim-treesitter.configs'.setup {
   refactor = {
     smart_rename = { enable = true },
     navigation = {
-        enable = true,
-        keymaps = {
-          -- FIXME: figure out why `goto_definition_lsp_fallback` doesn't work on buffers without LSP
-          -- goto_definition_lsp_fallback = "gd",
-          goto_definition = "gd",
-          goto_next_usage = "<a-n>",
-          goto_previous_usage = "<a-N>",
-        },
+      enable = true,
+      keymaps = {
+        goto_definition_lsp_fallback = "gd",
+        goto_next_usage = "<a-n>",
+        goto_previous_usage = "<a-N>",
       },
+    },
   },
-}
+})

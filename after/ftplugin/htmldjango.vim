@@ -1,5 +1,7 @@
 setlocal commentstring={#\ %s\ #}
 
+" Extend matchit to toggle between components of template blocks
+
 let s:match_patterns = [
       \     ['if', 'elif', 'else', 'endif'],
       \     ['(end)\@<!(\w+) ', 'end\3'],
