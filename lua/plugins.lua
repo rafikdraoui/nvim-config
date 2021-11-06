@@ -25,6 +25,15 @@ return require("packer").startup({
     -- Code linting and formatting
     { "dense-analysis/ale" },
 
+    -- UI
+    { "rafikdraoui/couleurs.vim" },
+    {
+      "https://gitlab.com/yorickpeterse/nvim-pqf",
+      config = function()
+        require("pqf").setup()
+      end,
+    },
+
     -- Wrappers around git
     { "junegunn/gv.vim", cmd = "GV" },
     {
@@ -54,10 +63,6 @@ return require("packer").startup({
     { "tpope/vim-eunuch" },
     { "vim-test/vim-test" },
 
-    -- UI
-    { "rafikdraoui/couleurs.vim" },
-    { "romainl/vim-cool" },
-
     -- Tree-sitter
     {
       "nvim-treesitter/nvim-treesitter",
@@ -74,17 +79,29 @@ return require("packer").startup({
       "nvim-treesitter/nvim-treesitter-refactor",
       requires = { "nvim-treesitter/nvim-treesitter" },
     },
+    {
+      "nvim-treesitter/playground",
+      requires = { "nvim-treesitter/nvim-treesitter" },
+      cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
+    },
 
     -- Misc
     { "MTDL9/vim-log-highlighting" },
     {
-      "akinsho/nvim-toggleterm.lua",
+      "akinsho/toggleterm.nvim",
       config = function()
         require("toggleterm").setup({ open_mapping = [[<c-\>]] })
       end,
     },
     { "justinmk/vim-dirvish" },
     { "kalekundert/vim-coiled-snake", ft = "python" },
+    { "lewis6991/impatient.nvim" },
+    {
+      "nathom/filetype.nvim",
+      config = function()
+        require("config.filetype")
+      end,
+    },
     { "neovimhaskell/haskell-vim" },
     { "norcalli/nvim-colorizer.lua" },
     { "rbong/vim-buffest" },

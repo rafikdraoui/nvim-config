@@ -4,9 +4,9 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = no_op
 
 -- Fallback to using tags if `vim.lsp.buf.definition()` doesn't find anything
 local default_definition_handler = vim.lsp.handlers["textDocument/definition"]
-local definition_with_fallback = function(_, method, result)
+local definition_with_fallback = function(err, result, ...)
   if result ~= nil then
-    default_definition_handler(nil, method, result)
+    default_definition_handler(err, result, ...)
   else
     vim.cmd([[execute "silent! normal! \<c-]>"]])
   end

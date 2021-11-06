@@ -1,5 +1,9 @@
 " vim: foldmethod=marker
 
+" speed up loading of lua modules
+" c.f. https://github.com/neovim/neovim/pull/15436
+lua require("impatient")
+
 " Options {{{1
 
 " Indentation
@@ -185,6 +189,9 @@ inoremap ,<tab> <c-x><c-o>
 
 " load packer.nvim plugin
 nnoremap <silent> cop <cmd>lua require("plugins")<cr>
+
+" Display syntax highlight group of term under cursor
+nnoremap <leader>H <cmd>TSHighlightCapturesUnderCursor<cr>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode

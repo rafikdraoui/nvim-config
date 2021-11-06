@@ -2,14 +2,6 @@ require("nvim-treesitter.configs").setup({
   highlight = {
     enable = true,
   },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "<cr>",
-      node_incremental = "<cr>",
-      node_decremental = "<bs>",
-    },
-  },
   textobjects = {
     select = {
       enable = true,
@@ -42,7 +34,9 @@ require("nvim-treesitter.configs").setup({
     },
   },
   refactor = {
-    smart_rename = { enable = true },
+    smart_rename = {
+      enable = true,
+    },
     navigation = {
       enable = true,
       keymaps = {
