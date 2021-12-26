@@ -2,6 +2,10 @@ require("filetype").setup({
   overrides = {
     literal = {
       [".envrc"] = "sh",
+      [".python-version"] = "text",
+    },
+    extensions = {
+      ["patch"] = "diff",
     },
     complex = {
       [".*/systemd/.*.service$"] = "systemd",

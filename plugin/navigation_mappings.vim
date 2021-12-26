@@ -13,6 +13,8 @@ nnoremap <silent> [q :cprevious <cr>
 nnoremap <silent> ]q :cnext <cr>
 nnoremap <silent> [Q :cfirst <cr>
 nnoremap <silent> ]Q :clast <cr>
+nnoremap <silent> [w :cpfile <cr>
+nnoremap <silent> ]w :cnfile <cr>
 
 " Location list
 nnoremap <silent> [z :lprevious <cr>

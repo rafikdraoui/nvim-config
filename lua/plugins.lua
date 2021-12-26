@@ -22,10 +22,17 @@ return require("packer").startup({
     { "simnalamburt/vim-mundo", cmd = "MundoToggle" },
     { "tpope/vim-rsi" },
 
-    -- Code linting and formatting
-    { "dense-analysis/ale" },
-
     -- UI
+    {
+      "nvim-telescope/telescope.nvim",
+      requires = {
+        "nvim-lua/plenary.nvim",
+        { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
+      },
+      config = function()
+        require("config.telescope")
+      end,
+    },
     { "rafikdraoui/couleurs.vim" },
     {
       "https://gitlab.com/yorickpeterse/nvim-pqf",
@@ -50,14 +57,19 @@ return require("packer").startup({
     { "tpope/vim-rhubarb" },
 
     -- Wrappers around other external programs
-    { "junegunn/fzf.vim" },
+    {
+      "jose-elias-alvarez/null-ls.nvim",
+      requires = { "nvim-lua/plenary.nvim" },
+      config = function()
+        require("config.null_ls")
+      end,
+    },
     { "ludovicchabant/vim-gutentags" },
     {
       "neovim/nvim-lspconfig",
       config = function()
         require("config.lsp")
       end,
-      ft = { "go", "python" },
     },
     { "sebdah/vim-delve", ft = "go" },
     { "tpope/vim-eunuch" },

@@ -13,17 +13,6 @@ function s:toggle_foldmethod() abort
 endfunction
 nnoremap <silent> cof :call <sid>toggle_foldmethod() <cr>
 
-" Toggle activation of `mypy` in ALE linting
-function! s:toggle_mypy() abort
-  let idx = index(g:ale_linters['python'], 'mypy')
-  if idx == -1
-    call add(g:ale_linters['python'], 'mypy')
-  else
-    call remove(g:ale_linters['python'], idx)
-  endif
-endfunction
-nnoremap <silent> cot :call <sid>toggle_mypy() <cr>
-
 " Filter range through `isort`
 command! -buffer -range=% Isort :<line1>,<line2>!isort -
 

@@ -127,9 +127,6 @@ nnoremap <silent> <leader>a :cclose <bar> exe 'cd ' . git#repo_root() <bar> cwin
 nnoremap * /\<<c-r>=expand('<cword>')<cr>\><cr>
 nnoremap # ?\<<c-r>=expand('<cword>')<cr>\><cr>
 
-" Repeat the last command-line command
-nnoremap Q @:
-
 " Run recorded macro on visual selection
 function! ExecuteMacroOnSelection()
   execute ":'<,'>normal @" . nr2char(getchar())
@@ -168,7 +165,7 @@ nnoremap <silent> con :set relativenumber!<cr>
 nnoremap <silent> cob :execute 'set bg=' . (&bg ==# 'dark' ? 'light' : 'dark') <cr>
 
 " Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
-tnoremap <expr> <esc> &ft == 'fzf' ? "<c-c>" : "<c-\><c-n>"
+tnoremap <expr> <esc> "<c-\><c-n>"
 tnoremap <a-[> <esc>
 
 " Emulate i_CTRL-R
@@ -247,8 +244,6 @@ onoremap <silent> ae :call textobj#entire#around()<cr>
 
 " Commands {{{1
 
-command! TrimWhitespace call whitespace#trim()
-
 " Delete other buffers
 command! -bang Bonly call buffers#bonly(<bang>0)
 
@@ -288,6 +283,15 @@ endfunction
 " The query is added to the vim search register and search history.
 command! -nargs=+ -bang -complete=tag Grep call grep#run(<bang>0, <f-args>)
 
+command! Format lua vim.lsp.buf.formatting_seq_sync()
+
+function! MaybeFormat() abort
+  if get(g:, 'enable_formatting', 0)
+    Format
+  endif
+endfunction
+command! MaybeFormat call MaybeFormat()
+
 
 " Autocommands {{{1
 
@@ -298,9 +302,6 @@ augroup END
 
 " highlight yank
 autocmd vimrc TextYankPost * lua require'vim.highlight'.on_yank()
-
-" Trim whitespace on save
-autocmd vimrc BufWritePre * TrimWhitespace
 
 " Trigger `autoread` when file changes on disk
 autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * if empty(getcmdwintype()) | checktime | endif
@@ -317,6 +318,12 @@ autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * let &showbreak=repea
 " Uses `*` instead of `$HOME` in the file pattern so that it also works when
 " editing the original file in the dotfiles repository.
 autocmd vimrc BufWritePost */.config/nvim/lua/plugins.lua source <afile> | PackerCompile
+
+" Set filetype to 'text' if no filetype is detected
+autocmd vimrc BufWinEnter * if empty(&filetype) | setfiletype text | endif
+
+" Format files on save (if enabled)
+autocmd vimrc BufWritePre * MaybeFormat
 
 
 " Color scheme {{{1
@@ -341,10 +348,7 @@ let &statusline .= '%{&spell ? printf("[spell=%s]", &spelllang) : ""} '
 
 " linting
 function! LintStatus() abort
-  if g:ale_is_running
-    return '[linting]'
-  endif
-  let num_errors = ale#statusline#Count(bufnr())['total']
+  let num_errors = luaeval('#vim.diagnostic.get(0)')
   return num_errors > 0 ? printf('[lint:%d]', num_errors) : ''
 endfunction
 let &statusline .= '%2*%{LintStatus()}%* '
@@ -390,15 +394,12 @@ let g:vimwiki_key_mappings = {
 \ 'text_objs': 0,
 \}
 nnoremap <silent> <leader>ww :edit $NOTES_DIR/index.md<cr>
-nnoremap <leader>n :Files $NOTES_DIR<cr>
+nnoremap <leader>n <cmd>Telescope find_files cwd=$NOTES_DIR<cr>
 
-" fzf
-if has('mac')
-  set runtimepath+=/usr/local/opt/fzf
-endif
-nnoremap <c-f> :GFiles <cr>
-nnoremap <c-h> :Helptags<cr>
-let g:fzf_preview_window = []
+" telescope
+nnoremap <c-f> <cmd>Telescope git_files<cr>
+nnoremap <c-h> <cmd>Telescope help_tags<cr>
+nnoremap <leader>r <cmd>Telescope resume<cr>
 
 " vim-sandwich
 let g:textobj_sandwich_no_default_key_mappings = 1
@@ -477,12 +478,16 @@ let g:projectionist_heuristics = {
 \ 'go.mod': {
 \   '*.go': {'alternate': '{}_test.go'},
 \   '*_test.go': {'type': 'test', 'alternate': '{}.go'},
+\  },
+\ '*.py': {
+\   '*.py': {'alternate': 'test_{}.py'},
+\   'test_*.py': {'type': 'test', 'alternate': '{}.py'},
 \  }
 \}
 
 " vim-delve
 let g:delve_new_command = 'new'
-let g:delve_sign_priority = 50  " higher than gitsigns and ale
+let g:delve_sign_priority = 50  " higher than gitsigns and diagnostic
 
 " vim-mundo
 nnoremap <silent> cou :MundoToggle<cr>
@@ -494,6 +499,7 @@ let g:targets_nl = ["\<Space>n", "\<Space>l"]
 let g:coiled_snake_foldtext_flags = ['static']
 
 " clever-f
+let g:clever_f_fix_key_direction = 1
 nmap <leader>f <Plug>(clever-f-reset)
 
 " nvim-colorizer
@@ -502,66 +508,18 @@ nnoremap <silent> coh <cmd>ColorizerToggle<cr>
 " nvim-treesitter
 nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
 
-" ALE {{{2
-let g:ale_lint_on_enter = 0
-let g:ale_lint_on_text_changed = 0
-let g:ale_lint_on_insert_leave = 0
-let g:ale_lint_on_filetype_changed = 0
-let g:ale_sign_error = '»'
-let g:ale_sign_warning = '»'
-let g:ale_echo_msg_format = '[%linter%]% code:% %s'
-let g:ale_hover_cursor = 0
+" diagnostics
+lua require("config/diagnostic")
+let g:enable_virtualtext = 1
+nnoremap <leader>c <cmd>lua vim.diagnostic.setloclist({open = true })<cr>
+nnoremap <leader>e <cmd>lua vim.diagnostic.open_float({scope = "line", header = false })<cr>
+nnoremap [e <cmd>lua vim.diagnostic.goto_prev({ wrap = false, float = false })<cr>
+nnoremap ]e <cmd>lua vim.diagnostic.goto_next({ wrap = false, float = false })<cr>
+nnoremap cov <cmd>let g:enable_virtualtext = !g:enable_virtualtext <bar> let g:enable_virtualtext <cr>
 
-let g:ale_linters = {
-\ 'fish': [],
-\ 'go': ['gobuild', 'golangci-lint'],
-\ 'javascript': ['eslint'],
-\ 'json': ['jsonlint'],
-\ 'markdown': ['markdownlint'],
-\ 'python': ['flake8', 'pylint', 'mypy'],
-\ 'sh': ['shellcheck'],
-\ 'vimwiki': [],
-\}
-let g:ale_go_golangci_lint_options = ''
-let g:ale_go_golangci_lint_package = 1
-let g:ale_python_flake8_change_directory = 'project'
-let g:ale_javascript_eslint_suppress_eslintignore = 1
-let g:ale_javascript_eslint_suppress_missing_config = 1
-
-let g:ale_fixers = {
-\ 'css': ['prettier'],
-\ 'elm': ['elm-format'],
-\ 'fish': ['fish_indent'],
-\ 'go': ['goimports', 'gofmt'],
-\ 'haskell': ['ormolu'],
-\ 'javascript': ['prettier'],
-\ 'json': ['jq'],
-\ 'lua': ['stylua'],
-\ 'python': ['black'],
-\ 'rust': ['rustfmt'],
-\ 'scss': ['prettier'],
-\ 'sh': ['shfmt'],
-\ 'yaml': ['prettier'],
-\}
-let g:ale_fix_on_save = 1
-let g:ale_sh_shfmt_options = '-i 2'
-let g:ale_go_gofmt_executable = 'gofumpt'
-let g:ale_lua_stylua_options = '--search-parent-directories'
-
-nmap <leader>cc <plug>(ale_lint)
-nmap <leader>cd <plug>(ale_detail)
-nmap <leader>cr <plug>(ale_reset)
-nmap [e <plug>(ale_previous)
-nmap ]e <plug>(ale_next)
-nmap [E <plug>(ale_first)
-nmap ]E <plug>(ale_last)
-
-nnoremap coa :ALEToggle <bar> let g:ale_enabled <cr>
-nnoremap cox :call autofix#toggle() <cr>
-
-let g:ale_is_running = v:false
-autocmd vimrc User ALELintPre let g:ale_is_running = v:true | redrawstatus
-autocmd vimrc User ALELintPost let g:ale_is_running = v:false | redrawstatus
+" formatting
+let g:enable_formatting = 1
+nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:enable_formatting<cr>
 
 
 " Abbreviations {{{1
