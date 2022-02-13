@@ -28,6 +28,8 @@ nnoremap <silent> <buffer> <leader>D <cmd>call GoDocFromLSPHover()<cr>
 
 iabbrev <buffer> testf! func TestF(t *testing.T) {<cr>// TODO<cr>}
 
+iabbrev <buffer> fmt! fmt.Printf("%+v\n", _)
+
 lua <<
 vim.b.testt = [[
 testCases := []struct {

@@ -14,21 +14,23 @@ end
 local on_attach = function()
   vim.api.nvim_buf_set_option(0, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-  local map = function(key, cmd, mode)
+  local function map(l, r, description, mode)
     mode = mode or "n"
-    vim.api.nvim_buf_set_keymap(0, mode, key, cmd, { noremap = true })
+    local opts = { buffer = true, desc = description }
+    vim.keymap.set(mode, l, r, opts)
   end
-  map("K", "<cmd>lua vim.lsp.buf.hover()<cr>")
-  map("<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>")
-  map("<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<cr>")
-  map("<c-k>", "<cmd>lua vim.lsp.buf.signature_help()<cr>", "i")
-  map("grd", "<cmd>lua vim.lsp.buf.document_symbol()<cr>")
-  map("grr", "<cmd>lua vim.lsp.buf.rename()<cr>")
-  map("grf", "<cmd>lua vim.lsp.buf.references()<cr>")
-  map("gri", "<cmd>lua vim.lsp.buf.implementation()<cr>")
-  map("grc", "<cmd>lua vim.lsp.buf.incoming_calls()<cr>")
-  map("gro", "<cmd>lua vim.lsp.buf.outgoing_calls()<cr>")
-  map("grt", "<cmd>lua vim.lsp.buf.type_definition()<cr>")
+
+  local lsp = vim.lsp.buf
+  map("K", lsp.hover, "LSP hover")
+  map("<c-]>", lsp.definition, "LSP definition")
+  map("<c-k>", lsp.signature_help, "LSP signature help", { "n", "i" })
+  map("grd", lsp.document_symbol, "LSP document symbol")
+  map("grr", lsp.rename, "LSP rename")
+  map("grf", lsp.references, "LSP references")
+  map("gri", lsp.implementation, "LSP implementation")
+  map("grc", lsp.incoming_calls, "LSP incoming calls")
+  map("gro", lsp.outgoing_calls, "LSP outgoing calls")
+  map("grt", lsp.type_definition, "LSP type definition")
 end
 
 lspconfig.gopls.setup({

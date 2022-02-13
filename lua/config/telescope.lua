@@ -19,11 +19,8 @@ telescope.setup({
       i = {
         ["<esc>"] = "close",
 
-        -- restore readline-style bindings
+        -- restore readline-style binding for clearing line
         ["<c-u>"] = false,
-        ["<c-w>"] = function()
-          vim.api.nvim_input("<c-s-w>")
-        end,
       },
     },
     preview = false,

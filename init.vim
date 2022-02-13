@@ -422,7 +422,12 @@ nmap css <plug>(SubversiveSubstituteWordRange)
 let g:subversiveCurrentTextRegister = 's'
 
 " vim-test
-let g:test#strategy = 'neovim'
+function! ToggleTermStrategy(cmd) abort
+  call luaeval("require('toggleterm').exec(_A[1])", [a:cmd])
+endfunction
+let g:test#custom_strategies = {'toggleterm': function('ToggleTermStrategy')}
+let g:test#strategy = 'toggleterm'
+
 let g:test#python#runner = 'pytest'
 let g:test#go#gotest#executable = 'gotest'
 nnoremap <silent> t<c-n> :TestNearest<cr>
@@ -462,14 +467,6 @@ nnoremap gh :GBrowse<cr>
 xnoremap gh :GBrowse<cr>
 
 " vim-mergetool
-function! s:disable_python_folding(split) abort
-  " disable vim-coiled-snake in mergetool mode to maintain `foldmethod=diff`
-  if exists('#CoiledSnake')
-    autocmd! CoiledSnake * <buffer>
-    setlocal foldtext<
-  endif
-endfunction
-let g:MergetoolSetLayoutCallback = function('s:disable_python_folding')
 nmap <leader>mt <plug>(MergetoolToggle)
 nnoremap <silent> <leader>mb :call mergetool#toggle_layout('mr,b')<CR>
 
@@ -495,9 +492,6 @@ nnoremap <silent> cou :MundoToggle<cr>
 " targets.vim
 let g:targets_nl = ["\<Space>n", "\<Space>l"]
 
-" coiled snake
-let g:coiled_snake_foldtext_flags = ['static']
-
 " clever-f
 let g:clever_f_fix_key_direction = 1
 nmap <leader>f <Plug>(clever-f-reset)
@@ -510,16 +504,31 @@ nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
 
 " diagnostics
 lua require("config/diagnostic")
-let g:enable_virtualtext = 1
+let g:diagnostic_enabled = 1
+
+function! ToggleDiagnostic() abort
+  if get(g:, 'diagnostic_enabled', 0)
+    lua vim.diagnostic.disable()
+  else
+    lua vim.diagnostic.enable()
+  endif
+  let g:diagnostic_enabled = !g:diagnostic_enabled
+endfunction
+nnoremap cod <cmd>call ToggleDiagnostic()<cr>
+
 nnoremap <leader>c <cmd>lua vim.diagnostic.setloclist({open = true })<cr>
 nnoremap <leader>e <cmd>lua vim.diagnostic.open_float({scope = "line", header = false })<cr>
 nnoremap [e <cmd>lua vim.diagnostic.goto_prev({ wrap = false, float = false })<cr>
 nnoremap ]e <cmd>lua vim.diagnostic.goto_next({ wrap = false, float = false })<cr>
-nnoremap cov <cmd>let g:enable_virtualtext = !g:enable_virtualtext <bar> let g:enable_virtualtext <cr>
 
 " formatting
 let g:enable_formatting = 1
 nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:enable_formatting<cr>
+
+" filetype detection
+let g:do_filetype_lua = 1
+let g:did_load_filetypes = 0
+lua require("config/filetype")
 
 
 " Abbreviations {{{1

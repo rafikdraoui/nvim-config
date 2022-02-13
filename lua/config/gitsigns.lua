@@ -1,4 +1,6 @@
-require("gitsigns").setup({
+local gitsigns = require("gitsigns")
+
+gitsigns.setup({
   signs = {
     add = { text = "▍" },
     change = { text = "▍" },
@@ -6,21 +8,32 @@ require("gitsigns").setup({
     topdelete = { text = "‾", show_count = true },
     changedelete = { text = "~", show_count = true },
   },
-  keymaps = {
-    noremap = true,
 
-    ["n gj"] = '<cmd>lua require"gitsigns.actions".next_hunk({wrap = false})<cr>',
-    ["n gk"] = '<cmd>lua require"gitsigns.actions".prev_hunk({wrap = false})<cr>',
+  on_attach = function()
+    local function map(l, r, description, mode)
+      mode = mode or "n"
+      local opts = { buffer = true, desc = description }
+      vim.keymap.set(mode, l, r, opts)
+    end
 
-    ["o ih"] = ':<c-u>lua require"gitsigns.actions".select_hunk()<cr>',
-    ["x ih"] = ':<c-u>lua require"gitsigns.actions".select_hunk()<cr>',
+    local next_hunk = function()
+      gitsigns.next_hunk({ wrap = false })
+    end
+    local prev_hunk = function()
+      gitsigns.prev_hunk({ wrap = false })
+    end
+    map("gj", next_hunk, "next hunk")
+    map("gk", prev_hunk, "previous hunk")
 
-    ["n <leader>hp"] = '<cmd>lua require"gitsigns".preview_hunk()<cr>',
+    map("<leader>hp", gitsigns.preview_hunk, "preview hunk")
 
-    ["n <leader>hs"] = '<cmd>lua require"gitsigns".stage_hunk()<cr>',
-    ["n <leader>hu"] = '<cmd>lua require"gitsigns".undo_stage_hunk()<cr>',
+    map("<leader>hs", gitsigns.stage_hunk, "stage hunk")
+    map("<leader>hS", gitsigns.stage_buffer, "stage buffer")
+    map("<leader>hu", gitsigns.undo_stage_hunk, "undo stage hunk")
 
-    ["n <leader>hr"] = '<cmd>lua require"gitsigns".reset_hunk()<cr>',
-    ["n <leader>hR"] = '<cmd>lua require"gitsigns".reset_buffer()<cr>',
-  },
+    map("<leader>hr", gitsigns.reset_hunk, "reset hunk")
+    map("<leader>hR", gitsigns.reset_buffer, "reset buffer")
+
+    map("ih", gitsigns.select_hunk, "select hunk", { "o", "x" })
+  end,
 })

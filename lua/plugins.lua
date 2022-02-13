@@ -35,7 +35,7 @@ return require("packer").startup({
     },
     { "rafikdraoui/couleurs.vim" },
     {
-      "https://gitlab.com/yorickpeterse/nvim-pqf",
+      "https://gitlab.com/yorickpeterse/nvim-pqf.git",
       config = function()
         require("pqf").setup()
       end,
@@ -106,14 +106,7 @@ return require("packer").startup({
       end,
     },
     { "justinmk/vim-dirvish" },
-    { "kalekundert/vim-coiled-snake", ft = "python" },
     { "lewis6991/impatient.nvim" },
-    {
-      "nathom/filetype.nvim",
-      config = function()
-        require("config.filetype")
-      end,
-    },
     { "neovimhaskell/haskell-vim" },
     { "norcalli/nvim-colorizer.lua" },
     { "rbong/vim-buffest" },
@@ -127,10 +120,6 @@ return require("packer").startup({
 
   config = {
     compile_path = vim.fn.stdpath("data") .. "/site/plugin/packer_compiled.lua",
-
-    -- hacky, but needed to avoid spurious error when installing vim-coiled-snake plugin
-    git = { subcommands = { submodules = "branch" } },
-
     display = {
       open_cmd = "enew",
       keybindings = { quit = "gq" },

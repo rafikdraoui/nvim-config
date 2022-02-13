@@ -3,13 +3,17 @@ nnoremap <buffer> <leader>d Obreakpoint()<esc>
 
 nnoremap <silent> <buffer> <leader>k <cmd>PyDoc<cr>
 
-" Toggle 'coiled-snake' and treesitter folding
+setlocal foldmethod=expr
+setlocal foldexpr=nvim_treesitter#foldexpr()
+
+" Toggle 'treesitter' and 'indent' folding
 function s:toggle_foldmethod() abort
-  if &l:foldexpr =~# 'coiledsnake#'
-    setlocal foldexpr=nvim_treesitter#foldexpr()
+  if &l:foldmethod ==# 'indent'
+    setlocal foldmethod=expr
   else
-    setlocal foldexpr=coiledsnake#FoldExpr(v:lnum)
+    setlocal foldmethod=indent
   endif
+  setlocal foldmethod?
 endfunction
 nnoremap <silent> cof :call <sid>toggle_foldmethod() <cr>
 
