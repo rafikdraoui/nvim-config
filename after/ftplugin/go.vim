@@ -9,7 +9,7 @@ nnoremap <silent> <buffer> <leader>dt <cmd>DlvToggleTracepoint<cr>
 nnoremap <silent> <buffer> <leader>dd <cmd>DlvDebug<cr>
 nnoremap <silent> <buffer> <leader>dc <cmd>DlvClearAll<cr>
 
-nnoremap <silent> <buffer> t<C-d> <cmd>DlvTest<cr>
+nnoremap <silent> <buffer> t<C-d> <cmd>DlvTestCurrent<cr>
 
 nnoremap <silent> <buffer> <leader>k <cmd>GoDoc<cr>
 
@@ -51,7 +51,7 @@ iabbrev <buffer> testt! <c-r>=b:testt<cr>
 lua <<
 vim.b.tcmp = [[
 if diff := cmp.Diff(want, got); diff != "" {
-t.Errorf("mismatch (-want +got):\n%s", diff)
+t.Fatalf("mismatch (-want +got):\n%s", diff)
 }]]
 .
 iabbrev <buffer> tcmp! <c-r>=b:tcmp<cr>

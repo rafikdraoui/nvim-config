@@ -2,14 +2,8 @@ vim.diagnostic.config({
   float = {
     format = function(d)
       -- Include error code in diagnostic (if available)
-
-      local code = d.code
-      if not code and d.user_data and d.user_data.lsp then
-        code = d.user_data.lsp.code
-      end
-
-      if code then
-        return string.format("%s: %s [%s]", d.source, d.message, code)
+      if d.code then
+        return string.format("%s: %s [%s]", d.source, d.message, d.code)
       else
         return string.format("%s: %s", d.source, d.message)
       end

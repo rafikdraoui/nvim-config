@@ -34,12 +34,7 @@ local on_attach = function()
 end
 
 lspconfig.gopls.setup({
-  on_attach = function(client)
-    on_attach()
-
-    -- Disable formatting: this is handled by null-ls
-    client.resolved_capabilities.document_formatting = false
-  end,
+  on_attach = on_attach,
   settings = {
     gopls = {
       analyses = {

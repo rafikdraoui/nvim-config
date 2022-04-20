@@ -63,8 +63,21 @@ return require("packer").startup({
       config = function()
         require("config.null_ls")
       end,
+      opt = true,
     },
     { "ludovicchabant/vim-gutentags" },
+    {
+      "mfussenegger/nvim-lint",
+      config = function()
+        require("config.nvim_lint")
+      end,
+    },
+    {
+      "mhartington/formatter.nvim",
+      config = function()
+        require("config.formatter")
+      end,
+    },
     {
       "neovim/nvim-lspconfig",
       config = function()
@@ -107,6 +120,7 @@ return require("packer").startup({
     },
     { "justinmk/vim-dirvish" },
     { "lewis6991/impatient.nvim" },
+    { "milisims/nvim-luaref" },
     { "neovimhaskell/haskell-vim" },
     { "norcalli/nvim-colorizer.lua" },
     { "rbong/vim-buffest" },

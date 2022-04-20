@@ -283,14 +283,19 @@ endfunction
 " The query is added to the vim search register and search history.
 command! -nargs=+ -bang -complete=tag Grep call grep#run(<bang>0, <f-args>)
 
-command! Format lua vim.lsp.buf.formatting_seq_sync()
+command! Lint lua require("lint").try_lint()
 
 function! MaybeFormat() abort
   if get(g:, 'enable_formatting', 0)
-    Format
+    let formatter_filetypes = get(g:, 'formatter_filetypes', [])
+    if index(formatter_filetypes, &filetype) >= 0
+      FormatWrite
+    endif
   endif
 endfunction
 command! MaybeFormat call MaybeFormat()
+
+command! TrimWhitespace call whitespace#trim()
 
 
 " Autocommands {{{1
@@ -322,8 +327,14 @@ autocmd vimrc BufWritePost */.config/nvim/lua/plugins.lua source <afile> | Packe
 " Set filetype to 'text' if no filetype is detected
 autocmd vimrc BufWinEnter * if empty(&filetype) | setfiletype text | endif
 
+" Trim whitespace on save
+autocmd vimrc BufWritePre * TrimWhitespace
+
 " Format files on save (if enabled)
-autocmd vimrc BufWritePre * MaybeFormat
+autocmd vimrc BufWritePost * MaybeFormat
+
+" Lint files on save
+autocmd vimrc BufWritePost * Lint
 
 
 " Color scheme {{{1
@@ -352,6 +363,18 @@ function! LintStatus() abort
   return num_errors > 0 ? printf('[lint:%d]', num_errors) : ''
 endfunction
 let &statusline .= '%2*%{LintStatus()}%* '
+
+" formatting
+function! FormattingStatus() abort
+  if get(g:, 'is_formatting', 0)
+    return '[fmt]'
+  else
+    return ''
+  endif
+endfunction
+autocmd vimrc User FormatterPre let g:is_formatting = 1
+autocmd vimrc User FormatterPost let g:is_formatting = 0
+let &statusline .= '%2*%{FormattingStatus()}%* '
 
 " line/column numbers
 let &statusline .= '%= %p%% %4l/%L:%-2c'
