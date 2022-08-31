@@ -9,16 +9,14 @@ telescope.setup({
     layout_config = {
       center = {
         -- set a maximum width of 80 and a minimum horizontal padding of 2
-        width = function(_, columns)
-          return math.min(80, columns - 4)
-        end,
+        width = function(_, columns) return math.min(80, columns - 4) end,
       },
     },
     layout_strategy = "center",
     mappings = {
       i = {
         ["<esc>"] = "close",
-
+        ["<c-s>"] = "select_horizontal",
         -- restore readline-style binding for clearing line
         ["<c-u>"] = false,
       },

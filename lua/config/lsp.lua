@@ -31,17 +31,38 @@ local on_attach = function()
   map("grc", lsp.incoming_calls, "LSP incoming calls")
   map("gro", lsp.outgoing_calls, "LSP outgoing calls")
   map("grt", lsp.type_definition, "LSP type definition")
+  map("gra", lsp.code_action, "LSP code action")
+  map(
+    "grA",
+    function() lsp.code_action({ apply = true }) end,
+    "LSP code action (auto-apply)"
+  )
 end
 
 lspconfig.gopls.setup({
+  on_init = function(client)
+    -- Set `local` setting to the current Go module
+    local path = client.workspace_folders[1].name
+    local cmd = string.format("cd %s && go list -m", path)
+    local mod = vim.trim(vim.fn.system(cmd))
+    if vim.v.shell_error > 0 then
+      vim.notify("Cannot determine module name: " .. mod, vim.log.levels.ERROR)
+    else
+      client.config.settings.gopls["local"] = mod
+      client.notify("workspace/didChangeConfiguration")
+    end
+  end,
   on_attach = on_attach,
   settings = {
     gopls = {
       analyses = {
         nilness = true,
         unusedparams = true,
+        unusedvariable = true,
         unusedwrite = true,
+        useany = true,
       },
+      gofumpt = true,
       staticcheck = true,
     },
   },

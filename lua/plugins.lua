@@ -1,6 +1,4 @@
-vim.cmd([[packadd packer.nvim]])
-
-return require("packer").startup({
+require("packer").startup({
   {
     { "wbthomason/packer.nvim", opt = true },
 
@@ -29,60 +27,42 @@ return require("packer").startup({
         "nvim-lua/plenary.nvim",
         { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
       },
-      config = function()
-        require("config.telescope")
-      end,
+      config = function() require("config.telescope") end,
     },
     { "rafikdraoui/couleurs.vim" },
-    {
-      "https://gitlab.com/yorickpeterse/nvim-pqf.git",
-      config = function()
-        require("pqf").setup()
-      end,
-    },
 
     -- Wrappers around git
     { "junegunn/gv.vim", cmd = "GV" },
     {
       "lewis6991/gitsigns.nvim",
       requires = { "nvim-lua/plenary.nvim" },
-      config = function()
-        require("config.gitsigns")
-      end,
+      config = function() require("config.gitsigns") end,
     },
     { "rhysd/conflict-marker.vim" },
     { "rhysd/git-messenger.vim" },
-    { "samoshkin/vim-mergetool" },
     { "tpope/vim-fugitive" },
     { "tpope/vim-rhubarb" },
+    { "whiteinge/diffconflicts" },
 
     -- Wrappers around other external programs
     {
       "jose-elias-alvarez/null-ls.nvim",
       requires = { "nvim-lua/plenary.nvim" },
-      config = function()
-        require("config.null_ls")
-      end,
+      config = function() require("config.null_ls") end,
       opt = true,
     },
     { "ludovicchabant/vim-gutentags" },
     {
       "mfussenegger/nvim-lint",
-      config = function()
-        require("config.nvim_lint")
-      end,
+      config = function() require("config.nvim_lint") end,
     },
     {
       "mhartington/formatter.nvim",
-      config = function()
-        require("config.formatter")
-      end,
+      config = function() require("config.formatter") end,
     },
     {
       "neovim/nvim-lspconfig",
-      config = function()
-        require("config.lsp")
-      end,
+      config = function() require("config.lsp") end,
     },
     { "sebdah/vim-delve", ft = "go" },
     { "tpope/vim-eunuch" },
@@ -92,9 +72,7 @@ return require("packer").startup({
     {
       "nvim-treesitter/nvim-treesitter",
       run = ":TSUpdate",
-      config = function()
-        require("config.treesitter")
-      end,
+      config = function() require("config.treesitter") end,
     },
     {
       "nvim-treesitter/nvim-treesitter-textobjects",
@@ -114,13 +92,11 @@ return require("packer").startup({
     { "MTDL9/vim-log-highlighting" },
     {
       "akinsho/toggleterm.nvim",
-      config = function()
-        require("toggleterm").setup({ open_mapping = [[<c-\>]] })
-      end,
+      config = function() require("toggleterm").setup({ open_mapping = [[<c-\>]] }) end,
     },
+    { "dstein64/vim-startuptime", cmd = "StartupTime" },
     { "justinmk/vim-dirvish" },
     { "lewis6991/impatient.nvim" },
-    { "milisims/nvim-luaref" },
     { "neovimhaskell/haskell-vim" },
     { "norcalli/nvim-colorizer.lua" },
     { "rbong/vim-buffest" },
@@ -128,7 +104,6 @@ return require("packer").startup({
     { "tpope/vim-characterize" },
     { "tpope/vim-projectionist" },
     { "tpope/vim-scriptease" },
-    { "tweekmonster/startuptime.vim" },
     { "vimwiki/vimwiki", ft = "vimwiki" },
   },
 

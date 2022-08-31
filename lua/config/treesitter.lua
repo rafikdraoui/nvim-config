@@ -1,7 +1,7 @@
 require("nvim-treesitter.configs").setup({
   highlight = {
     enable = true,
-    disable = { "html", "make", "vim" },
+    disable = { "haskell", "help", "make", "vim" },
   },
   textobjects = {
     select = {

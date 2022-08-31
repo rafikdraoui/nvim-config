@@ -21,7 +21,7 @@ nnoremap <silent> cof :call <sid>toggle_foldmethod() <cr>
 command! -buffer -range=% Isort :<line1>,<line2>!isort -
 
 " Add various useful locations to 'path'
-let s:project_root = git#repo_root()
+let s:project_root = luaeval('require("lib/git").root()')
 if !empty(s:project_root)
   execute 'setlocal path+=' . s:project_root . '/*'
 endif

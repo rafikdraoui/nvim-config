@@ -29,6 +29,7 @@ set ignorecase smartcase  " case-insensitive search, unless query has capital le
 set lazyredraw  " only redraw screen when necessary
 set list listchars=tab:▸·,extends:❯,precedes:❮,nbsp:⁓
 set matchpairs+=«:»
+set mouse=
 set noswapfile directory=''  " disable swapfile
 set notimeout
 set path-=/usr/include
@@ -49,6 +50,8 @@ let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
 " Allow syntax highlighting of embedded lua in vimscript files
 " c.f. $VIMRUNTIME/syntax/vim.vim
 let g:vimsyn_embed= 'l'
+
+colorscheme couleurs
 
 
 " Mappings {{{1
@@ -120,9 +123,6 @@ cnoremap <expr> <c-r>< expand('%:h').'/'
 " Join all lines in a paragraph (and make it repeatable through vim-repeat)
 nnoremap <silent> gJ vipJ :call repeat#set('gJ')<cr>
 
-" Make file paths in quickfix window relative to repo root
-nnoremap <silent> <leader>a :cclose <bar> exe 'cd ' . git#repo_root() <bar> cwindow <bar> cd - <cr>
-
 " Make `*` and `#` respect `smartcase`
 nnoremap * /\<<c-r>=expand('<cword>')<cr>\><cr>
 nnoremap # ?\<<c-r>=expand('<cword>')<cr>\><cr>
@@ -137,16 +137,16 @@ nnoremap <leader>s :Grep<space>
 nnoremap <leader>S :Grep!<space>
 
 " Search operator
-nnoremap <silent> gs :set opfunc=opfunc#search<cr>g@
-xnoremap <silent> gs :<c-u>call opfunc#search(visualmode())<cr>
+nnoremap <silent> gs :set opfunc=v:lua.require'lib.opfunc'.search<cr>g@
+xnoremap <silent> gs :<c-u>lua require("lib/opfunc").search(vim.fn.visualmode())<cr>
 nmap gss gsiw
 
 " Sort operator
-nnoremap zs :echo "sort" <bar> set opfunc=opfunc#sort<cr>g@
-xnoremap <silent> zs :<c-u>call opfunc#sort(visualmode())<cr>
+nnoremap zs :echo "sort" <bar> set opfunc=v:lua.require'lib.opfunc'.sort<cr>g@
+xnoremap <silent> zs :<c-u>lua require("lib/opfunc").sort(vim.fn.visualmode())<cr>
 
 " Open browser at url under cursor
-nnoremap <silent> gx :call browse#url()<cr>
+nnoremap <silent> gx <cmd>Browse<cr>
 
 " Toggle spellcheck and spelllang
 nnoremap <silent> cos :set spell! <cr>
@@ -242,144 +242,6 @@ xnoremap <silent> ae :<c-u>call textobj#entire#around()<cr>
 onoremap <silent> ae :call textobj#entire#around()<cr>
 
 
-" Commands {{{1
-
-" Delete other buffers
-command! -bang Bonly call buffers#bonly(<bang>0)
-
-" Scratch buffer
-command! Scratch call scratch#create([])
-command! -nargs=1 -complete=command Redir silent call scratch#redir(<q-args>)
-
-command! PackSync lua require "plugins"; vim.cmd[[PackerSync]]
-
-" copy last yank to system clipboard
-command! ToSystemClipboard let @+ = @@
-
-" set pwd to root of git repo (if applicable)
-command! CdRoot call git#cd_root()
-
-" set pwd to the directory containing the file loaded in buffer
-command! CdBuffer cd %:p:h
-
-" Open web browser at given URL (or url under cursor if no argument given)
-" This is mostly needed to support Fugitive's `:GBrowse`
-command! -nargs=? Browse call browse#url(<f-args>)
-
-" Browse documentation
-command! -nargs=* PyDoc call docs#python(<f-args>)
-command! -nargs=* GoDoc call docs#golang(<f-args>)
-
-" `git jump` from within vim
-" need to use a patched version of git's contrib `git-jump` script
-" https://gist.github.com/romainl/a3ddb1d08764b93183260f8cdf0f524f
-command! -count=0 -nargs=* -complete=custom,GitJumpComplete Jump call git#jump(<f-args>)
-function! GitJumpComplete(...)
-  return join(['diff', 'staged', 'merge'], "\n")
-endfunction
-
-" Use ripgrep to search for a term in the current git repository. When [!] is
-" added, the search is done in the pwd instead.
-" The query is added to the vim search register and search history.
-command! -nargs=+ -bang -complete=tag Grep call grep#run(<bang>0, <f-args>)
-
-command! Lint lua require("lint").try_lint()
-
-function! MaybeFormat() abort
-  if get(g:, 'enable_formatting', 0)
-    let formatter_filetypes = get(g:, 'formatter_filetypes', [])
-    if index(formatter_filetypes, &filetype) >= 0
-      FormatWrite
-    endif
-  endif
-endfunction
-command! MaybeFormat call MaybeFormat()
-
-command! TrimWhitespace call whitespace#trim()
-
-
-" Autocommands {{{1
-
-" define autocmd group `vimrc` and initialize
-augroup vimrc
-  autocmd!
-augroup END
-
-" highlight yank
-autocmd vimrc TextYankPost * lua require'vim.highlight'.on_yank()
-
-" Trigger `autoread` when file changes on disk
-autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * if empty(getcmdwintype()) | checktime | endif
-autocmd vimrc FileChangedShellPost * echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
-
-" Make terminal start in insert mode, and disable number and sign columns
-autocmd vimrc TermOpen * startinsert | setlocal nonumber norelativenumber signcolumn=auto
-
-" Set 'showbreak' symbol so that it aligns to the right of the line number
-" column (whose width varies depending on the number of lines in the buffer.)
-autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * let &showbreak=repeat(' ', float2nr(floor(log10(line('$'))))) . '⋯'
-
-" Run :PackerCompile whenever plugins config is saved
-" Uses `*` instead of `$HOME` in the file pattern so that it also works when
-" editing the original file in the dotfiles repository.
-autocmd vimrc BufWritePost */.config/nvim/lua/plugins.lua source <afile> | PackerCompile
-
-" Set filetype to 'text' if no filetype is detected
-autocmd vimrc BufWinEnter * if empty(&filetype) | setfiletype text | endif
-
-" Trim whitespace on save
-autocmd vimrc BufWritePre * TrimWhitespace
-
-" Format files on save (if enabled)
-autocmd vimrc BufWritePost * MaybeFormat
-
-" Lint files on save
-autocmd vimrc BufWritePost * Lint
-
-
-" Color scheme {{{1
-
-" Set status line custom highlights when colorscheme is changed
-autocmd vimrc ColorScheme * call statusline#set_highlights()
-colorscheme couleurs
-
-
-" Status line {{{1
-
-let &statusline = ''
-
-" filename, modified flag, preview flag, and filetype
-let &statusline .= '%1*%f%*%m%w %y '
-
-" git branch and change stats
-let &statusline .= '%{git#statusline()} '
-
-" spell checking
-let &statusline .= '%{&spell ? printf("[spell=%s]", &spelllang) : ""} '
-
-" linting
-function! LintStatus() abort
-  let num_errors = luaeval('#vim.diagnostic.get(0)')
-  return num_errors > 0 ? printf('[lint:%d]', num_errors) : ''
-endfunction
-let &statusline .= '%2*%{LintStatus()}%* '
-
-" formatting
-function! FormattingStatus() abort
-  if get(g:, 'is_formatting', 0)
-    return '[fmt]'
-  else
-    return ''
-  endif
-endfunction
-autocmd vimrc User FormatterPre let g:is_formatting = 1
-autocmd vimrc User FormatterPost let g:is_formatting = 0
-let &statusline .= '%2*%{FormattingStatus()}%* '
-
-" line/column numbers
-let &statusline .= '%= %p%% %4l/%L:%-2c'
-
-
 " Plugins configuration {{{1
 " See also:
 "   lua/plugins.lua
@@ -394,6 +256,9 @@ let g:markdown_folding = 1
 
 " rust ftplugin (from default $VIMRUNTIME)
 let g:rust_fold = 1
+
+" cfilter (from default $VIMRUNTIME)
+packadd! cfilter
 
 " vimwiki
 let s:wiki = {}
@@ -424,6 +289,10 @@ nnoremap <c-f> <cmd>Telescope git_files<cr>
 nnoremap <c-h> <cmd>Telescope help_tags<cr>
 nnoremap <leader>r <cmd>Telescope resume<cr>
 
+nnoremap ,pd <cmd>Telescope git_files cwd=~/dotfiles prompt_title=Dotfiles<cr>
+nnoremap ,pp <cmd>lua require("switch_repo").switch()<cr>
+nnoremap ,pv <cmd>lua require("switch_repo").switch({prompt_title = "Vim plugins", search_paths = vim.api.nvim_get_runtime_file("pack", true) })<cr>
+
 " vim-sandwich
 let g:textobj_sandwich_no_default_key_mappings = 1
 xmap is <Plug>(textobj-sandwich-auto-i)
@@ -434,7 +303,10 @@ let s:extra_recipes = [
 \ {'buns': ['«', '»'], 'input': ['g']},
 \ {'buns': ['(', ')'], 'input': ['p', 'b'], 'nesting': 1},
 \]
-autocmd vimrc BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
+augroup sandwich_recipes
+  autocmd!
+augroup END
+autocmd sandwich_recipes BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
 
 " vim-subversive
 nmap s <plug>(SubversiveSubstitute)
@@ -458,9 +330,6 @@ nnoremap <silent> t<c-f> :TestFile<cr>
 nnoremap <silent> t<c-s> :TestSuite<cr>
 nnoremap <silent> t<c-l> :TestLast<cr>
 nnoremap <silent> t<c-g> :TestVisit<cr>
-
-" dirvish
-autocmd vimrc FileType dirvish setlocal statusline=%y\ %f
 
 " miniyank
 map p <Plug>(miniyank-autoput)
@@ -488,10 +357,6 @@ let g:fugitive_legacy_commands = 0
 nnoremap <silent> <leader>g <cmd>Git<cr>
 nnoremap gh :GBrowse<cr>
 xnoremap gh :GBrowse<cr>
-
-" vim-mergetool
-nmap <leader>mt <plug>(MergetoolToggle)
-nnoremap <silent> <leader>mb :call mergetool#toggle_layout('mr,b')<CR>
 
 " vim-projectionist
 let g:projectionist_heuristics = {
@@ -526,7 +391,6 @@ nnoremap <silent> coh <cmd>ColorizerToggle<cr>
 nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
 
 " diagnostics
-lua require("config/diagnostic")
 let g:diagnostic_enabled = 1
 
 function! ToggleDiagnostic() abort
@@ -545,13 +409,8 @@ nnoremap [e <cmd>lua vim.diagnostic.goto_prev({ wrap = false, float = false })<c
 nnoremap ]e <cmd>lua vim.diagnostic.goto_next({ wrap = false, float = false })<cr>
 
 " formatting
-let g:enable_formatting = 1
+let g:enable_formatting = v:true
 nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:enable_formatting<cr>
-
-" filetype detection
-let g:do_filetype_lua = 1
-let g:did_load_filetypes = 0
-lua require("config/filetype")
 
 
 " Abbreviations {{{1

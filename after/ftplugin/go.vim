@@ -19,12 +19,21 @@ nnoremap <silent> <buffer> <leader>k <cmd>GoDoc<cr>
 function! GoDocFromLSPHover() abort
   wincmd w
   if search('https://pkg.go.dev/')
-    call browse#url()
+    lua require("lib/browse").url()
   end
   wincmd w
 endfunction
 nnoremap <silent> <buffer> <leader>D <cmd>call GoDocFromLSPHover()<cr>
 
+function! GoplsFormat() abort
+  if get(g:, 'enable_formatting', v:false)
+    lua vim.lsp.buf.format()
+  endif
+endfunction
+augroup goformat
+  autocmd! * <buffer>
+augroup END
+autocmd goformat BufWritePre <buffer> call GoplsFormat()
 
 iabbrev <buffer> testf! func TestF(t *testing.T) {<cr>// TODO<cr>}
 

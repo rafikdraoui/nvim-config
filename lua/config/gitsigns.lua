@@ -16,12 +16,8 @@ gitsigns.setup({
       vim.keymap.set(mode, l, r, opts)
     end
 
-    local next_hunk = function()
-      gitsigns.next_hunk({ wrap = false })
-    end
-    local prev_hunk = function()
-      gitsigns.prev_hunk({ wrap = false })
-    end
+    local next_hunk = function() gitsigns.next_hunk({ wrap = false }) end
+    local prev_hunk = function() gitsigns.prev_hunk({ wrap = false }) end
     map("gj", next_hunk, "next hunk")
     map("gk", prev_hunk, "previous hunk")
 

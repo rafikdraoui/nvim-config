@@ -11,10 +11,6 @@ end
 
 local config = {
   fish = { f("fish_indent") },
-  go = {
-    f("goimports"),
-    f("gofumpt"),
-  },
   json = { f("fixjson") },
   lua = { f("stylua", "--search-parent-directories", "-") },
   python = {
