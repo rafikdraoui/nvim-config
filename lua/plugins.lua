@@ -17,6 +17,11 @@ require("packer").startup({
 
     -- Editing
     { "bfredl/nvim-miniyank" },
+    {
+      "L3MON4D3/LuaSnip",
+      config = function() require("config.luasnip") end,
+      ft = "go",
+    },
     { "simnalamburt/vim-mundo", cmd = "MundoToggle" },
     { "tpope/vim-rsi" },
 
@@ -95,10 +100,17 @@ require("packer").startup({
       config = function() require("toggleterm").setup({ open_mapping = [[<c-\>]] }) end,
     },
     { "dstein64/vim-startuptime", cmd = "StartupTime" },
-    { "justinmk/vim-dirvish" },
+    {
+      "elihunter173/dirbuf.nvim",
+      config = function() require("dirbuf").setup({ write_cmd = "DirbufSync -confirm" }) end,
+    },
     { "lewis6991/impatient.nvim" },
     { "neovimhaskell/haskell-vim" },
     { "norcalli/nvim-colorizer.lua" },
+    {
+      "phelipetls/jsonpath.nvim",
+      requires = { "nvim-treesitter/nvim-treesitter" },
+    },
     { "rbong/vim-buffest" },
     { "romainl/vim-qf" },
     { "tpope/vim-characterize" },

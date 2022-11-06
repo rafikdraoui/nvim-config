@@ -34,33 +34,3 @@ augroup goformat
   autocmd! * <buffer>
 augroup END
 autocmd goformat BufWritePre <buffer> call GoplsFormat()
-
-iabbrev <buffer> testf! func TestF(t *testing.T) {<cr>// TODO<cr>}
-
-iabbrev <buffer> fmt! fmt.Printf("%+v\n", _)
-
-lua <<
-vim.b.testt = [[
-testCases := []struct {
-name string
-}{
-{
-name: "NAME",
-},
-}
-
-for _, tc := range testCases {
-t.Run(tc.name, func(t *testing.T) {
-// TODO
-})
-}]]
-.
-iabbrev <buffer> testt! <c-r>=b:testt<cr>
-
-lua <<
-vim.b.tcmp = [[
-if diff := cmp.Diff(want, got); diff != "" {
-t.Fatalf("mismatch (-want +got):\n%s", diff)
-}]]
-.
-iabbrev <buffer> tcmp! <c-r>=b:tcmp<cr>

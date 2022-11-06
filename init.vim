@@ -332,8 +332,10 @@ nnoremap <silent> t<c-l> :TestLast<cr>
 nnoremap <silent> t<c-g> :TestVisit<cr>
 
 " miniyank
-map p <Plug>(miniyank-autoput)
-map P <Plug>(miniyank-autoPut)
+nmap p <Plug>(miniyank-autoput)
+xmap p <Plug>(miniyank-autoput)
+nmap P <Plug>(miniyank-autoPut)
+xmap P <Plug>(miniyank-autoPut)
 map <c-p> <Plug>(miniyank-cycle)
 map <c-n> <Plug>(miniyank-cycleback)
 
