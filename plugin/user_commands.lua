@@ -88,7 +88,7 @@ command("TrimWhitespace", function()
 end, { desc = "Trim trailing whitespace" })
 
 command("MaybeFormat", function()
-  if vim.g.enable_formatting then
+  if vim.g.enable_formatting == 1 then
     local formatter_filetypes = vim.g.formatter_filetypes or {}
     if vim.tbl_contains(formatter_filetypes, vim.o.filetype) then
       vim.cmd.FormatWrite()
@@ -160,4 +160,8 @@ end, {
   nargs = "*",
   count = 0,
   complete = git_jump_complete,
+})
+
+command("W", function() vim.cmd.write({ mods = { noautocmd = true } }) end, {
+  desc = "Save buffer without running BufWrite/BufWritePost autocommands",
 })

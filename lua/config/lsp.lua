@@ -28,7 +28,18 @@ lspconfig.gopls.setup({
   },
 })
 
-lspconfig.pyright.setup({})
+lspconfig.pyright.setup({
+  handlers = {
+    -- Filter out `HINT` diagnostics: we only want severity of `INFO` or above
+    ["textDocument/publishDiagnostics"] = function(err, result, ...)
+      result.diagnostics = vim.tbl_filter(
+        function(d) return d.severity ~= vim.diagnostic.severity.HINT end,
+        result.diagnostics
+      )
+      vim.lsp.handlers["textDocument/publishDiagnostics"](err, result, ...)
+    end,
+  },
+})
 
 lspconfig.eslint.setup({})
 

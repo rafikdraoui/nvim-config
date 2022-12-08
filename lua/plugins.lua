@@ -3,17 +3,26 @@ require("packer").startup({
     { "wbthomason/packer.nvim", opt = true },
 
     -- Actions
-    { "machakann/vim-sandwich" },
+    {
+      "echasnovski/mini.surround",
+      config = function() require("config.mini").surround() end,
+    },
     { "svermeulen/vim-subversive" },
     { "tommcdo/vim-exchange" },
     { "tpope/vim-commentary" },
     { "tpope/vim-repeat" },
 
     -- Motions
-    { "rhysd/clever-f.vim" },
+    {
+      "echasnovski/mini.jump",
+      config = function() require("config.mini").jump() end,
+    },
 
     -- Text objects
-    { "wellle/targets.vim" },
+    {
+      "echasnovski/mini.ai",
+      config = function() require("config.mini").ai() end,
+    },
 
     -- Editing
     { "bfredl/nvim-miniyank" },
@@ -34,6 +43,10 @@ require("packer").startup({
       },
       config = function() require("config.telescope") end,
     },
+    {
+      "nvim-telescope/telescope-ui-select.nvim",
+      requires = { "nvim-telescope/telescope.nvim" },
+    },
     { "rafikdraoui/couleurs.vim" },
 
     -- Wrappers around git
@@ -51,12 +64,14 @@ require("packer").startup({
 
     -- Wrappers around other external programs
     {
-      "jose-elias-alvarez/null-ls.nvim",
-      requires = { "nvim-lua/plenary.nvim" },
-      config = function() require("config.null_ls") end,
-      opt = true,
+      "leoluz/nvim-dap-go",
+      requires = { "mfussenegger/nvim-dap" },
+      after = "nvim-dap",
+      config = function() require("dap-go").setup() end,
+      ft = "go",
     },
     { "ludovicchabant/vim-gutentags" },
+    { "mfussenegger/nvim-dap", config = function() require("config.dap") end },
     {
       "mfussenegger/nvim-lint",
       config = function() require("config.nvim_lint") end,
@@ -69,7 +84,6 @@ require("packer").startup({
       "neovim/nvim-lspconfig",
       config = function() require("config.lsp") end,
     },
-    { "sebdah/vim-delve", ft = "go" },
     { "tpope/vim-eunuch" },
     { "vim-test/vim-test" },
 
@@ -105,7 +119,6 @@ require("packer").startup({
       config = function() require("dirbuf").setup({ write_cmd = "DirbufSync -confirm" }) end,
     },
     { "lewis6991/impatient.nvim" },
-    { "neovimhaskell/haskell-vim" },
     { "norcalli/nvim-colorizer.lua" },
     {
       "phelipetls/jsonpath.nvim",

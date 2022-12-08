@@ -35,6 +35,19 @@ M.git = function()
   return branch .. stats
 end
 
+-- Display status of running debugging session
+M.debug = function()
+  local ok, dap = pcall(require, "dap")
+  if not ok then
+    return ""
+  end
+  local status = dap.status()
+  if status == "" then
+    return ""
+  end
+  return string.format("[debug: %s]", status)
+end
+
 -- Set custom highlights for status line, using `hl-User{N}` for better
 -- interaction with StatusLineNC.
 --

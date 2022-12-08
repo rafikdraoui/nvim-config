@@ -25,3 +25,6 @@ nnoremap <a-right> 3<c-w>>
 nnoremap <a-left> 3<c-w><
 nnoremap <a-=> <c-w>=
 nnoremap <a--> <c-w>_<c-w><bar>
+
+" 'detach' window to new tab
+nnoremap <c-w><c-d> <c-w>T

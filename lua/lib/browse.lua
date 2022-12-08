@@ -4,9 +4,9 @@ local M = {}
 -- one under the cursor.
 M.url = function(url)
   if url == nil or url == "" then
-    -- include `@` character in URLs (e.g. used in Go docs links in gopls)
+    -- include extra characters that are valid for URLs (`@-@` is used for `@`)
     local isf_save = vim.o.isfname
-    vim.opt.isfname:append("@-@")
+    vim.opt.isfname:append({ ":", "@-@", "?", "&" })
     url = vim.fn.expand("<cfile>")
     vim.o.isfname = isf_save
   end

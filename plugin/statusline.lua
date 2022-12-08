@@ -14,6 +14,9 @@ local parts = {
   -- formatting
   "%2*%{v:lua.require'lib.statusline'.formatting()}%*",
 
+  -- debugging
+  "%#QuickFixLine#%{v:lua.require'lib.statusline'.debug()}%*",
+
   -- line/column numbers
   "%= %p%% %4l/%L:%-2c",
 }

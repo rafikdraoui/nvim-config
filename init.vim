@@ -199,49 +199,6 @@ nnoremap É ?
 nnoremap è '
 
 
-" Text Objects {{{1
-
-" 'in line' (entire line without whitespace)
-xnoremap <silent> il :<c-u>normal! g_v^<cr>
-onoremap <silent> il :normal! g_v^<cr>
-
-" 'around line' (entire line without trailing newline)
-xnoremap <silent> al :<c-u>normal! $v0<cr>
-onoremap <silent> al :normal! $v0<cr>
-
-" 'in indentation' (indentation level without surrounding empty lines)
-xnoremap <silent> ii :<c-u>call textobj#indent#in()<cr>
-onoremap <silent> ii :call textobj#indent#in()<cr>
-
-" 'around indentation' (indentation level and any surrounding empty lines)
-xnoremap <silent> ai :<c-u>call textobj#indent#around()<cr>
-onoremap <silent> ai :call textobj#indent#around()<cr>
-
-" 'in number' (next number after cursor on current line)
-xnoremap <silent> in :<c-u>call textobj#number#in()<cr>
-onoremap <silent> in :call textobj#number#in()<cr>
-
-" 'around number' (next number on line and surrounding whitespace)
-xnoremap <silent> an :<c-u>call textobj#number#around()<cr>
-onoremap <silent> an :call textobj#number#around()<cr>
-
-" 'in «guillemets»'
-xnoremap <silent> ig :<c-u>call textobj#guillemets#in()<cr>
-onoremap <silent> ig :call textobj#guillemets#in()<cr>
-
-" 'around «guillemets»'
-xnoremap <silent> ag :<c-u>call textobj#guillemets#around()<cr>
-onoremap <silent> ag :call textobj#guillemets#around()<cr>
-
-" 'in entire buffer' (excludes leading and trailing empty lines)
-xnoremap <silent> ie :<c-u>call textobj#entire#in()<cr>
-onoremap <silent> ie :call textobj#entire#in()<cr>
-
-" 'around entire buffer' (includes leading and trailing empty lines)
-xnoremap <silent> ae :<c-u>call textobj#entire#around()<cr>
-onoremap <silent> ae :call textobj#entire#around()<cr>
-
-
 " Plugins configuration {{{1
 " See also:
 "   lua/plugins.lua
@@ -292,21 +249,6 @@ nnoremap <leader>r <cmd>Telescope resume<cr>
 nnoremap ,pd <cmd>Telescope git_files cwd=~/dotfiles prompt_title=Dotfiles<cr>
 nnoremap ,pp <cmd>lua require("switch_repo").switch()<cr>
 nnoremap ,pv <cmd>lua require("switch_repo").switch({prompt_title = "Vim plugins", search_paths = vim.api.nvim_get_runtime_file("pack", true) })<cr>
-
-" vim-sandwich
-let g:textobj_sandwich_no_default_key_mappings = 1
-xmap is <Plug>(textobj-sandwich-auto-i)
-omap is <Plug>(textobj-sandwich-auto-i)
-xmap as <Plug>(textobj-sandwich-auto-a)
-omap as <Plug>(textobj-sandwich-auto-a)
-let s:extra_recipes = [
-\ {'buns': ['«', '»'], 'input': ['g']},
-\ {'buns': ['(', ')'], 'input': ['p', 'b'], 'nesting': 1},
-\]
-augroup sandwich_recipes
-  autocmd!
-augroup END
-autocmd sandwich_recipes BufRead,BufNewFile * call sandwich#util#addlocal(s:extra_recipes)
 
 " vim-subversive
 nmap s <plug>(SubversiveSubstitute)
@@ -379,39 +321,12 @@ let g:delve_sign_priority = 50  " higher than gitsigns and diagnostic
 " vim-mundo
 nnoremap <silent> cou :MundoToggle<cr>
 
-" targets.vim
-let g:targets_nl = ["\<Space>n", "\<Space>l"]
-
-" clever-f
-let g:clever_f_fix_key_direction = 1
-nmap <leader>f <Plug>(clever-f-reset)
-
-" nvim-colorizer
-nnoremap <silent> coh <cmd>ColorizerToggle<cr>
-
 " nvim-treesitter
 nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
-
-" diagnostics
-let g:diagnostic_enabled = 1
-
-function! ToggleDiagnostic() abort
-  if get(g:, 'diagnostic_enabled', 0)
-    lua vim.diagnostic.disable()
-  else
-    lua vim.diagnostic.enable()
-  endif
-  let g:diagnostic_enabled = !g:diagnostic_enabled
-endfunction
-nnoremap cod <cmd>call ToggleDiagnostic()<cr>
-
-nnoremap <leader>c <cmd>lua vim.diagnostic.setloclist({open = true })<cr>
-nnoremap <leader>e <cmd>lua vim.diagnostic.open_float({scope = "line", header = false })<cr>
-nnoremap [e <cmd>lua vim.diagnostic.goto_prev({ wrap = false, float = false })<cr>
-nnoremap ]e <cmd>lua vim.diagnostic.goto_next({ wrap = false, float = false })<cr>
+nnoremap <silent> coh <cmd>TSBufToggle highlight<cr>
 
 " formatting
-let g:enable_formatting = v:true
+let g:enable_formatting = 1
 nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:enable_formatting<cr>
 
 
@@ -420,3 +335,4 @@ nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:ena
 iabbrev Quebec Québec
 iabbrev Montreal Montréal
 cabbrev Q! q!
+cabbrev CF Cfilter
