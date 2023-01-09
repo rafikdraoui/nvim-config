@@ -17,7 +17,7 @@ local set_mappings = function()
   map("grA", function() lsp.code_action({ apply = true }) end, "code action (auto-apply)")
   map("grx", function() lsp.format({ async = true }) end, "format (async)")
   map("grl", vim.lsp.codelens.run, "run code lens")
-  map("grL", vim.lsp.codelens.run, "refresh code lenses")
+  map("grL", vim.lsp.codelens.refresh, "refresh code lenses")
 
   vim.keymap.set(
     "i",

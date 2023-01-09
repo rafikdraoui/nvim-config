@@ -28,7 +28,13 @@ M.ai = function()
   })
 end
 
-M.jump = function() require("mini.jump").setup() end
+M.jump = function()
+  require("mini.jump").setup({
+    mappings = {
+      repeat_jump = "",
+    },
+  })
+end
 
 M.surround = function()
   require("mini.surround").setup({

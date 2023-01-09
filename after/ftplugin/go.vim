@@ -30,13 +30,3 @@ function! GoDocFromLSPHover() abort
 
 endfunction
 nnoremap <silent> <buffer> <leader>D <cmd>call GoDocFromLSPHover()<cr>
-
-function! GoplsFormat() abort
-  if get(g:, 'enable_formatting', 0)
-    lua vim.lsp.buf.format()
-  endif
-endfunction
-augroup goformat
-  autocmd! * <buffer>
-augroup END
-autocmd goformat BufWritePre <buffer> call GoplsFormat()

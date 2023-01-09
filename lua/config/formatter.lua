@@ -18,6 +18,7 @@ local config = {
     f("black", "-"),
   },
   sh = { f("shfmt", "-i", "2") },
+  toml = { f("taplo", "format", "-") },
 }
 
 local prettierd = function()

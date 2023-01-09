@@ -1,5 +1,5 @@
 " Insert a pdb `breakpoint` call on the line above
-nnoremap <buffer> <leader>d Obreakpoint()<esc>
+nnoremap <buffer> <leader>db Obreakpoint()<esc>
 
 nnoremap <silent> <buffer> <leader>k <cmd>PyDoc<cr>
 

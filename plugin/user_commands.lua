@@ -88,11 +88,18 @@ command("TrimWhitespace", function()
 end, { desc = "Trim trailing whitespace" })
 
 command("MaybeFormat", function()
-  if vim.g.enable_formatting == 1 then
-    local formatter_filetypes = vim.g.formatter_filetypes or {}
-    if vim.tbl_contains(formatter_filetypes, vim.o.filetype) then
-      vim.cmd.FormatWrite()
-    end
+  if vim.g.enable_formatting ~= 1 then
+    return
+  end
+
+  local lsp_format_filetypes = vim.g.lsp_format_filetypes or {}
+  local formatter_filetypes = vim.g.formatter_filetypes or {}
+  local ft = vim.o.filetype
+  if vim.tbl_contains(lsp_format_filetypes, ft) then
+    vim.lsp.buf.format()
+    vim.cmd.update()
+  elseif vim.tbl_contains(formatter_filetypes, ft) then
+    vim.cmd.FormatWrite()
   end
 end, { desc = "Format buffer if enabled" })
 

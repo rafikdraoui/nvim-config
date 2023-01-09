@@ -46,3 +46,15 @@ lspconfig.eslint.setup({})
 lspconfig.tailwindcss.setup({
   root_dir = lspconfig.util.root_pattern("tailwind.config.js"),
 })
+
+require("rust-tools").setup({
+  server = {
+    settings = {
+      ["rust-analyzer"] = {
+        checkOnSave = {
+          command = "clippy",
+        },
+      },
+    },
+  },
+})

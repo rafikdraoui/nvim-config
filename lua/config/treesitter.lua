@@ -21,6 +21,10 @@ require("nvim-treesitter.configs").setup({
       },
     },
   },
+  query_linter = {
+    enable = true,
+    lint_events = { "BufWritePre" },
+  },
   refactor = {
     smart_rename = {
       enable = true,

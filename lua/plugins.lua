@@ -84,6 +84,7 @@ require("packer").startup({
       "neovim/nvim-lspconfig",
       config = function() require("config.lsp") end,
     },
+    { "simrat39/rust-tools.nvim" },
     { "tpope/vim-eunuch" },
     { "vim-test/vim-test" },
 
@@ -105,6 +106,7 @@ require("packer").startup({
       "nvim-treesitter/playground",
       requires = { "nvim-treesitter/nvim-treesitter" },
       cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
+      ft = "query",
     },
 
     -- Misc

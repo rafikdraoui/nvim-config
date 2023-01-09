@@ -211,9 +211,6 @@ let g:loaded_netrwPlugin = 1
 " markdown ftplugin (from default $VIMRUNTIME)
 let g:markdown_folding = 1
 
-" rust ftplugin (from default $VIMRUNTIME)
-let g:rust_fold = 1
-
 " cfilter (from default $VIMRUNTIME)
 packadd! cfilter
 
@@ -327,6 +324,7 @@ nnoremap <silent> coh <cmd>TSBufToggle highlight<cr>
 
 " formatting
 let g:enable_formatting = 1
+let g:lsp_format_filetypes = ['go', 'rust']
 nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:enable_formatting<cr>
 
 
