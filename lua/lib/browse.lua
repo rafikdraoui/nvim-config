@@ -80,4 +80,20 @@ M.python_docs = function(doc)
   browse_docs(patterns, doc)
 end
 
+-- Call `rustup doc <topic>`.
+M.rust_docs = function(topic)
+  local args = vim.split(topic, " ", { trimempty = true })
+  local cmd = vim.list_extend({ "rustup", "doc" }, args)
+  vim.fn.jobstart(cmd, {
+    on_exit = function(_, exit_code)
+      if exit_code ~= 0 then
+        vim.notify(
+          string.format("rustup doc: could not open topic %q", topic),
+          vim.log.levels.ERROR
+        )
+      end
+    end,
+  })
+end
+
 return M

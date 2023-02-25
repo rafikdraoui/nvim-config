@@ -9,17 +9,15 @@ gitsigns.setup({
     changedelete = { text = "~", show_count = true },
   },
 
-  on_attach = function()
+  on_attach = function(bufnr)
     local function map(l, r, description, mode)
       mode = mode or "n"
-      local opts = { buffer = true, desc = description }
+      local opts = { buffer = bufnr, desc = description }
       vim.keymap.set(mode, l, r, opts)
     end
 
-    local next_hunk = function() gitsigns.next_hunk({ wrap = false }) end
-    local prev_hunk = function() gitsigns.prev_hunk({ wrap = false }) end
-    map("gj", next_hunk, "next hunk")
-    map("gk", prev_hunk, "previous hunk")
+    map("gj", function() gitsigns.next_hunk({ wrap = false }) end, "next hunk")
+    map("gk", function() gitsigns.prev_hunk({ wrap = false }) end, "previous hunk")
 
     map("<leader>hp", gitsigns.preview_hunk, "preview hunk")
 

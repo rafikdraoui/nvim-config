@@ -29,11 +29,8 @@ M.ai = function()
 end
 
 M.jump = function()
-  require("mini.jump").setup({
-    mappings = {
-      repeat_jump = "",
-    },
-  })
+  vim.g.minijump_silence = true
+  require("mini.jump").setup()
 end
 
 M.surround = function()

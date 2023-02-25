@@ -49,6 +49,10 @@ lspconfig.tailwindcss.setup({
 
 require("rust-tools").setup({
   server = {
+    on_attach = function(client)
+      -- disable semantic tokens highlighting
+      client.server_capabilities.semanticTokensProvider = nil
+    end,
     settings = {
       ["rust-analyzer"] = {
         checkOnSave = {

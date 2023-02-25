@@ -105,7 +105,7 @@ nnoremap <leader>/ :%s/
 xnoremap <leader>/ :s/
 
 " Visually select last changed or yanked text
-nnoremap gl `[v`]
+nnoremap gV `[v`]
 
 " Consider already entered text as prefix when navigating command-line history
 " The `wildmenumode()` guard is needed to preserve ctrl-n/ctrl-p behaviour
@@ -150,10 +150,10 @@ nnoremap <silent> gx <cmd>Browse<cr>
 
 " Toggle spellcheck and spelllang
 nnoremap <silent> cos :set spell! <cr>
-nnoremap <silent> cof :execute 'setlocal spelllang=' . (&spelllang ==# 'en' ? 'fr' : 'en') <cr>
+nnoremap <silent> col :execute 'setlocal spelllang=' . (&spelllang ==# 'en' ? 'fr' : 'en') <cr>
 
 " Toggle cursorline highlighting
-nnoremap <silent> col <cmd>execute 'set cursorlineopt=' . (&culopt ==# 'number' ? 'both' : 'number')<cr>
+nnoremap <silent> coc <cmd>execute 'set cursorlineopt=' . (&culopt ==# 'number' ? 'both' : 'number')<cr>
 
 " Toggle wrap
 nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
@@ -236,16 +236,16 @@ let g:vimwiki_key_mappings = {
 \ 'text_objs': 0,
 \}
 nnoremap <silent> <leader>ww :edit $NOTES_DIR/index.md<cr>
-nnoremap <leader>n <cmd>Telescope find_files cwd=$NOTES_DIR<cr>
+nnoremap <leader>n <cmd>FzfLua files cwd=$NOTES_DIR prompt=Notes>\ <cr>
 
-" telescope
-nnoremap <c-f> <cmd>Telescope git_files<cr>
-nnoremap <c-h> <cmd>Telescope help_tags<cr>
-nnoremap <leader>r <cmd>Telescope resume<cr>
+" fzf-lua
+nnoremap <c-f> <cmd>FzfLua git_files<cr>
+nnoremap <c-h> <cmd>FzfLua help_tags<cr>
+nnoremap <leader>r <cmd>FzfLua resume<cr>
 
-nnoremap ,pd <cmd>Telescope git_files cwd=~/dotfiles prompt_title=Dotfiles<cr>
-nnoremap ,pp <cmd>lua require("switch_repo").switch()<cr>
-nnoremap ,pv <cmd>lua require("switch_repo").switch({prompt_title = "Vim plugins", search_paths = vim.api.nvim_get_runtime_file("pack", true) })<cr>
+nnoremap ,pd <cmd>FzfLua git_files cwd=~/dotfiles prompt=Dotfiles>\ <cr>
+nnoremap ,pp <cmd>lua require("switch_repo").switch({ search_paths = vim.g.switch_repo_default_search_paths })<cr>
+nnoremap ,pv <cmd>lua require("switch_repo").switch({prompt = "Vim plugins", search_paths = vim.api.nvim_get_runtime_file("pack", true) })<cr>
 
 " vim-subversive
 nmap s <plug>(SubversiveSubstitute)

@@ -1,123 +1,148 @@
-local action_state = require("telescope.actions.state")
-local actions = require("telescope.actions")
-local conf = require("telescope.config").values
-local finders = require("telescope.finders")
-local pickers = require("telescope.pickers")
+local fzf = require("fzf-lua")
 
 local M = {}
+local h = {}
 
-local BASE_DIRECTORY = vim.env.HOME
-local DEFAULT_SEARCH_PATHS_CONFIG = "switch_repo_search_paths"
+local state = {
+  -- Indicates whether the repository paths should be included in the
+  -- fuzzy-finder display or not. It can be toggled on-the-fly when the
+  -- fuzzy-finder is active.
+  display_path = false,
+}
 
-local PATH_DISPLAY = { none = "none", shortened = "shortened", full = "full" }
-local current_path_display = PATH_DISPLAY.none
+-- `switch` provides a fzf interface to select a git repository to work on.
+--
+-- The first screen lists candidate repositories. Pressing `<tab>` toggles the
+-- display of the full path of the repository (which can be fuzzy-searched on).
+-- After selecting one, the `git_files` fzf-lua command is invoked on it.
+--
+-- It takes an optional `opts` table with keys `prompt`, `root`, and
+-- `search_paths`, all of which are optional.
+--
+-- `search_paths` should be a list of paths to directories in which to search
+-- for repositories. If a path isn't absolute, then it is considered to be
+-- relative to `root`. If the list is empty, then all directories of `root` are
+-- searched. If `root` is not provided, then it defaults to `$HOME`.
+--
+-- Examples:
+--    Search for repositories in ~/:
+--      switch()
+--
+--    Search for repositories in `~/dotfiles` and `~/projects`:
+--      switch({ search_paths = { "dotfiles", "projects" } })
+--
+--    Search for repositories in `~/code`:
+--      switch({ root = vim.env.HOME .. "/code" })
+--
+--    Search for repositories in `~/code/dotfiles` and `~/code/projects`:
+--      switch({
+--        root = vim.env.HOME .. "/code",
+--        search_paths = { "dotfiles", "projects" },
+--      })
+--
+--    Search for repositories in `~/.local/share/nvim/site/pack` and
+--    `/usr/local/share` (`root` is ignored when a search path is absolute):
+--      switch({
+--        root = vim.fn.stdpath("data"),
+--        search_paths = { "site/pack", "/usr/local/share" },
+--      })
+M.switch = function(opts)
+  opts = opts or {}
+  local prompt = opts.prompt or "Repos"
+  local root = opts.root or vim.env.HOME
+  local search_paths = opts.search_paths or {}
 
--- `cycle_path_display` sets the current path display to the next available
--- option.
-local cycle_path_display = function()
-  local cycle = {
-    PATH_DISPLAY.none,
-    PATH_DISPLAY.shortened,
-    PATH_DISPLAY.full,
-  }
-  vim.tbl_add_reverse_lookup(cycle)
+  local cmd = h.make_command(root, search_paths)
+  fzf.fzf_exec(cmd, {
+    actions = {
+      -- select repo and fuzzy-search its files
+      default = function(selected) h.act(selected[1], root) end,
 
-  local i = cycle[current_path_display] + 1
-  if i > #cycle then
-    i = 1
-  end
-  current_path_display = cycle[i]
+      -- toggle display of full paths
+      tab = {
+        function() state.display_path = not state.display_path end,
+        function() fzf.resume({ fzf_opts = h.fzf_opts(state.display_path) }) end,
+      },
+    },
+    fn_transform = h.display,
+    fzf_opts = h.fzf_opts(state.display_path),
+    prompt = prompt .. "> ",
+  })
 end
 
+-- Helpers --------------------------------------------------------------------
+
 -- `make_command` returns the `fd` command used to list all git repositories
--- under the given `search_paths`. If `search_paths` is empty or nil, then it
--- lists all git repositories under `BASE_DIRECTORY`.
-local make_command = function(search_paths)
-  local search_pattern = [[^\.git$]]
+-- under the given `search_paths` in `root`. If `search_paths` is empty , then
+-- it lists all git repositories under `root`.
+h.make_command = function(root, search_paths)
   local cmd = {
     "fd",
-    "--hidden",
-    { "--type", "directory" },
-    { "--base-directory", BASE_DIRECTORY },
-    { "--exec", "echo", "{//}", ";" },
+    ".git", -- file name pattern to search for
+    "--glob", -- match pattern on the exact name rather than regex
+    "--hidden", -- ensure that hidden files are included in search
+    { "--base-directory", root }, -- use `root` as cwd for search
   }
+
+  -- restrict search to the following paths
   for _, p in ipairs(search_paths) do
     table.insert(cmd, { "--search-path", p })
   end
-  table.insert(cmd, search_pattern)
-  return vim.tbl_flatten(cmd)
+
+  -- displays the parent directories of matches as the search results
+  -- e.g. `/home/user/hello/.git` -> `/home/user/hello`
+  table.insert(cmd, { "--exec", "echo", "{//}" })
+
+  return table.concat(vim.tbl_flatten(cmd), " ")
 end
 
--- `make_entry` is the Telescope entry maker used by the switch_repo picker. It
--- uses the base name of the path of the git repository (i.e. the name of the
--- directory that contains the `.git` directory) as the display value,
--- optionally adding the shortened or full path depending on the value of
--- `current_path_display`.
-local make_entry = function(entry)
-  local path_display = ""
-  if current_path_display == PATH_DISPLAY.shortened then
-    path_display = string.format("(%s)", vim.fn.pathshorten(entry))
-  elseif current_path_display == PATH_DISPLAY.full then
-    path_display = string.format("(%s)", entry)
+-- `act` changes the local current working directory to the repository
+-- corresponding to the selection, and triggers the built-in `git_files`
+-- fzf-lua action for it.
+--
+-- `selection` will always be the full "<basename> <path>" entry, regardless of
+-- the value of `state.display_path`.
+h.act = function(selection, root)
+  local basename, path = unpack(vim.split(selection, " "))
+  if not path then
+    vim.notify("Invalid selection: " .. selection, vim.log.levels.ERROR)
+    return
   end
 
-  local basename = vim.fs.basename(entry)
-  local display = string.format("%s %s", basename, path_display)
+  if not vim.startswith(path, root) then
+    path = string.format("%s/%s", root, path)
+  end
+  vim.cmd.lcd(path)
+  fzf.git_files({ cwd = path, prompt = basename .. "> " })
+end
 
+-- `fzf_opts` returns the the appropriate options for fzf depending on whether
+-- display_path is true or false.
+--
+-- If `display_path` is true, then we disable the `with_nth` option, so that it
+-- shows the whole entries with their paths. Otherwise, we set it to 1, to
+-- indicate that we only want to use the first (space-delimited) "field" of the
+-- entries (i.e. the base names of the repositories).
+h.fzf_opts = function(display_path)
+  local with_nth = false
+  if not display_path then
+    with_nth = 1
+  end
   return {
-    value = entry,
-    display = display,
-    ordinal = display,
-    basename = basename,
+    ["--with-nth"] = with_nth,
   }
 end
 
--- `on_select` is run when an entry is selected. It closes the prompt, changes
--- the local current working directory to the path of the selected entry, and
--- runs the builtin `git_files` picker in that directory.
-local on_select = function(prompt_bufnr)
-  actions.close(prompt_bufnr)
-  local selection = action_state.get_selected_entry()
-  if selection == nil then
-    return
-  end
-  local dir = selection.value
-  if not vim.startswith(dir, BASE_DIRECTORY) then
-    dir = string.format("%s/%s", BASE_DIRECTORY, dir)
-  end
-  vim.cmd.lcd(dir)
-  require("telescope.builtin").git_files({ prompt_title = selection.basename })
-end
-
--- `switch` is a Telescope picker used to select a git repository to work on.
--- By default, it looks for repositories in the list of folders given by
--- `opts.search_paths`, falling back to `vim.g.switch_repo_search_paths`. If
--- neither of those are given, then the picker looks for every git repository
--- under $HOME.
-M.switch = function(opts)
-  opts = opts or {}
-  opts.entry_maker = make_entry
-  local search_paths = opts.search_paths or vim.g[DEFAULT_SEARCH_PATHS_CONFIG] or {}
-  local cmd = make_command(search_paths)
-
-  pickers
-    .new(opts, {
-      prompt_title = "Repos",
-      finder = finders.new_oneshot_job(cmd, opts),
-      sorter = conf.file_sorter(opts),
-      attach_mappings = function(prompt_bufnr, map)
-        actions.select_default:replace(function() on_select(prompt_bufnr) end)
-
-        map("i", "<tab>", function()
-          cycle_path_display()
-          local picker = action_state.get_current_picker(prompt_bufnr)
-          picker:refresh(finders.new_oneshot_job(cmd, opts))
-        end)
-
-        return true
-      end,
-    })
-    :find()
+-- `display` takes the file path of a git repository, and renders it as
+-- "<basename> <path>", where the base name is emphasized and the path is
+-- muted.
+h.display = function(path)
+  local basename = vim.fs.basename(path)
+  return string.format(
+    "%s %s",
+    fzf.utils.ansi_codes.bold(basename),
+    fzf.utils.ansi_codes.grey(path)
+  )
 end
 
 return M

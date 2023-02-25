@@ -29,25 +29,10 @@ require("packer").startup({
     {
       "L3MON4D3/LuaSnip",
       config = function() require("config.luasnip") end,
-      ft = "go",
+      ft = { "go", "rust" },
     },
     { "simnalamburt/vim-mundo", cmd = "MundoToggle" },
     { "tpope/vim-rsi" },
-
-    -- UI
-    {
-      "nvim-telescope/telescope.nvim",
-      requires = {
-        "nvim-lua/plenary.nvim",
-        { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-      },
-      config = function() require("config.telescope") end,
-    },
-    {
-      "nvim-telescope/telescope-ui-select.nvim",
-      requires = { "nvim-telescope/telescope.nvim" },
-    },
-    { "rafikdraoui/couleurs.vim" },
 
     -- Wrappers around git
     { "junegunn/gv.vim", cmd = "GV" },
@@ -63,6 +48,10 @@ require("packer").startup({
     { "whiteinge/diffconflicts" },
 
     -- Wrappers around other external programs
+    {
+      "ibhagwan/fzf-lua",
+      config = function() require("config.fzf") end,
+    },
     {
       "leoluz/nvim-dap-go",
       requires = { "mfussenegger/nvim-dap" },
@@ -126,6 +115,7 @@ require("packer").startup({
       "phelipetls/jsonpath.nvim",
       requires = { "nvim-treesitter/nvim-treesitter" },
     },
+    { "rafikdraoui/couleurs.vim" },
     { "rbong/vim-buffest" },
     { "romainl/vim-qf" },
     { "tpope/vim-characterize" },

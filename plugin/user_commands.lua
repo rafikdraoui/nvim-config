@@ -64,6 +64,12 @@ command(
   { desc = "Browse Python documentation", nargs = "*" }
 )
 
+command(
+  "RustDoc",
+  function(opts) require("lib/browse").rust_docs(opts.args) end,
+  { desc = "Browse Rust documentation", nargs = "*" }
+)
+
 command("Lint", function() require("lint").try_lint() end, { desc = "Lint file" })
 
 command("TrimWhitespace", function()
