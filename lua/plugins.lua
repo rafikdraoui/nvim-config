@@ -27,9 +27,8 @@ require("packer").startup({
     -- Editing
     { "bfredl/nvim-miniyank" },
     {
-      "L3MON4D3/LuaSnip",
-      config = function() require("config.luasnip") end,
-      ft = { "go", "rust" },
+      "dcampos/nvim-snippy",
+      config = function() require("config.snippy") end,
     },
     { "simnalamburt/vim-mundo", cmd = "MundoToggle" },
     { "tpope/vim-rsi" },
@@ -109,7 +108,6 @@ require("packer").startup({
       "elihunter173/dirbuf.nvim",
       config = function() require("dirbuf").setup({ write_cmd = "DirbufSync -confirm" }) end,
     },
-    { "lewis6991/impatient.nvim" },
     { "norcalli/nvim-colorizer.lua" },
     {
       "phelipetls/jsonpath.nvim",

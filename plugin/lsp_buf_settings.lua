@@ -21,7 +21,7 @@ local set_mappings = function()
 
   vim.keymap.set(
     "i",
-    "<c-l>", -- <c-k> is used for snippet trigger
+    "<c-k>",
     lsp.signature_help,
     { buffer = true, desc = "LSP: signature" }
   )

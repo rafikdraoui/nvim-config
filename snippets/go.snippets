@@ -1,0 +1,40 @@
+# vim:tabstop=4 shiftwidth=4
+
+snippet pp "Pretty-print"
+	fmt.Printf("${1:var}: %+v\n", ${1})
+
+snippet tf "Test function"
+	func Test${1:Name}(t *testing.T) {
+		${2:t.Fatal("TODO")}
+	}
+
+snippet tt "Test table"
+	tests := []struct {
+		name string
+	}{
+		{
+			name: "NAME",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Fatal("TODO")
+		})
+	}
+
+snippet cmp "go-cmp diff assertion"
+	if diff := cmp.Diff(${1:want}, ${2:got}); diff != "" {
+		t.Fatalf("mismatch (-want +got):\n%s", diff)
+	}
+
+snippet hh "HTTP handler"
+	func ${1}(w http.ResponseWriter, r *http.Request) {
+		${2}
+	}
+
+snippet jt "JSON struct tag"
+	\`json:"${1:name}"\`
+
+snippet werr "Return wrapped error"
+	return ${2}fmt.Errorf("${1}: %w", err)

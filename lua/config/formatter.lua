@@ -32,6 +32,7 @@ local prettierd = function()
 end
 local prettierd_ft = {
   "css",
+  "graphql",
   "html",
   "javascript",
   "javascriptreact",

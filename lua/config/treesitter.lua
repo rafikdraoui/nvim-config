@@ -26,13 +26,9 @@ require("nvim-treesitter.configs").setup({
     lint_events = { "BufWritePre" },
   },
   refactor = {
-    smart_rename = {
-      enable = true,
-    },
     navigation = {
       enable = true,
       keymaps = {
-        goto_definition_lsp_fallback = "gd",
         goto_next_usage = "<a-n>",
         goto_previous_usage = "<a-N>",
       },

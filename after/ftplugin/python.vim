@@ -4,7 +4,7 @@ nnoremap <buffer> <leader>db Obreakpoint()<esc>
 nnoremap <silent> <buffer> <leader>k <cmd>PyDoc<cr>
 
 setlocal foldmethod=expr
-setlocal foldexpr=nvim_treesitter#foldexpr()
+setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
 
 " Toggle 'treesitter' and 'indent' folding
 function s:toggle_foldmethod() abort

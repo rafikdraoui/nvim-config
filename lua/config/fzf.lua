@@ -19,18 +19,6 @@ fzf.setup({
     border = "single",
     preview = { hidden = "hidden" }, -- start with preview window hidden
   },
-
-  -- Override default action to ensure that buffer names stay relative to cwd
-  git = {
-    files = {
-      actions = {
-        ["default"] = function(...)
-          fzf.actions.file_edit_or_qf(...)
-          vim.cmd.lcd(vim.loop.cwd())
-        end,
-      },
-    },
-  },
 })
 
 -- Use fzf-lua as provider for `vim.ui.select`

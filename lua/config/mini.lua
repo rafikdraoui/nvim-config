@@ -29,8 +29,9 @@ M.ai = function()
 end
 
 M.jump = function()
-  vim.g.minijump_silence = true
-  require("mini.jump").setup()
+  require("mini.jump").setup({
+    silent = true, -- suppress printing of warning messages
+  })
 end
 
 M.surround = function()
