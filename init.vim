@@ -43,8 +43,11 @@ set updatetime=1000
 set wildcharm=<c-z>
 set wildmode=longest:full,full
 
-" Speed up loading by explicitly setting python provider
-let g:python3_host_prog = expand('~/.pyenv/versions/neovim/bin/python')
+" Use dedicated directory for spelling word list files. It needs to be the
+" "first directory in 'runtimepath' that is writable", according to the
+" documentation of 'spellfile'.
+let spellfiles_rtp = stdpath('data') .. '/spellfiles'
+let &runtimepath=printf('%s,%s', spellfiles_rtp , &runtimepath)
 
 " Allow syntax highlighting of embedded lua in vimscript files
 " c.f. $VIMRUNTIME/syntax/vim.vim
@@ -323,9 +326,11 @@ nnoremap <silent> coh <cmd>TSBufToggle highlight<cr>
 
 " formatting
 let g:enable_formatting = 1
-let g:lsp_format_filetypes = ['go', 'rust']
+let g:lsp_format_filetypes = ['go', 'nix', 'rust']
 nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:enable_formatting<cr>
 
+" Define `P()` as a global Lua function to pretty-print values
+lua _G.P = vim.print
 
 " Abbreviations {{{1
 

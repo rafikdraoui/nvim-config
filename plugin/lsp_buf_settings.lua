@@ -30,8 +30,12 @@ end
 local g = vim.api.nvim_create_augroup("lsp_buf_settings", { clear = true })
 vim.api.nvim_create_autocmd({ "LspAttach" }, {
   group = g,
-  callback = function()
+  callback = function(args)
     vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
     set_mappings()
+
+    -- disable semantic tokens highlighting
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    client.server_capabilities.semanticTokensProvider = nil
   end,
 })

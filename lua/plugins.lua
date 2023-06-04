@@ -93,8 +93,7 @@ require("packer").startup({
     {
       "nvim-treesitter/playground",
       requires = { "nvim-treesitter/nvim-treesitter" },
-      cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
-      ft = "query",
+      cmd = { "TSPlaygroundToggle" },
     },
 
     -- Misc
@@ -128,5 +127,6 @@ require("packer").startup({
       open_cmd = "enew",
       keybindings = { quit = "gq" },
     },
+    log = { level = "error" },
   },
 })

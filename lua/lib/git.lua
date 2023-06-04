@@ -29,7 +29,7 @@ M.jump = function(args)
   if args == "staged" then
     args = "diff --cached"
   end
-  local system_cmd = string.format("system('git jump %s')", args)
+  local system_cmd = string.format("system('git jump --stdout %s')", args)
   vim.cmd.cexpr(system_cmd)
 end
 

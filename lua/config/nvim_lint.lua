@@ -6,6 +6,12 @@ local ruff = require("lint.linters.ruff")
 ruff.ignore_exitcode = false
 table.insert(ruff.args, 1, "--exit-zero")
 
+local selene = require("lint.linters.selene")
+selene.args = vim.list_extend(
+  { "--config", vim.env.HOME .. "/.config/selene/selene.toml" },
+  selene.args
+)
+
 require("lint").linters_by_ft = {
   fish = { "fish" },
   go = { "golangcilint" },
