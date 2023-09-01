@@ -15,7 +15,7 @@ function s:toggle_foldmethod() abort
   endif
   setlocal foldmethod?
 endfunction
-nnoremap <silent> cof :call <sid>toggle_foldmethod() <cr>
+command! -buffer ToggleFoldMethod call <sid>toggle_foldmethod()
 
 " Filter range through `isort`
 command! -buffer -range=% Isort :<line1>,<line2>!isort -

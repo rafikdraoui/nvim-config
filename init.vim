@@ -166,6 +166,9 @@ nnoremap <silent> con :set relativenumber!<cr>
 " Toggle dark/light background
 nnoremap <silent> cob :execute 'set bg=' . (&bg ==# 'dark' ? 'light' : 'dark') <cr>
 
+" Toggle colorscheme
+nnoremap <silent> cog :execute 'colo ' . (g:colors_name ==# 'couleurs' ? 'gris' : 'couleurs') <cr>
+
 " Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
 tnoremap <expr> <esc> "<c-\><c-n>"
 tnoremap <a-[> <esc>
@@ -324,10 +327,9 @@ nnoremap <silent> cou :MundoToggle<cr>
 nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
 nnoremap <silent> coh <cmd>TSBufToggle highlight<cr>
 
-" formatting
-let g:enable_formatting = 1
-let g:lsp_format_filetypes = ['go', 'nix', 'rust']
-nnoremap cox <cmd>let g:enable_formatting = !g:enable_formatting <bar> let g:enable_formatting<cr>
+" lsp-format
+nnoremap cof <cmd>FormatToggle <bar>
+  \ lua print(string.format('formatting: %s', not require('lsp-format').disabled)) <cr>
 
 " Define `P()` as a global Lua function to pretty-print values
 lua _G.P = vim.print

@@ -71,18 +71,6 @@ autocmd({ "BufWritePre" }, {
   command = "TrimWhitespace",
 })
 
-autocmd({ "BufWritePost" }, {
-  desc = "Format files on save (if enabled)",
-  group = g,
-  command = "MaybeFormat",
-})
-
-autocmd({ "BufWritePost" }, {
-  desc = "Lint files on save",
-  group = g,
-  command = "Lint",
-})
-
 autocmd({ "ColorScheme" }, {
   desc = "Set status line custom highlights when colorscheme is changed",
   group = g,

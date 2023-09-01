@@ -61,14 +61,6 @@ require("packer").startup({
     { "ludovicchabant/vim-gutentags" },
     { "mfussenegger/nvim-dap", config = function() require("config.dap") end },
     {
-      "mfussenegger/nvim-lint",
-      config = function() require("config.nvim_lint") end,
-    },
-    {
-      "mhartington/formatter.nvim",
-      config = function() require("config.formatter") end,
-    },
-    {
       "neovim/nvim-lspconfig",
       config = function() require("config.lsp") end,
     },
@@ -106,6 +98,10 @@ require("packer").startup({
     {
       "elihunter173/dirbuf.nvim",
       config = function() require("dirbuf").setup({ write_cmd = "DirbufSync -confirm" }) end,
+    },
+    {
+      "lukas-reineke/lsp-format.nvim",
+      config = function() require("lsp-format").setup() end,
     },
     { "norcalli/nvim-colorizer.lua" },
     {

@@ -10,15 +10,6 @@ M.lint = function()
   end
 end
 
--- Display whether the buffer is currently being formatted
-M.formatting = function()
-  if vim.g.is_formatting then
-    return "[fmt]"
-  else
-    return ""
-  end
-end
-
 -- Display git branch and changes.
 -- This relies on the `gitsigns` plugin.
 M.git = function()
