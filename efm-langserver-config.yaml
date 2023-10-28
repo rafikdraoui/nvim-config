@@ -82,10 +82,6 @@ tools:
     format-command: "stylua --search-parent-directories -"
     format-stdin: true
 
-  taplo: &taplo
-    format-command: "taplo format -"
-    format-stdin: true
-
 languages:
   css:
     - <<: *prettier
@@ -116,8 +112,6 @@ languages:
   sh:
     - <<: *shellcheck
     - <<: *shfmt
-  toml:
-    - <<: *taplo
   vim:
     - <<: *vint
   yaml:

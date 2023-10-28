@@ -24,11 +24,6 @@ end, {
   complete = "command",
 })
 
-command("PackSync", function()
-  require("plugins")
-  vim.cmd.PackerSync()
-end, { desc = "Load packer configuration and run PackerSync" })
-
 command("ToSystemClipboard", function()
   local last_yank = vim.fn.getreginfo("@")
   vim.fn.setreg("+", last_yank)

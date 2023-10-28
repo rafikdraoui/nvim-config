@@ -1,3 +1,7 @@
+vim.cmd.packadd("nvim-treesitter")
+vim.cmd.packadd("nvim-treesitter-refactor")
+vim.cmd.packadd("nvim-treesitter-textobjects")
+
 require("nvim-treesitter.configs").setup({
   highlight = { enable = true },
   textobjects = {
@@ -31,3 +35,17 @@ require("nvim-treesitter.configs").setup({
     },
   },
 })
+
+vim.keymap.set(
+  "n",
+  "g:",
+  function() print(require("nvim-treesitter").statusline()) end,
+  { desc = "Display current position in parse tree" }
+)
+
+vim.keymap.set(
+  "n",
+  "coh",
+  function() vim.cmd.TSBufToggle("highlight") end,
+  { desc = "Toggle tree-sitter highlighting" }
+)

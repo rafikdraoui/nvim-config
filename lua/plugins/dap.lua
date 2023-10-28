@@ -1,9 +1,11 @@
+vim.cmd.packadd("nvim-dap")
 local dap = require("dap")
 local widgets = require("dap.ui.widgets")
 
 -- Define global mappings -----------------------------------------------------
-local map =
-  function(lhs, rhs, desc) vim.keymap.set("n", lhs, rhs, { desc = "DAP: " .. desc }) end
+local map = function(lhs, rhs, desc)
+  vim.keymap.set("n", lhs, rhs, { desc = "DAP: " .. desc })
+end
 
 map("<leader>db", dap.toggle_breakpoint, "toggle breakpoint")
 map("<leader>dB", function()
@@ -91,6 +93,7 @@ dap.listeners.after.event_terminated["session_keymaps"] = remove_session_mapping
 local g = vim.api.nvim_create_augroup("dap", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "dap-float",
+  desc = "Define mappings for dap-float filetype",
   group = g,
   callback = function()
     vim.keymap.set(
@@ -103,6 +106,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "dap-repl",
+  desc = "Define mappings for dap-repl filetype",
   group = g,
   callback = function()
     vim.keymap.set(

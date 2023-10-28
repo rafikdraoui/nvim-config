@@ -1,3 +1,6 @@
+vim.cmd.packadd("nvim-lspconfig")
+vim.cmd.packadd("rust-tools.nvim")
+
 local configs = {
   -- https://github.com/mattn/efm-langserver
   efm = {
@@ -20,7 +23,6 @@ local configs = {
       "markdown",
       "python",
       "sh",
-      "toml",
       "vim",
       "yaml",
     },
@@ -93,6 +95,9 @@ local configs = {
   tailwindcss = {
     root_dir = require("lspconfig").util.root_pattern("tailwind.config.js"),
   },
+
+  -- https://github.com/tamasfe/taplo
+  taplo = {},
 
   -- https://github.com/redhat-developer/yaml-language-server
   yamlls = {},

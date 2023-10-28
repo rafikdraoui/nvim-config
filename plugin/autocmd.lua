@@ -21,7 +21,9 @@ autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
 autocmd({ "FileChangedShellPost" }, {
   desc = "Print message when file was changed outside of Vim",
   group = g,
-  callback = function() vim.notify("File changed on disk. Buffer reloaded", vim.log.levels.WARN) end,
+  callback = function()
+    vim.notify("File changed on disk. Buffer reloaded", vim.log.levels.WARN)
+  end,
 })
 
 autocmd({ "TermOpen" }, {
@@ -50,18 +52,6 @@ autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
     local num_lines = vim.fn.line("$")
     local indent = string.rep(" ", math.floor(math.log10(num_lines)))
     vim.opt.showbreak = indent .. "⋯"
-  end,
-})
-
-autocmd({ "BufWritePost" }, {
-  desc = "Run :PackerCompile whenever plugins config is saved",
-  group = g,
-  --  Use `*` instead of `$HOME` in the file pattern so that it also works when
-  --  editing the original file in the dotfiles repository.
-  pattern = "*/.config/nvim/lua/plugins.lua",
-  callback = function(opts)
-    vim.cmd.source(opts.file)
-    vim.cmd.PackerCompile()
   end,
 })
 

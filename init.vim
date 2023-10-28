@@ -58,10 +58,6 @@ colorscheme couleurs
 
 " Mappings {{{1
 
-" See also:
-"   plugin/navigation_mappings.vim
-"   plugin/window_mappings.vim
-
 let g:mapleader = ','
 
 " Buffers
@@ -71,6 +67,65 @@ nnoremap <leader>B :ls<cr>:sb<space>
 " close quickfix window before `bdelete`, to avoid prematurely quitting vim
 " (cf. g:qf_auto_quit)
 nnoremap <silent> <leader><bs> :cclose <bar> :lclose <bar> :bdelete<cr>
+
+" Navigate between windows
+nnoremap <a-h> <c-w>h
+nnoremap <a-j> <c-w>j
+nnoremap <a-k> <c-w>k
+nnoremap <a-l> <c-w>l
+nnoremap <a-p> <c-w>p
+tnoremap <a-h> <c-\><c-n><c-w>h
+tnoremap <a-j> <c-\><c-n><c-w>j
+tnoremap <a-k> <c-\><c-n><c-w>k
+tnoremap <a-l> <c-\><c-n><c-w>l
+tnoremap <a-p> <c-\><c-n><c-w>p
+xnoremap <a-h> <esc><c-w>h
+xnoremap <a-j> <esc><c-w>j
+xnoremap <a-k> <esc><c-w>k
+xnoremap <a-l> <esc><c-w>l
+xnoremap <a-p> <esc><c-w>p
+
+" Resize windows
+nnoremap <a-up> 3<c-w>+
+nnoremap <a-down> 3<c-w>-
+nnoremap <a-right> 3<c-w>>
+nnoremap <a-left> 3<c-w><
+nnoremap <a-=> <c-w>=
+nnoremap <a--> <c-w>_<c-w><bar>
+
+" 'Detach' window to new tab
+nnoremap <c-w><c-d> <c-w>T
+
+" Navigate between buffers
+nnoremap <silent> [b :bprevious <cr>
+nnoremap <silent> ]b :bnext <cr>
+
+" Navigate between files in argument list
+nnoremap <silent> [a :previous <cr>
+nnoremap <silent> ]a :next <cr>
+nnoremap <silent> [A :first <cr>
+nnoremap <silent> ]A :last <cr>
+
+" Navigate between entries of quickfix list
+nnoremap <silent> [q :cprevious <cr>
+nnoremap <silent> ]q :cnext <cr>
+nnoremap <silent> [Q :cfirst <cr>
+nnoremap <silent> ]Q :clast <cr>
+nnoremap <silent> [w :cpfile <cr>
+nnoremap <silent> ]w :cnfile <cr>
+
+" Navigate between entries of location list
+nnoremap <silent> [z :lprevious <cr>
+nnoremap <silent> ]z :lnext <cr>
+nnoremap <silent> [Z :lfirst <cr>
+nnoremap <silent> ]Z :llast <cr>
+
+" Navigate between entries in tag matchlist
+nnoremap <silent> [t :tprevious <cr>
+nnoremap <silent> ]t :tnext <cr>
+nnoremap <silent> [T :tfirst <cr>
+nnoremap <silent> ]T :tlast <cr>
+
 
 " Use ctrl-s to save file
 nnoremap <silent> <c-s> :update<cr>
@@ -189,9 +244,6 @@ inoremap ,l <c-x><c-l>
 inoremap ,t <c-x><c-]>
 inoremap ,<tab> <c-x><c-o>
 
-" load packer.nvim plugin
-nnoremap <silent> cop <cmd>lua require("plugins")<cr>
-
 " Display syntax highlight group of term under cursor
 nnoremap <leader>H <cmd>Inspect<cr>
 
@@ -202,134 +254,7 @@ nnoremap ¨ {
 nnoremap é /
 nnoremap É ?
 nnoremap è '
-
-
-" Plugins configuration {{{1
-" See also:
-"   lua/plugins.lua
-"   lua/config/*.lua
-
-" disable netrw plugin
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
-
-" markdown ftplugin (from default $VIMRUNTIME)
-let g:markdown_folding = 1
-
-" cfilter (from default $VIMRUNTIME)
-packadd! cfilter
-
-" vimwiki
-let s:wiki = {}
-let s:wiki.path = $NOTES_DIR
-let s:wiki.syntax = 'markdown'
-let s:wiki.ext = '.md'
-let s:wiki.links_space_char = '-'
-let s:wiki.auto_tags = 1
-let g:vimwiki_list = [s:wiki]
-let g:vimwiki_folding = 'expr'
-let g:vimwiki_global_ext = 0
-let g:vimwiki_key_mappings = {
-\ 'headers': 1,
-\ 'links': 1,
-\ 'lists': 1,
-\ 'global': 0,
-\ 'html': 0,
-\ 'mouse': 0,
-\ 'table_format': 0,
-\ 'table_mappings': 0,
-\ 'text_objs': 0,
-\}
-nnoremap <silent> <leader>ww :edit $NOTES_DIR/index.md<cr>
-nnoremap <leader>n <cmd>FzfLua files cwd=$NOTES_DIR prompt=Notes>\ <cr>
-
-" fzf-lua
-nnoremap <c-f> <cmd>FzfLua git_files<cr>
-nnoremap <c-h> <cmd>FzfLua help_tags<cr>
-nnoremap <leader>r <cmd>FzfLua resume<cr>
-
-nnoremap ,pd <cmd>FzfLua git_files cwd=~/dotfiles prompt=Dotfiles>\ <cr>
-nnoremap ,pp <cmd>lua require("switch_repo").switch({ search_paths = vim.g.switch_repo_default_search_paths })<cr>
-nnoremap ,pv <cmd>lua require("switch_repo").switch({prompt = "Vim plugins", search_paths = vim.api.nvim_get_runtime_file("pack", true) })<cr>
-
-" vim-subversive
-nmap s <plug>(SubversiveSubstitute)
-nmap ss <plug>(SubversiveSubstituteLine)
-nmap cs <plug>(SubversiveSubstituteRange)
-xmap cs <plug>(SubversiveSubstituteRange)
-nmap css <plug>(SubversiveSubstituteWordRange)
-let g:subversiveCurrentTextRegister = 's'
-
-" vim-test
-function! ToggleTermStrategy(cmd) abort
-  call luaeval("require('toggleterm').exec(_A[1])", [a:cmd])
-endfunction
-let g:test#custom_strategies = {'toggleterm': function('ToggleTermStrategy')}
-let g:test#strategy = 'toggleterm'
-
-let g:test#python#runner = 'pytest'
-let g:test#go#gotest#executable = 'gotest'
-nnoremap <silent> t<c-n> :TestNearest<cr>
-nnoremap <silent> t<c-f> :TestFile<cr>
-nnoremap <silent> t<c-s> :TestSuite<cr>
-nnoremap <silent> t<c-l> :TestLast<cr>
-nnoremap <silent> t<c-g> :TestVisit<cr>
-
-" miniyank
-nmap p <Plug>(miniyank-autoput)
-xmap p <Plug>(miniyank-autoput)
-nmap P <Plug>(miniyank-autoPut)
-xmap P <Plug>(miniyank-autoPut)
-map <c-p> <Plug>(miniyank-cycle)
-map <c-n> <Plug>(miniyank-cycleback)
-
-" gutentags
-let g:gutentags_file_list_command = {'markers': {'.git': 'git ls-files'}}
-let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-" git-messenger
-" see also: after/ftplugin/gitmessengerpopup.vim
-let g:git_messenger_always_into_popup = v:true
-let g:git_messenger_no_default_mappings = v:true
-nmap gb <Plug>(git-messenger)
-
-" vim-qf
-" see also: after/ftplugin/qf.vim
-nmap <leader>q <plug>(qf_qf_toggle_stay)
-nmap <leader>z <plug>(qf_loc_toggle_stay)
-
-" vim-fugitive
-let g:fugitive_legacy_commands = 0
-nnoremap <silent> <leader>g <cmd>Git<cr>
-nnoremap gh :GBrowse<cr>
-xnoremap gh :GBrowse<cr>
-
-" vim-projectionist
-let g:projectionist_heuristics = {
-\ 'go.mod': {
-\   '*.go': {'alternate': '{}_test.go'},
-\   '*_test.go': {'type': 'test', 'alternate': '{}.go'},
-\  },
-\ '*.py': {
-\   '*.py': {'alternate': 'test_{}.py'},
-\   'test_*.py': {'type': 'test', 'alternate': '{}.py'},
-\  }
-\}
-
-" vim-delve
-let g:delve_new_command = 'new'
-let g:delve_sign_priority = 50  " higher than gitsigns and diagnostic
-
-" vim-mundo
-nnoremap <silent> cou :MundoToggle<cr>
-
-" nvim-treesitter
-nnoremap <silent> g: <cmd>echo nvim_treesitter#statusline()<cr>
-nnoremap <silent> coh <cmd>TSBufToggle highlight<cr>
-
-" lsp-format
-nnoremap cof <cmd>FormatToggle <bar>
-  \ lua print(string.format('formatting: %s', not require('lsp-format').disabled)) <cr>
+nnoremap È "
 
 " Define `P()` as a global Lua function to pretty-print values
 lua _G.P = vim.print

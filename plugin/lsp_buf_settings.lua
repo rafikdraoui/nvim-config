@@ -108,7 +108,6 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
   callback = function(args)
     local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-    vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
     set_mappings(client)
 
     -- enable formatting on save
@@ -116,7 +115,7 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
     if ok then
       lsp_format.on_attach(client)
     else
-      vim.notify("lsp-format is not installed", vim.log.levels.WARN)
+      vim.notify("LspAttach: lsp-format is not installed", vim.log.levels.WARN)
     end
 
     -- disable semantic tokens highlighting

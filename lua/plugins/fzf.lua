@@ -1,3 +1,4 @@
+vim.cmd.packadd("fzf-lua")
 local fzf = require("fzf-lua")
 
 -- Extend default key mappings
@@ -23,3 +24,20 @@ fzf.setup({
 
 -- Use fzf-lua as provider for `vim.ui.select`
 fzf.register_ui_select()
+
+vim.keymap.set("n", "<c-f>", fzf.git_files, { desc = "fzf: git files" })
+vim.keymap.set("n", "<c-h>", fzf.help_tags, { desc = "fzf: help tags" })
+vim.keymap.set("n", "<leader>r", fzf.resume, { desc = "fzf: resume" })
+vim.keymap.set("n", "gr<space>", fzf.lsp_finder, { desc = "fzf: LSP info for symbol" })
+vim.keymap.set(
+  "n",
+  "<leader>pd",
+  function() fzf.git_files({ cwd = "~/dotfiles", prompt = "Dotfiles> " }) end,
+  { desc = "fzf: dotfiles" }
+)
+vim.keymap.set(
+  "n",
+  "<leader>n",
+  function() fzf.files({ cwd = vim.env.NOTES_DIR }) end,
+  { desc = "fzf: notes" }
+)

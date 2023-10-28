@@ -19,4 +19,9 @@ local rust_doc_from_lsp_hover = function()
   vim.cmd.close()
 end
 
-vim.keymap.set("n", "<leader>D", rust_doc_from_lsp_hover, { buffer = true })
+vim.keymap.set(
+  "n",
+  "<leader>D",
+  rust_doc_from_lsp_hover,
+  { buffer = true, desc = "Open documentation link for topic in LSP hover window" }
+)

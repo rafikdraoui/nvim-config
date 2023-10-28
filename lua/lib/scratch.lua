@@ -11,6 +11,11 @@ M.create = function(lines)
   vim.opt_local.bufhidden = "wipe"
   vim.opt_local.swapfile = false
 
-  vim.keymap.set("n", "gq", vim.cmd.quit, { buffer = true, silent = true })
+  vim.keymap.set(
+    "n",
+    "gq",
+    vim.cmd.quit,
+    { buffer = true, desc = "Close scratch buffer" }
+  )
 end
 return M
