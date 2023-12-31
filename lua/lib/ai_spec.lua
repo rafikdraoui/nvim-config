@@ -1,58 +1,34 @@
 local M = {}
 local h = {}
 
--- `entire` is a text object for the entire buffer.
-M.entire = function() return h.lines(1, vim.fn.line("$")) end
-
--- `indent` is a text object for an indented block of lines.
+-- `indent` is a text object ai-spec for an indented block of lines.
 M.indent = function()
-  local lnum = vim.fn.line(".")
-  local reference_line = h.find_reference_line(lnum)
-  local indent = vim.fn.indent(reference_line)
-  if indent == 0 then
-    return M.entire()
-  end
-
-  local top = h.find_border(lnum, "up", indent)
-  local bottom = h.find_border(lnum, "down", indent)
-  return h.lines(top, bottom)
-end
-
--- `url` is a text object for a URL with scheme `http` or `https`.
-M.url = function()
-  -- Patterns of valid URL characters. This isn't an exhaustive list, but is
-  -- good enough for the purpose of matching most URLs.
-  -- stylua: ignore
-  local url_chars = table.concat({
-    "%%", "%-", "%.", "%[", "%]", "%w", "#", "&", "+", "/", ":", "=", "?", "@", "_", "~",
-  })
-
-  return { string.format("%%f[%s]https?://[%s]+", url_chars, url_chars) }
-end
-
--- `line` is a text object for a line without the trailing `\n`. If `i` is
--- used, the line is matched without leading and trailing whitespace.
-M.line = function(ai_type)
-  local line = vim.fn.getline(".")
-  if line == "" then
-    return nil
-  end
-
-  local start_col, end_col = 1, line:len()
-  if ai_type == "i" then
-    -- Exclude leading and trailing whitespace
-    if vim.trim(line) == "" then
-      return nil
+  return function()
+    local lnum = vim.fn.line(".")
+    local reference_line = h.find_reference_line(lnum)
+    local indent = vim.fn.indent(reference_line)
+    if indent == 0 then
+      return h.lines(1, vim.fn.line("$"))
     end
-    start_col = line:find("%S")
-    end_col = line:len() - line:reverse():find("%S") + 1
-  end
 
-  local lnum = vim.fn.line(".")
-  return {
-    from = { line = lnum, col = start_col },
-    to = { line = lnum, col = end_col },
-  }
+    local top = h.find_border(lnum, "up", indent)
+    local bottom = h.find_border(lnum, "down", indent)
+    return h.lines(top, bottom)
+  end
+end
+
+-- `url` is a text object ai-spec for a URL with scheme `http` or `https`.
+M.url = function()
+  return function()
+    -- Patterns of valid URL characters. This isn't an exhaustive list, but is
+    -- good enough for the purpose of matching most URLs.
+    -- stylua: ignore
+    local url_chars = table.concat({
+      "%%", "%-", "%.", "%[", "%]", "%w", "#", "&", "+", "/", ":", "=", "?", "@", "_", "~",
+    })
+
+    return { string.format("%%f[%s]https?://[%s]+", url_chars, url_chars) }
+  end
 end
 
 -- `treesitter` is the same as `MiniAi.gen_spec.treesitter`, except that it

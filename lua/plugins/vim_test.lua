@@ -1,8 +1,3 @@
-vim.g["test#custom_strategies"] =
-  -- Not using "point-free" `toggleterm = require("toggleterm").exec` to avoid
-  -- executing the `require` during start-up (when `toggleterm.nvim` possibly
-  -- hasn't loaded yet).
-  { toggleterm = function(cmd) require("toggleterm").exec(cmd) end }
 vim.g["test#strategy"] = "toggleterm"
 vim.g["test#python#runner"] = "pytest"
 vim.g["test#go#gotest#executable"] = "gotest"

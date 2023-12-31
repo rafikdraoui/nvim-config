@@ -14,7 +14,6 @@ local load_plugins = function()
     "vim-characterize",
     "vim-commentary",
     "vim-eunuch",
-    "vim-exchange",
     "vim-log-highlighting",
     "vim-repeat",
     "vim-rhubarb",

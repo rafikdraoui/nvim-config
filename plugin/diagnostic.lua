@@ -28,16 +28,6 @@ map(
   function() vim.diagnostic.open_float() end,
   "Show diagnostics in a floating window"
 )
-map(
-  "[e",
-  function() vim.diagnostic.goto_prev({ wrap = false, float = false }) end,
-  "Move to previous diagnostic"
-)
-map(
-  "]e",
-  function() vim.diagnostic.goto_next({ wrap = false, float = false }) end,
-  "Move to next diagnostic"
-)
 
 -- Set signs symbol
 local levels = { "Error", "Warn", "Info", "Hint" }

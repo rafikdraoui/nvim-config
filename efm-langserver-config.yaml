@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mattn/efm-langserver/master/schema.json
+
 version: 2
 
 tools:
@@ -66,12 +68,12 @@ tools:
     format-command: "fixjson"
     format-stdin: true
 
-  isort: &isort
-    format-command: "isort -"
-    format-stdin: true
-
   prettier: &prettier
     format-command: "prettierd ${INPUT}"
+    format-stdin: true
+
+  ruff-isort: &ruff-isort
+    format-command: "ruff check --fix --select=I -"
     format-stdin: true
 
   shfmt: &shfmt
@@ -107,8 +109,8 @@ languages:
     - <<: *prettier
   python:
     - <<: *black
-    - <<: *isort
     - <<: *pylint
+    - <<: *ruff-isort
   sh:
     - <<: *shellcheck
     - <<: *shfmt

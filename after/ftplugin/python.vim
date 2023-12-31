@@ -17,9 +17,6 @@ function s:toggle_foldmethod() abort
 endfunction
 command! -buffer ToggleFoldMethod call <sid>toggle_foldmethod()
 
-" Filter range through `isort`
-command! -buffer -range=% Isort :<line1>,<line2>!isort -
-
 " Add various useful locations to 'path'
 let s:project_root = luaeval('require("lib/git").root()')
 if !empty(s:project_root)

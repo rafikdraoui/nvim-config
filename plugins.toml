@@ -29,7 +29,6 @@ repos = [
   "https://github.com/simnalamburt/vim-mundo",
   "https://github.com/simrat39/rust-tools.nvim",
   "https://github.com/svermeulen/vim-subversive",
-  "https://github.com/tommcdo/vim-exchange",
   "https://github.com/tpope/vim-characterize",
   "https://github.com/tpope/vim-commentary",
   "https://github.com/tpope/vim-eunuch",

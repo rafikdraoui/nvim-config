@@ -1,8 +1,8 @@
-local tobj = require("lib.mini_tobj")
+local treesitter = require("lib.ai_spec").treesitter
 
 vim.b.miniai_config = {
   custom_textobjects = {
     -- Use tree-sitter for matching tags
-    t = tobj.treesitter({ a = "@function.outer", i = "@function.inner" }),
+    t = treesitter({ a = "@function.outer", i = "@function.inner" }),
   },
 }

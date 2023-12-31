@@ -96,29 +96,15 @@ nnoremap <a--> <c-w>_<c-w><bar>
 " 'Detach' window to new tab
 nnoremap <c-w><c-d> <c-w>T
 
-" Navigate between buffers
-nnoremap <silent> [b :bprevious <cr>
-nnoremap <silent> ]b :bnext <cr>
-
 " Navigate between files in argument list
 nnoremap <silent> [a :previous <cr>
 nnoremap <silent> ]a :next <cr>
 nnoremap <silent> [A :first <cr>
 nnoremap <silent> ]A :last <cr>
 
-" Navigate between entries of quickfix list
-nnoremap <silent> [q :cprevious <cr>
-nnoremap <silent> ]q :cnext <cr>
-nnoremap <silent> [Q :cfirst <cr>
-nnoremap <silent> ]Q :clast <cr>
-nnoremap <silent> [w :cpfile <cr>
-nnoremap <silent> ]w :cnfile <cr>
-
-" Navigate between entries of location list
-nnoremap <silent> [z :lprevious <cr>
-nnoremap <silent> ]z :lnext <cr>
-nnoremap <silent> [Z :lfirst <cr>
-nnoremap <silent> ]Z :llast <cr>
+" Navigate between files in quickfix list
+nnoremap <silent> [z :cpfile <cr>
+nnoremap <silent> ]z :cnfile <cr>
 
 " Navigate between entries in tag matchlist
 nnoremap <silent> [t :tprevious <cr>

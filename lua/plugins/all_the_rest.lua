@@ -99,7 +99,5 @@ vim.keymap.set("n", "<leader>z", "<plug>(qf_loc_toggle_stay)")
 -- vim-subversive
 vim.g.subversiveCurrentTextRegister = "s"
 vim.cmd.packadd("vim-subversive")
-vim.keymap.set("n", "s", "<plug>(SubversiveSubstitute)")
-vim.keymap.set("n", "ss", "<plug>(SubversiveSubstituteLine)")
 vim.keymap.set({ "n", "x" }, "cs", "<plug>(SubversiveSubstituteRange)")
 vim.keymap.set("n", "css", "<plug>(SubversiveSubstituteWordRange)")

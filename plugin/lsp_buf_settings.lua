@@ -112,10 +112,12 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
 
     -- enable formatting on save
     local ok, lsp_format = pcall(require, "lsp-format")
-    if ok then
-      lsp_format.on_attach(client)
-    else
+    if not ok then
       vim.notify("LspAttach: lsp-format is not installed", vim.log.levels.WARN)
+    else
+      if client.supports_method(methods.textDocument_formatting) then
+        lsp_format.on_attach(client)
+      end
     end
 
     -- disable semantic tokens highlighting

@@ -2,7 +2,7 @@ vim.cmd.packadd("fzf-lua")
 local fzf = require("fzf-lua")
 
 -- Extend default key mappings
-local keymap = vim.deepcopy(fzf.defaults.keymap)
+local keymap = vim.deepcopy(require("fzf-lua.defaults").defaults.keymap)
 keymap.builtin["<a-p>"] = "toggle-preview"
 keymap.builtin["<a-j>"] = "preview-page-down"
 keymap.builtin["<a-k>"] = "preview-page-up"

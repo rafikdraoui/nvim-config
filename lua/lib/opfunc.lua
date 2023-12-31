@@ -5,7 +5,7 @@ local M = {}
 M.search = function(type)
   local reg_save = vim.fn.getreginfo("@")
 
-  local normal_bang = function(cmd) vim.cmd.normal({ cmd, bang = true }) end
+  local normal_bang = function(cmd) vim.cmd.normal({ args = { cmd }, bang = true }) end
   if type == "v" or type == "V" then
     normal_bang("gvy")
   elseif type == "line" then
