@@ -1,5 +1,4 @@
 setlocal shiftwidth<
-setlocal nowrap
 
 " Restore dirbuf mapping
 silent! unmap <buffer> -

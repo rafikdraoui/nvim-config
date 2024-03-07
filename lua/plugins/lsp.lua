@@ -31,9 +31,6 @@ local configs = {
   -- https://github.com/hrsh7th/vscode-langservers-extracted
   eslint = {},
 
-  -- https://github.com/nametake/golangci-lint-langserver
-  golangci_lint_ls = {},
-
   -- https://github.com/golang/tools/tree/master/gopls
   gopls = {
     on_init = function(client)
@@ -89,7 +86,13 @@ local configs = {
   },
 
   -- https://github.com/astral-sh/ruff-lsp
-  ruff_lsp = {},
+  ruff_lsp = {
+    on_init = function(client)
+      -- Disable formatting capabilities.
+      -- Let `black` handle it instead (via efm-langserver).
+      client.server_capabilities.documentFormattingProvider = false
+    end,
+  },
 
   -- https://github.com/tailwindlabs/tailwindcss-intellisense
   tailwindcss = {

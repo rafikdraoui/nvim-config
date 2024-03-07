@@ -21,7 +21,7 @@ function! GoDocFromLSPHover() abort
   " Wait for 50ms to make sure that the async LSP request has time to complete
   sleep 50m
 
-  if search('https://pkg.go.dev/')
+  if search('\[`.*` on pkg.go.dev\](\zshttps://pkg.go.dev/.*\ze)')
     lua require("lib/browse").url()
   end
 
