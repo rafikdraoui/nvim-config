@@ -11,18 +11,20 @@ M.lint = function()
 end
 
 -- Display git branch and changes.
--- This relies on the `gitsigns` plugin.
+-- This relies on the vim-fugitive and mini.nvim plugins
 M.git = function()
-  if vim.b.gitsigns_status_dict == nil then
+  local ok, branch = pcall(vim.fn.FugitiveHead, 7)
+  if not ok or branch == "" then
     return ""
   end
+  branch = string.format("[⌥ %s]", branch)
 
-  local branch = string.format("[⌥ %s]", vim.b.gitsigns_head)
-
-  local stats = string.gsub(vim.b.gitsigns_status, "~", "•")
+  local stats = vim.b.minidiff_summary_string or ""
   if stats ~= "" then
+    stats = string.gsub(stats, "~", "•")
     stats = string.format("[%s]", stats)
   end
+
   return branch .. stats
 end
 

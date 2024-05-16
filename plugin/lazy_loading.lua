@@ -23,10 +23,12 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
       require("dap-go").setup()
     end
 
-    local ok, _ = pcall(load_dap_go)
-    if not ok then
-      vim.notify("nvim-dap or nvim-dap-go are not installed", vim.log.levels.WARN)
-    end
+    xpcall(
+      load_dap_go,
+      function(err)
+        vim.notify("could not initialize dap-go: " .. err, vim.log.levels.WARN)
+      end
+    )
   end,
 })
 

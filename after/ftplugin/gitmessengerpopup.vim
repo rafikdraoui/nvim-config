@@ -5,4 +5,4 @@ function! s:BrowseCommit() abort
   silent execute 'GBrowse ' . @@
 endfunction
 
-nnoremap <buffer> <silent> gh <cmd>call <sid>BrowseCommit()<cr>
+nnoremap <buffer> <silent> go <cmd>call <sid>BrowseCommit()<cr>

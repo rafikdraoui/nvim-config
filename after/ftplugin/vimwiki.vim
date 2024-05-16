@@ -1,6 +1,6 @@
 setlocal shiftwidth<
 
-" Restore dirbuf mapping
+" Restore `MiniFiles.open()` mapping
 silent! unmap <buffer> -
 
 inoremap <buffer> <tab> <c-t>

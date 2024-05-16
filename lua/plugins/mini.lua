@@ -59,6 +59,42 @@ MiniBracketed.setup({
   treesitter = { suffix = "" },
 })
 
+-- mini-diff ------------------------------------------------------------------ {{{1
+local MiniDiff = require("mini.diff")
+
+MiniDiff.setup({
+  view = {
+    style = "sign",
+    signs = { add = "▍", change = "▍", delete = "▁▁" },
+  },
+})
+
+vim.keymap.set(
+  "n",
+  "<leader>go",
+  MiniDiff.toggle_overlay,
+  { desc = "Toggle diff overlay" }
+)
+
+-- mini-files ----------------------------------------------------------------- {{{1
+local MiniFiles = require("mini.files")
+
+MiniFiles.setup({
+  content = {
+    -- Disable icons
+    prefix = function() end,
+  },
+  mappings = {
+    -- Open file and close explorer
+    go_in_plus = "<cr>",
+  },
+})
+
+vim.keymap.set("n", "-", function()
+  local current_filepath = vim.api.nvim_buf_get_name(0)
+  MiniFiles.open(current_filepath)
+end, { desc = "Open file explorer (in directory of current file)" })
+
 -- mini-jump ------------------------------------------------------------------ {{{1
 require("mini.jump").setup({
   silent = true, -- suppress printing of warning messages

@@ -51,7 +51,11 @@ let &runtimepath=printf('%s,%s', spellfiles_rtp , &runtimepath)
 
 " Allow syntax highlighting of embedded lua in vimscript files
 " c.f. $VIMRUNTIME/syntax/vim.vim
-let g:vimsyn_embed= 'l'
+let g:vimsyn_embed = 'l'
+
+" Prevent loading of netrw plugin
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
 
 colorscheme couleurs
 

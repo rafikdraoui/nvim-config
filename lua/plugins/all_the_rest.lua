@@ -1,7 +1,3 @@
--- dirbuf
-vim.cmd.packadd("dirbuf.nvim")
-require("dirbuf").setup({ write_cmd = "DirbufSync -confirm" })
-
 -- git-messenger
 -- see also: after/ftplugin/gitmessengerpopup.vim
 vim.g.git_messenger_no_default_mappings = true
@@ -34,11 +30,6 @@ vim.keymap.set({ "n", "x" }, "P", "<plug>(miniyank-autoPut)")
 vim.keymap.set("", "<c-p>", "<plug>(miniyank-cycle)")
 vim.keymap.set("", "<c-n>", "<plug>(miniyank-cycleback)")
 
--- netrw (from default $VIMRUNTIME)
--- Prevent loading the plugin
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-
 -- switch-repo
 vim.keymap.set(
   "n",
@@ -69,9 +60,9 @@ require("toggleterm").setup({ open_mapping = [[<c-\>]] })
 --  vim-fugitive
 vim.g.fugitive_legacy_commands = 0
 vim.cmd.packadd("vim-fugitive")
-vim.keymap.set("n", "<leader>g", vim.cmd.Git, { desc = "Fugitive summary" })
-vim.keymap.set("n", "gh", vim.cmd.GBrowse, { desc = "Git browse" })
-vim.keymap.set("x", "gh", ":GBrowse<cr>", { desc = "Git browse" })
+vim.keymap.set("n", "<leader>gg", vim.cmd.Git, { desc = "Fugitive summary" })
+vim.keymap.set("n", "go", vim.cmd.GBrowse, { desc = "Git browse" })
+vim.keymap.set("x", "go", ":GBrowse<cr>", { desc = "Git browse" })
 
 -- vim-mundo
 -- no 'packadd' here, because this plugin is lazy-loaded

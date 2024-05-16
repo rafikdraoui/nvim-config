@@ -1,5 +1,5 @@
 root = "${HOME}/.local/share/nvim/site/pack/rafik/opt"
-statefile = "${HOME}/.local/share/nvim/plugins.state.toml"
+lockfile = "${HOME}/.local/share/nvim/plugins.lock.toml"
 
 # The following plugins are not included here because they are installed
 # through Nixpkgs:
@@ -12,11 +12,9 @@ repos = [
   "https://github.com/dcampos/nvim-snippy",
   "https://github.com/dstein64/vim-startuptime",
   "https://github.com/echasnovski/mini.nvim",
-  "https://github.com/elihunter173/dirbuf.nvim",
   "https://github.com/ibhagwan/fzf-lua",
   "https://github.com/junegunn/gv.vim",
   "https://github.com/leoluz/nvim-dap-go",
-  "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/ludovicchabant/vim-gutentags",
   "https://github.com/lukas-reineke/lsp-format.nvim",
   "https://github.com/mfussenegger/nvim-dap",

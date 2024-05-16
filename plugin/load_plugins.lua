@@ -27,7 +27,6 @@ local load_plugins = function()
   for _, p in ipairs({
     "dap",
     "fzf",
-    "gitsigns",
     "lsp",
     "mini",
     "snippy",
@@ -40,7 +39,7 @@ local load_plugins = function()
   end
 end
 
-local ok = pcall(load_plugins)
-if not ok then
-  vim.notify("error when loading plugins", vim.log.levels.WARN)
-end
+xpcall(
+  load_plugins,
+  function(err) vim.notify("error when loading plugins: " .. err, vim.log.levels.WARN) end
+)
