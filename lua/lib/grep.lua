@@ -22,7 +22,7 @@ local ripgrep_to_vimsearch = function(args)
   query = string.gsub(query, [[\%)]], ")")
 
   -- add word boundary markers if `-w` was used
-  if vim.tbl_contains(args, "-w") then
+  if vim.list_contains(args, "-w") then
     query = string.format([[\<%s\>]], query)
   end
 
@@ -31,7 +31,7 @@ local ripgrep_to_vimsearch = function(args)
   query = string.gsub(query, [[\b$]], [[\>]])
 
   -- add case-sensitivity marker if `-s` was used
-  if vim.tbl_contains(args, "-s") then
+  if vim.list_contains(args, "-s") then
     query = [[\C]] .. query
   end
   return query

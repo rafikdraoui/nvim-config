@@ -1,25 +1,6 @@
--- TODO: Use `vim.lsp.protocol.Methods` from upstream once v0.10 is released.
-local methods = {
-  callHierarchy_incomingCalls = "callHierarchy/incomingCalls",
-  callHierarchy_outgoingCalls = "callHierarchy/outgoingCalls",
-  textDocument_codeAction = "textDocument/codeAction",
-  textDocument_codeLens = "textDocument/codeLens",
-  textDocument_documentSymbol = "textDocument/documentSymbol",
-  textDocument_formatting = "textDocument/formatting",
-  textDocument_hover = "textDocument/hover",
-  textDocument_implementation = "textDocument/implementation",
-  textDocument_references = "textDocument/references",
-  textDocument_rename = "textDocument/rename",
-  textDocument_signatureHelp = "textDocument/signatureHelp",
-  textDocument_typeDefinition = "textDocument/typeDefinition",
-}
+local methods = vim.lsp.protocol.Methods
 
 local actions = {
-  ["hover"] = {
-    method = methods.textDocument_hover,
-    lhs = "K",
-    rhs = vim.lsp.buf.hover,
-  },
   ["signature help"] = {
     method = methods.textDocument_signatureHelp,
     lhs = "<c-k>",

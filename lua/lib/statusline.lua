@@ -2,7 +2,13 @@ local M = {}
 
 -- Display number of lint warnings
 M.lint = function()
-  local num_errors = #vim.diagnostic.get(0)
+  local counts = vim.diagnostic.count(0)
+  -- Wrapping `counts` in `pairs` to ensure that it is always treated as a map
+  -- and not as a list.
+  local num_errors = vim.iter(pairs(counts)):fold(0, function(acc, _k, v)
+    acc = acc + v
+    return acc
+  end)
   if num_errors > 0 then
     return string.format("[lint:%d]", num_errors)
   else

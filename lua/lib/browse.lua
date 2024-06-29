@@ -15,14 +15,7 @@ M.url = function(url)
     return
   end
 
-  local open_cmd
-  if vim.fn.has("mac") == 1 then
-    open_cmd = "open"
-  else
-    open_cmd = "xdg-open"
-  end
-
-  vim.fn.jobstart({ open_cmd, url }, { detach = true })
+  vim.ui.open(url)
 end
 
 -- Open a web browser for code documentation. The `patterns` table contains URL

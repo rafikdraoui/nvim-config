@@ -14,7 +14,11 @@ fzf.setup({
   fzf_opts = {
     ["--info"] = "default", -- use default finder info style instead of "inline"
   },
-  global_git_icons = false,
+  defaults = {
+    color_icons = false,
+    file_icons = false,
+    git_icons = false,
+  },
   keymap = keymap,
   winopts = {
     border = "single",

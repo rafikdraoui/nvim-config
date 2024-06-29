@@ -22,7 +22,7 @@ set completeopt-=preview
 set cursorline cursorlineopt=number  " highlight current line number
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
-set grepprg=rg\ --vimgrep grepformat^=%f:%l:%c:%m
+set grepprg=rg\ --vimgrep
 set helpheight=1000  " maximize help window
 set ignorecase smartcase  " case-insensitive search, unless query has capital letter
 set lazyredraw  " only redraw screen when necessary
@@ -174,12 +174,6 @@ nnoremap <silent> gJ vipJ :call repeat#set('gJ')<cr>
 nnoremap * /\<<c-r>=expand('<cword>')<cr>\><cr>
 nnoremap # ?\<<c-r>=expand('<cword>')<cr>\><cr>
 
-" Run recorded macro on visual selection
-function! ExecuteMacroOnSelection()
-  execute ":'<,'>normal @" . nr2char(getchar())
-endfunction
-xnoremap @ :<c-u>call ExecuteMacroOnSelection()<cr>
-
 nnoremap <leader>s :Grep<space>
 nnoremap <leader>S :Grep!<space>
 
@@ -191,9 +185,6 @@ nmap gss gsiw
 " Sort operator
 nnoremap zs :echo "sort" <bar> set opfunc=v:lua.require'lib.opfunc'.sort<cr>g@
 xnoremap <silent> zs :<c-u>lua require("lib/opfunc").sort(vim.fn.visualmode())<cr>
-
-" Open browser at url under cursor
-nnoremap <silent> gx <cmd>Browse<cr>
 
 " Toggle spellcheck and spelllang
 nnoremap <silent> cos :set spell! <cr>

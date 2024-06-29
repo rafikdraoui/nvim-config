@@ -5,7 +5,7 @@ local g = vim.api.nvim_create_augroup("main", { clear = true })
 autocmd({ "TextYankPost" }, {
   desc = "Highlight yanked text briefly",
   group = g,
-  callback = function() require("vim.highlight").on_yank() end,
+  callback = function() vim.highlight.on_yank() end,
 })
 
 autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {

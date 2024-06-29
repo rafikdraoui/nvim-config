@@ -9,6 +9,7 @@ local load_plugins = function()
     "cfilter", -- from default $VIMRUNTIME
     "conflict-marker.vim",
     "diffconflicts",
+    "jj-diffconflicts",
     "jsonpath.nvim",
     "vim-buffest",
     "vim-characterize",

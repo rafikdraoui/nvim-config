@@ -93,7 +93,7 @@ h.make_command = function(root, search_paths)
   -- e.g. `/home/user/hello/.git` -> `/home/user/hello`
   table.insert(cmd, { "--exec", "echo", "{//}" })
 
-  return table.concat(vim.tbl_flatten(cmd), " ")
+  return vim.iter(cmd):flatten():join(" ")
 end
 
 -- `act` changes the local current working directory to the repository
