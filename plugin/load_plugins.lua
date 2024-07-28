@@ -33,7 +33,6 @@ local load_plugins = function()
     "snippy",
     "treesitter",
     "vim_test",
-    "vimwiki",
     "all_the_rest",
   }) do
     require("plugins." .. p)

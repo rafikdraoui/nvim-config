@@ -85,12 +85,15 @@ local configs = {
     },
   },
 
-  -- https://github.com/astral-sh/ruff-lsp
-  ruff_lsp = {
+  -- https://github.com/astral-sh/ruff/tree/main/crates/ruff_server
+  ruff = {
     on_init = function(client)
       -- Disable formatting capabilities.
       -- Let `black` handle it instead (via efm-langserver).
       client.server_capabilities.documentFormattingProvider = false
+
+      -- Disable hover capabilities. Let `pyright` handle it instead.
+      client.server_capabilities.hoverProvider = false
     end,
   },
 

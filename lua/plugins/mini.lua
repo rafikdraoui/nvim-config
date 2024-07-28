@@ -95,6 +95,9 @@ vim.keymap.set("n", "-", function()
   MiniFiles.open(current_filepath)
 end, { desc = "Open file explorer (in directory of current file)" })
 
+-- mini-hipatterns ------------------------------------------------------------ {{{1
+require("mini.hipatterns").setup({})
+
 -- mini-jump ------------------------------------------------------------------ {{{1
 require("mini.jump").setup({
   silent = true, -- suppress printing of warning messages

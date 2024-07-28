@@ -31,22 +31,3 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
     )
   end,
 })
-
--- Only load vimwiki when a vimwiki file is opened
-local vw_group = vim.api.nvim_create_augroup("vimwiki_once", { clear = true })
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  desc = "Load vimwiki plugin when filetype is 'vimwiki'",
-  group = vw_group,
-  pattern = "vimwiki",
-  callback = function()
-    -- Load vimwiki plugin
-    vim.cmd.packadd("vimwiki")
-
-    -- Self-delete autocommand to avoid infinite recursion below
-    -- (using the `once` argument of `nvim_create_autocmd` isn't enough)
-    vim.cmd.autocmd({ args = { "vimwiki_once" }, bang = true })
-
-    -- Trigger FileType change to ensure that all of vimwiki is set up.
-    vim.cmd.doautocmd("FileType vimwiki")
-  end,
-})

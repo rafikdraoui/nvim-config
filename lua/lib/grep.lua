@@ -39,13 +39,15 @@ end
 
 -- Run ripgrep with the given arguments.
 --
--- The search is based at the root of the git repository (if any), unless the
--- `use_cwd` option is `true`.
+-- If the `path` options is provided, then it is used as the directory to
+-- search in. If omitted, the search is based at the root of the git repository
+-- of the file of the current buffer, falling back to the current directory if
+-- not in a git repository.
 --
 -- The query is added to Vim's search history, after being transformed from
 -- ripgrep to Vim regexp.
 M.run = function(args, opts)
-  opts = opts or { use_cwd = false }
+  opts = opts or {}
 
   if #args == 0 then
     vim.notify("grep.run: Argument required", vim.log.levels.ERROR)
@@ -59,12 +61,7 @@ M.run = function(args, opts)
   vim.fn.setreg("/", vim_query)
   vim.fn.histadd("search", vim_query)
 
-  local path
-  if opts.use_cwd then
-    path = "."
-  else
-    path = require("lib/git").root() or "."
-  end
+  local path = opts.path or require("lib/git").root() or "."
   table.insert(args, path)
 
   -- escape command-line special characters `%` and `#`

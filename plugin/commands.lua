@@ -41,12 +41,6 @@ command(
   { desc = "Set cwd to directory containing the file loaded in buffer" }
 )
 
--- This is mostly needed to support Fugitive's `:GBrowse`
-command("Browse", function(opts) require("lib/browse").url(opts.args) end, {
-  desc = "Open web browser at given URL (or URL under cursor if no argument is given)",
-  nargs = "?",
-})
-
 command(
   "GoDoc",
   function(opts) require("lib/browse").golang_docs(opts.fargs[1]) end,
@@ -86,16 +80,18 @@ command("TrimWhitespace", function()
   vim.fn.winrestview(view)
 end, { desc = "Trim trailing whitespace" })
 
-command(
-  "Grep",
-  function(opts) require("lib/grep").run(opts.fargs, { use_cwd = opts.bang }) end,
-  {
-    desc = "Use ripgrep to search for a term. The query is added to the search register and search history",
-    nargs = "+",
-    bang = true,
-    complete = "tag",
-  }
-)
+command("Grep", function(opts)
+  local grep_opts = {}
+  if opts.bang then
+    grep_opts.path = "."
+  end
+  require("lib/grep").run(opts.fargs, grep_opts)
+end, {
+  desc = "Use ripgrep to search for a term",
+  nargs = "+",
+  bang = true,
+  complete = "tag",
+})
 
 command("Sed", function(opts)
   local pattern = opts.fargs[1]

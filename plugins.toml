@@ -41,6 +41,5 @@ repos = [
   "https://github.com/tpope/vim-rsi",
   "https://github.com/tpope/vim-scriptease",
   "https://github.com/vim-test/vim-test",
-  "https://github.com/vimwiki/vimwiki",
   "https://github.com/whiteinge/diffconflicts",
 ]

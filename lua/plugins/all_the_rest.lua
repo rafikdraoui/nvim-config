@@ -30,7 +30,17 @@ vim.keymap.set({ "n", "x" }, "P", "<plug>(miniyank-autoPut)")
 vim.keymap.set("", "<c-p>", "<plug>(miniyank-cycle)")
 vim.keymap.set("", "<c-n>", "<plug>(miniyank-cycleback)")
 
+-- notes
+-- no 'packadd' here, because this plugin is part of the dotfiles
+vim.keymap.set(
+  "n",
+  "<leader>n",
+  require("notes").edit,
+  { desc = "Edit/create/search notes" }
+)
+
 -- switch-repo
+-- no 'packadd' here, because this plugin is part of the dotfiles
 vim.keymap.set(
   "n",
   "<leader>pp",
