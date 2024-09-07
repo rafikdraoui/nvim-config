@@ -18,7 +18,7 @@ endfunction
 command! -buffer ToggleFoldMethod call <sid>toggle_foldmethod()
 
 " Add various useful locations to 'path'
-let s:project_root = luaeval('require("lib/git").root()')
+let s:project_root = luaeval('require("rafik.git").root()')
 if !empty(s:project_root)
   execute 'setlocal path+=' . s:project_root . '/*'
 endif

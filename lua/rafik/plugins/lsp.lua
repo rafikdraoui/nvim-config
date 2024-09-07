@@ -1,5 +1,4 @@
 vim.cmd.packadd("nvim-lspconfig")
-vim.cmd.packadd("rust-tools.nvim")
 
 local configs = {
   -- https://github.com/mattn/efm-langserver
@@ -111,20 +110,4 @@ local configs = {
 
 for server, config in pairs(configs) do
   require("lspconfig")[server].setup(config)
-end
-
--- https://github.com/simrat39/rust-tools.nvim
-local ok, rust_tools = pcall(require, "rust-tools")
-if ok then
-  rust_tools.setup({
-    server = {
-      settings = {
-        ["rust-analyzer"] = {
-          checkOnSave = {
-            command = "clippy",
-          },
-        },
-      },
-    },
-  })
 end

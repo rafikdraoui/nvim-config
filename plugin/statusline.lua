@@ -3,16 +3,16 @@ local parts = {
   "%1*%f%*%m%w %y",
 
   -- git branch and change stats
-  "%{v:lua.require'lib.statusline'.git()}",
+  "%{v:lua.require'rafik.statusline'.git()}",
 
   -- spell checking
   "%{&spell ? printf('[spell=%s]', &spelllang) : ''}",
 
   -- linting
-  "%2*%{v:lua.require'lib.statusline'.lint()}%*",
+  "%2*%{v:lua.require'rafik.statusline'.lint()}%*",
 
   -- debugging
-  "%#QuickFixLine#%{v:lua.require'lib.statusline'.debug()}%*",
+  "%#QuickFixLine#%{v:lua.require'rafik.statusline'.debug()}%*",
 
   -- line/column numbers
   "%= %p%% %4l/%L:%-2c",
@@ -22,4 +22,4 @@ local parts = {
 vim.o.statusline = table.concat(parts, " ")
 
 -- Set appropriate User highlights for colorscheme (c.f. `:help hl-User1..9`)
-require("lib/statusline").set_status_highlights()
+require("rafik.statusline").set_status_highlights()

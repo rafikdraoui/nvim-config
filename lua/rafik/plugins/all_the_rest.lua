@@ -35,7 +35,7 @@ vim.keymap.set("", "<c-n>", "<plug>(miniyank-cycleback)")
 vim.keymap.set(
   "n",
   "<leader>n",
-  require("notes").edit,
+  require("rafik.notes").edit,
   { desc = "Edit/create/search notes" }
 )
 
@@ -45,7 +45,7 @@ vim.keymap.set(
   "n",
   "<leader>pp",
   function()
-    require("switch_repo").switch({
+    require("rafik.switch_repo").switch({
       search_paths = vim.g.switch_repo_default_search_paths,
     })
   end,
@@ -55,7 +55,7 @@ vim.keymap.set(
   "n",
   "<leader>pv",
   function()
-    require("switch_repo").switch({
+    require("rafik.switch_repo").switch({
       prompt = "Vim plugins",
       search_paths = vim.api.nvim_get_runtime_file("pack", true),
     })
@@ -66,13 +66,6 @@ vim.keymap.set(
 -- toggleterm
 vim.cmd.packadd("toggleterm.nvim")
 require("toggleterm").setup({ open_mapping = [[<c-\>]] })
-
---  vim-fugitive
-vim.g.fugitive_legacy_commands = 0
-vim.cmd.packadd("vim-fugitive")
-vim.keymap.set("n", "<leader>gg", vim.cmd.Git, { desc = "Fugitive summary" })
-vim.keymap.set("n", "go", vim.cmd.GBrowse, { desc = "Git browse" })
-vim.keymap.set("x", "go", ":GBrowse<cr>", { desc = "Git browse" })
 
 -- vim-mundo
 -- no 'packadd' here, because this plugin is lazy-loaded
@@ -96,6 +89,11 @@ vim.cmd.packadd("vim-projectionist")
 vim.cmd.packadd("vim-qf")
 vim.keymap.set("n", "<leader>q", "<plug>(qf_qf_toggle_stay)")
 vim.keymap.set("n", "<leader>z", "<plug>(qf_loc_toggle_stay)")
+
+-- vim-startuptime
+-- no 'packadd' here, because this plugin is lazy-loaded
+vim.g.startuptime_event_width = 0
+vim.g.startuptime_exe_path = vim.env.HOME .. "/.nix-profile/bin/nvim"
 
 -- vim-subversive
 vim.g.subversiveCurrentTextRegister = "s"

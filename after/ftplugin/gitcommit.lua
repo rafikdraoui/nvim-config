@@ -15,7 +15,7 @@ local trim_whitespace = function()
   local flags = { "e" }
   local mods = { keeppatterns = true, silent = true }
   local range = { 1, cutoff_line }
-  require("lib/sed").run([[\s\+$]], "", flags, mods, range)
+  require("rafik.sed").run([[\s\+$]], "", flags, mods, range)
 end
 
 -- Override `:TrimWhitespace` to only act on the commit message

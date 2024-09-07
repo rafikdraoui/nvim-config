@@ -17,11 +17,16 @@ M.lint = function()
 end
 
 -- Display git branch and changes.
--- This relies on the vim-fugitive and mini.nvim plugins
+-- This relies on the mini.nvim plugin
 M.git = function()
-  local ok, branch = pcall(vim.fn.FugitiveHead, 7)
-  if not ok or branch == "" then
+  local git_info = vim.b.minigit_summary
+  if not git_info then
     return ""
+  end
+
+  local branch = git_info.head_name
+  if branch == "HEAD" then
+    branch = string.sub(git_info.head, 1, 7)
   end
   branch = string.format("[⌥ %s]", branch)
 

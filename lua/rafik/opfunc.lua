@@ -1,7 +1,7 @@
 local M = {}
 
 -- Operator function that can be used to search for the selection with
--- `lib/grep.run`
+-- `rafik.grep.run`
 M.search = function(type)
   local reg_save = vim.fn.getreginfo("@")
 
@@ -16,7 +16,7 @@ M.search = function(type)
 
   local query = vim.fn.getreg("@")
   if query ~= "" then
-    require("lib/grep").run({ string.format("%q", query) })
+    require("rafik.grep").run({ string.format("%q", query) })
     vim.fn.histadd("cmd", string.format("Grep %q", query))
   end
 

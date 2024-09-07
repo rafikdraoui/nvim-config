@@ -5,7 +5,7 @@ vim.cmd.packadd("mini.nvim")
 -- mini-ai -------------------------------------------------------------------- {{{1
 local ai_spec = require("mini.ai").gen_spec
 local extra_ai_spec = require("mini.extra").gen_ai_spec
-local custom_ai_spec = require("lib.ai_spec")
+local custom_ai_spec = require("rafik.ai_spec")
 
 local specs = {
   buffer = extra_ai_spec.buffer,
@@ -94,6 +94,17 @@ vim.keymap.set("n", "-", function()
   local current_filepath = vim.api.nvim_buf_get_name(0)
   MiniFiles.open(current_filepath)
 end, { desc = "Open file explorer (in directory of current file)" })
+
+-- mini-git ------------------------------------------------------------------- {{{1
+local MiniGit = require("mini.git")
+MiniGit.setup()
+
+vim.keymap.set(
+  { "n", "x" },
+  "<leader>gg",
+  MiniGit.show_at_cursor,
+  { desc = "Show git info at cursor" }
+)
 
 -- mini-hipatterns ------------------------------------------------------------ {{{1
 require("mini.hipatterns").setup({})

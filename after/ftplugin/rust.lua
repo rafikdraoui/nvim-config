@@ -13,7 +13,7 @@ local rust_doc_from_lsp_hover = function()
   -- The first line of the hover window from rust-analyzer often corresponds to
   -- the relevant topic for `rustup doc`.
   local topic = vim.fn.getline(1)
-  require("lib/browse").rust_docs(topic)
+  require("rafik.browse").rust_docs(topic)
 
   -- Close hover window
   vim.cmd.close()

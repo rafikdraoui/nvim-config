@@ -17,7 +17,7 @@ end, { desc = "Delete hidden buffers" })
 command("Redir", function(opts)
   local output = vim.fn.execute(opts.args)
   local lines = vim.split(output, "\n", { trimempty = true })
-  require("lib/scratch").create(lines)
+  require("rafik.scratch").create(lines)
 end, {
   desc = "Redirect output of Ex command into a scratch buffer",
   nargs = "+",
@@ -31,7 +31,7 @@ end, { desc = "Copy last yank to system clipboard" })
 
 command(
   "CdRoot",
-  function() require("lib/git").cd_root() end,
+  function() require("rafik.git").cd_root() end,
   { desc = "Set cwd to root of git repository (if applicable)" }
 )
 
@@ -43,24 +43,24 @@ command(
 
 command(
   "GoDoc",
-  function(opts) require("lib/browse").golang_docs(opts.fargs[1]) end,
+  function(opts) require("rafik.browse").golang_docs(opts.fargs[1]) end,
   { desc = "Browse Go documentation", nargs = "*" }
 )
 
 command(
   "PyDoc",
-  function(opts) require("lib/browse").python_docs(opts.fargs[1]) end,
+  function(opts) require("rafik.browse").python_docs(opts.fargs[1]) end,
   { desc = "Browse Python documentation", nargs = "*" }
 )
 
 command(
   "RustDoc",
-  function(opts) require("lib/browse").rust_docs(opts.args) end,
+  function(opts) require("rafik.browse").rust_docs(opts.args) end,
   { desc = "Browse Rust documentation", nargs = "*" }
 )
 
 command("TrimWhitespace", function()
-  local sed = require("lib/sed").run
+  local sed = require("rafik.sed").run
 
   -- Save cursor position
   local view = vim.fn.winsaveview()
@@ -85,7 +85,7 @@ command("Grep", function(opts)
   if opts.bang then
     grep_opts.path = "."
   end
-  require("lib/grep").run(opts.fargs, grep_opts)
+  require("rafik.grep").run(opts.fargs, grep_opts)
 end, {
   desc = "Use ripgrep to search for a term",
   nargs = "+",
@@ -107,7 +107,7 @@ command("Sed", function(opts)
     flags = nil
   end
 
-  require("lib/sed").run(pattern, repl, flags)
+  require("rafik.sed").run(pattern, repl, flags)
 end, {
   desc = "Substitute pattern with a replacement string",
   bang = true, -- Can be set to avoid using the default "g" flag
@@ -140,12 +140,21 @@ command("Jump", function(opts)
     args = opts.args
   end
 
-  require("lib/git").jump(args)
+  require("rafik.git").jump(args)
 end, {
   desc = "`git jump` from within Vim",
   nargs = "*",
   count = 0,
   complete = git_jump_complete,
+})
+
+command("GBrowse", function(opts)
+  local range = { start = opts.line1, finish = opts.line2 }
+  require("rafik.git").gh_browse(opts.fargs, range)
+end, {
+  desc = "Use `gh browse` to view file and commits on GitHub",
+  nargs = "*",
+  range = true,
 })
 
 command("W", function() vim.cmd.write({ mods = { noautocmd = true } }) end, {

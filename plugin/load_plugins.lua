@@ -1,23 +1,17 @@
 local load_plugins = function()
   -- Load plugins that don't require any custom configuration.
-  -- The following plugins are not included here, because they are lazy-loaded
-  -- (see `plugin/lazy_loading.lua`):
-  --   * gv.vim
-  --   * nvim-dap-go
-  --   * vim-startuptime
   for _, p in ipairs({
     "cfilter", -- from default $VIMRUNTIME
     "conflict-marker.vim",
     "diffconflicts",
     "jj-diffconflicts",
     "jsonpath.nvim",
+    "rustaceanvim",
     "vim-buffest",
     "vim-characterize",
-    "vim-commentary",
     "vim-eunuch",
     "vim-log-highlighting",
     "vim-repeat",
-    "vim-rhubarb",
     "vim-rsi",
     "vim-scriptease",
   }) do
@@ -35,7 +29,7 @@ local load_plugins = function()
     "vim_test",
     "all_the_rest",
   }) do
-    require("plugins." .. p)
+    require("rafik.plugins." .. p)
   end
 end
 

@@ -22,7 +22,7 @@ function! GoDocFromLSPHover() abort
   sleep 50m
 
   if search('\[`.*` on pkg.go.dev\](\zshttps://pkg.go.dev/.*\ze)')
-    lua require("lib/browse").url()
+    lua require("rafik.browse").url()
   end
 
   " Close hover window

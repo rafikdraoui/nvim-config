@@ -61,7 +61,7 @@ M.run = function(args, opts)
   vim.fn.setreg("/", vim_query)
   vim.fn.histadd("search", vim_query)
 
-  local path = opts.path or require("lib/git").root() or "."
+  local path = opts.path or require("rafik.git").root() or "."
   table.insert(args, path)
 
   -- escape command-line special characters `%` and `#`

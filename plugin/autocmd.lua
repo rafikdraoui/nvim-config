@@ -64,5 +64,5 @@ autocmd({ "BufWritePre" }, {
 autocmd({ "ColorScheme" }, {
   desc = "Set status line custom highlights when colorscheme is changed",
   group = g,
-  callback = function() require("lib/statusline").set_status_highlights() end,
+  callback = function() require("rafik.statusline").set_status_highlights() end,
 })

@@ -15,7 +15,7 @@ M.edit = function(root, query)
     query = query,
     actions = {
       -- edit or create note
-      default = function(selected, opts)
+      ["return"] = function(selected, opts)
         if #selected > 0 then
           fzf.actions.file_edit_or_qf(selected, opts)
         else
@@ -61,7 +61,10 @@ M.jump = function(root)
 
   local tag = h.target_at_cursor(M.tag_pattern)
   if tag then
-    require("lib/grep").run({ "--fixed-strings", "--sort", "path", tag }, { path = root })
+    require("rafik.grep").run(
+      { "--fixed-strings", "--sort", "path", tag },
+      { path = root }
+    )
     return
   end
 

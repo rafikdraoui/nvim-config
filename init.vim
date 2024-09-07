@@ -17,7 +17,6 @@ set breakindent  " keep indentation when wrapping lines
 set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the line number column
 
 let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
-set commentstring=#\ %s
 set completeopt-=preview
 set cursorline cursorlineopt=number  " highlight current line number
 set foldlevel=99  " start unfolded by default
@@ -121,6 +120,9 @@ nnoremap <silent> ]T :tlast <cr>
 nnoremap <silent> <c-s> :update<cr>
 inoremap <silent> <c-s> <esc>:update<cr>
 
+" Quit window
+nnoremap gq <cmd>quit<cr>
+
 " Move through wrapped lines (unless prefixed with a count)
 nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
 nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
@@ -178,13 +180,13 @@ nnoremap <leader>s :Grep<space>
 nnoremap <leader>S :Grep!<space>
 
 " Search operator
-nnoremap <silent> gs :set opfunc=v:lua.require'lib.opfunc'.search<cr>g@
-xnoremap <silent> gs :<c-u>lua require("lib/opfunc").search(vim.fn.visualmode())<cr>
+nnoremap <silent> gs :set opfunc=v:lua.require'rafik.opfunc'.search<cr>g@
+xnoremap <silent> gs :<c-u>lua require("rafik.opfunc").search(vim.fn.visualmode())<cr>
 nmap gss gsiw
 
 " Sort operator
-nnoremap zs :echo "sort" <bar> set opfunc=v:lua.require'lib.opfunc'.sort<cr>g@
-xnoremap <silent> zs :<c-u>lua require("lib/opfunc").sort(vim.fn.visualmode())<cr>
+nnoremap zs :echo "sort" <bar> set opfunc=v:lua.require'rafik.opfunc'.sort<cr>g@
+xnoremap <silent> zs :<c-u>lua require("rafik.opfunc").sort(vim.fn.visualmode())<cr>
 
 " Toggle spellcheck and spelllang
 nnoremap <silent> cos :set spell! <cr>
@@ -218,6 +220,10 @@ nnoremap Z ge]s1z=
 " Use git-jump from within vim. Can pass a count of 1, 2, or 3 for `diff`,
 " `staged`, and `merge` variants.
 nnoremap <silent> <leader>j :Jump<cr>
+
+" Browse commit/file/repo in GitHub
+nnoremap <silent> go <cmd>GBrowse<cr>
+xnoremap <silent> go :GBrowse<cr>
 
 " Trigger insert mode completions
 inoremap ,f <c-x><c-f>

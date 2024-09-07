@@ -1,4 +1,4 @@
-local treesitter = require("lib.ai_spec").treesitter
+local treesitter = require("rafik.ai_spec").treesitter
 
 vim.b.miniai_config = {
   custom_textobjects = {
