@@ -91,8 +91,11 @@ MiniFiles.setup({
 })
 
 vim.keymap.set("n", "-", function()
-  local current_filepath = vim.api.nvim_buf_get_name(0)
-  MiniFiles.open(current_filepath)
+  local path = vim.api.nvim_buf_get_name(0)
+  if not vim.loop.fs_stat(path) then
+    path = vim.fn.fnamemodify(path, ":p:h")
+  end
+  MiniFiles.open(path)
 end, { desc = "Open file explorer (in directory of current file)" })
 
 -- mini-git ------------------------------------------------------------------- {{{1
@@ -146,6 +149,11 @@ require("mini.operators").setup({
     prefix = "",
   },
 })
+
+-- mini-pick ------------------------------------------------------------------ {{{1
+local MiniPick = require("mini.pick")
+MiniPick.setup()
+vim.ui.select = MiniPick.ui_select
 
 -- mini-surround -------------------------------------------------------------- {{{1
 require("mini.surround").setup({

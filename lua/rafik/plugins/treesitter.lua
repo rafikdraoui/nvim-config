@@ -3,6 +3,7 @@ vim.cmd.packadd("nvim-treesitter-refactor")
 vim.cmd.packadd("nvim-treesitter-textobjects")
 
 require("nvim-treesitter.configs").setup({
+  parser_install_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "site"),
   highlight = { enable = true },
   textobjects = {
     move = {
@@ -49,3 +50,14 @@ vim.keymap.set(
   function() vim.cmd.TSBufToggle("highlight") end,
   { desc = "Toggle tree-sitter highlighting" }
 )
+
+-- Add grammar for Jujutsu's commit messages filetype
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.jjdescription = {
+  install_info = {
+    url = "https://github.com/kareigu/tree-sitter-jjdescription.git",
+    files = { "src/parser.c" },
+    branch = "dev",
+  },
+  filetype = "jj",
+}

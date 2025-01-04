@@ -246,6 +246,9 @@ nnoremap È "
 " Define `P()` as a global Lua function to pretty-print values
 lua _G.P = vim.print
 
+" Workaround for https://github.com/neovim/neovim/issues/31675
+lua vim.hl = vim.highlight
+
 " Abbreviations {{{1
 
 iabbrev Quebec Québec

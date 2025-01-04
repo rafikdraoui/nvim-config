@@ -67,6 +67,15 @@ vim.keymap.set(
 vim.cmd.packadd("toggleterm.nvim")
 require("toggleterm").setup({ open_mapping = [[<c-\>]] })
 
+-- unicode-picker
+-- no 'packadd' here, because this plugin is part of the dotfiles
+vim.keymap.set(
+  { "i", "n" },
+  "<a-u>",
+  function() require("rafik.unicode_picker").pick() end,
+  { desc = "Insert Unicode character" }
+)
+
 -- vim-mundo
 -- no 'packadd' here, because this plugin is lazy-loaded
 vim.keymap.set("n", "cou", vim.cmd.MundoToggle, { desc = "Toggle Mundo undotree" })

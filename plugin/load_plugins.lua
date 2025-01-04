@@ -2,11 +2,9 @@ local load_plugins = function()
   -- Load plugins that don't require any custom configuration.
   for _, p in ipairs({
     "cfilter", -- from default $VIMRUNTIME
-    "conflict-marker.vim",
     "diffconflicts",
     "jj-diffconflicts",
     "jsonpath.nvim",
-    "rustaceanvim",
     "vim-buffest",
     "vim-characterize",
     "vim-eunuch",
