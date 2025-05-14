@@ -32,6 +32,7 @@ require("nvim-treesitter.configs").setup({
       keymaps = {
         goto_next_usage = "<a-n>",
         goto_previous_usage = "<a-N>",
+        list_definitions_toc = false,
       },
     },
   },
@@ -46,7 +47,7 @@ vim.keymap.set(
 
 vim.keymap.set(
   "n",
-  "coh",
+  "cot",
   function() vim.cmd.TSBufToggle("highlight") end,
   { desc = "Toggle tree-sitter highlighting" }
 )

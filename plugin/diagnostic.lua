@@ -12,21 +12,18 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = "»",
     },
   },
+  virtual_text = true,
 })
 
-local map = function(lhs, rhs, desc) vim.keymap.set("n", lhs, rhs, { desc = desc }) end
-map(
+vim.keymap.set(
+  "n",
   "cod",
   function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
-  "Toggle display of diagnostics"
+  { desc = "Toggle display of diagnostics" }
 )
-map(
-  "<leader>c",
-  function() vim.diagnostic.setloclist({ open = true }) end,
-  "Add buffer diagnostics to location list"
-)
-map(
+vim.keymap.set(
+  "n",
   "<leader>e",
   function() vim.diagnostic.open_float() end,
-  "Show diagnostics in a floating window"
+  { desc = "Show diagnostics in a floating window" }
 )

@@ -92,7 +92,7 @@ MiniFiles.setup({
 
 vim.keymap.set("n", "-", function()
   local path = vim.api.nvim_buf_get_name(0)
-  if not vim.loop.fs_stat(path) then
+  if not vim.uv.fs_stat(path) then
     path = vim.fn.fnamemodify(path, ":p:h")
   end
   MiniFiles.open(path)
@@ -110,7 +110,19 @@ vim.keymap.set(
 )
 
 -- mini-hipatterns ------------------------------------------------------------ {{{1
-require("mini.hipatterns").setup({})
+local MiniHiPatterns = require("mini.hipatterns")
+MiniHiPatterns.setup({
+  highlighters = {
+    hex_color = MiniHiPatterns.gen_highlighter.hex_color(),
+  },
+})
+
+vim.keymap.set(
+  "n",
+  "coh",
+  MiniHiPatterns.toggle,
+  { desc = "Toggle highlighting of patterns" }
+)
 
 -- mini-jump ------------------------------------------------------------------ {{{1
 require("mini.jump").setup({
@@ -152,8 +164,28 @@ require("mini.operators").setup({
 
 -- mini-pick ------------------------------------------------------------------ {{{1
 local MiniPick = require("mini.pick")
-MiniPick.setup()
+MiniPick.setup({
+  mappings = {
+    send_to_quickfix = {
+      char = "<c-q>",
+      func = function()
+        vim.api.nvim_input("<c-a>") -- mark all
+        vim.api.nvim_input("<a-cr>") -- choose marked
+      end,
+    },
+  },
+})
+-- Enable extra pickers
+require("mini.extra").setup()
+
 vim.ui.select = MiniPick.ui_select
+
+vim.keymap.set(
+  "n",
+  "<leader>c",
+  MiniPick.registry.diagnostic,
+  { desc = "Show diagnostics in mini picker" }
+)
 
 -- mini-surround -------------------------------------------------------------- {{{1
 require("mini.surround").setup({

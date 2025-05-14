@@ -5,7 +5,7 @@ local g = vim.api.nvim_create_augroup("main", { clear = true })
 autocmd({ "TextYankPost" }, {
   desc = "Highlight yanked text briefly",
   group = g,
-  callback = function() vim.highlight.on_yank() end,
+  callback = function() vim.hl.on_yank() end,
 })
 
 autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
@@ -27,14 +27,9 @@ autocmd({ "FileChangedShellPost" }, {
 })
 
 autocmd({ "TermOpen" }, {
-  desc = "Make terminal start in insert mode, and disable number and sign columns",
+  desc = "Make terminal start in insert mode",
   group = g,
-  callback = function()
-    vim.cmd.startinsert()
-    vim.opt_local.number = false
-    vim.opt_local.relativenumber = false
-    vim.opt_local.signcolumn = "auto"
-  end,
+  command = "startinsert",
 })
 
 autocmd({ "TermEnter" }, {

@@ -15,7 +15,7 @@ M.edit = function(root, query)
     query = query,
     actions = {
       -- edit or create note
-      ["return"] = function(selected, opts)
+      ["default"] = function(selected, opts)
         if #selected > 0 then
           fzf.actions.file_edit_or_qf(selected, opts)
         else
@@ -95,7 +95,8 @@ h.query = fzf.get_last_query
 
 h.create_note_from_query = function(root)
   local filename = h.query()
-  vim.cmd.edit(vim.fs.joinpath(root, filename))
+  local path = vim.fs.joinpath(root, filename)
+  vim.cmd.edit(path)
 end
 
 h.target_at_cursor = function(pattern)

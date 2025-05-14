@@ -68,6 +68,10 @@ tools:
     format-command: "fixjson"
     format-stdin: true
 
+  mdformat: &mdformat
+    format-command: "mdformat -"
+    format-stdin: true
+
   prettier: &prettier
     format-command: "prettierd ${INPUT}"
     format-stdin: true
@@ -106,7 +110,7 @@ languages:
     - <<: *selene
     - <<: *stylua
   markdown:
-    - <<: *prettier
+    - <<: *mdformat
   python:
     - <<: *black
     - <<: *pylint

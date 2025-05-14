@@ -97,9 +97,7 @@ local configs = {
   },
 
   -- https://github.com/tailwindlabs/tailwindcss-intellisense
-  tailwindcss = {
-    root_dir = require("lspconfig").util.root_pattern("tailwind.config.js"),
-  },
+  tailwindcss = {},
 
   -- https://github.com/tamasfe/taplo
   taplo = {},
@@ -109,5 +107,6 @@ local configs = {
 }
 
 for server, config in pairs(configs) do
-  require("lspconfig")[server].setup(config)
+  vim.lsp.enable(server)
+  vim.lsp.config(server, config)
 end

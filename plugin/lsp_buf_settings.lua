@@ -1,31 +1,18 @@
 local methods = vim.lsp.protocol.Methods
 
+-- In addition to these custom mappings, the following default mappings are
+-- defined:
+--     gO: vim.lsp.buf.document_symbol
+--    gra: vim.lsp.buf.code_action
+--    gri: vim.lsp.buf.implementation
+--    grn: vim.lsp.buf.rename
+--    grr: vim.lsp.buf.references
 local actions = {
   ["signature help"] = {
     method = methods.textDocument_signatureHelp,
     lhs = "<c-k>",
     rhs = vim.lsp.buf.signature_help,
     modes = { "n", "i" },
-  },
-  ["document symbol"] = {
-    method = methods.textDocument_documentSymbol,
-    lhs = "grd",
-    rhs = vim.lsp.buf.document_symbol,
-  },
-  ["rename"] = {
-    method = methods.textDocument_rename,
-    lhs = "grr",
-    rhs = vim.lsp.buf.rename,
-  },
-  ["references"] = {
-    method = methods.textDocument_references,
-    lhs = "grf",
-    rhs = vim.lsp.buf.references,
-  },
-  ["implementation"] = {
-    method = methods.textDocument_implementation,
-    lhs = "gri",
-    rhs = vim.lsp.buf.implementation,
   },
   ["incoming calls"] = {
     method = methods.callHierarchy_incomingCalls,
@@ -41,11 +28,6 @@ local actions = {
     method = methods.textDocument_typeDefinition,
     lhs = "grt",
     rhs = vim.lsp.buf.type_definition,
-  },
-  ["code action"] = {
-    method = methods.textDocument_codeAction,
-    lhs = "gra",
-    rhs = vim.lsp.buf.code_action,
   },
   ["code action (auto-apply)"] = {
     method = methods.textDocument_codeAction,
@@ -71,7 +53,7 @@ local actions = {
 
 local set_mappings = function(client)
   for action, data in pairs(actions) do
-    if client.supports_method(data.method) then
+    if client:supports_method(data.method) then
       local modes = data.modes or { "n" }
       vim.keymap.set(
         modes,
@@ -96,7 +78,7 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
     if not ok then
       vim.notify("LspAttach: lsp-format is not installed", vim.log.levels.WARN)
     else
-      if client.supports_method(methods.textDocument_formatting) then
+      if client:supports_method(methods.textDocument_formatting) then
         lsp_format.on_attach(client)
       end
     end

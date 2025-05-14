@@ -3,6 +3,9 @@
 " speed up loading of lua modules
 lua vim.loader.enable()
 
+" Define `P()` as a global Lua function to pretty-print values
+lua _G.P = vim.print
+
 " Options {{{1
 
 " Indentation
@@ -17,7 +20,7 @@ set breakindent  " keep indentation when wrapping lines
 set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the line number column
 
 let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
-set completeopt-=preview
+set completeopt-=popup
 set cursorline cursorlineopt=number  " highlight current line number
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
@@ -30,7 +33,6 @@ set matchpairs+=«:»
 set mouse=
 set noswapfile directory=''  " disable swapfile
 set notimeout
-set path-=/usr/include
 set relativenumber number numberwidth=1 " use relative line number, but display absolute number on current line
 set scrolloff=3
 set signcolumn=yes
@@ -39,7 +41,6 @@ set tagcase=smart
 set termguicolors
 set title
 set updatetime=1000
-set wildcharm=<c-z>
 set wildmode=longest:full,full
 
 " Use dedicated directory for spelling word list files. It needs to be the
@@ -77,11 +78,11 @@ nnoremap <a-j> <c-w>j
 nnoremap <a-k> <c-w>k
 nnoremap <a-l> <c-w>l
 nnoremap <a-p> <c-w>p
-tnoremap <a-h> <c-\><c-n><c-w>h
-tnoremap <a-j> <c-\><c-n><c-w>j
-tnoremap <a-k> <c-\><c-n><c-w>k
-tnoremap <a-l> <c-\><c-n><c-w>l
-tnoremap <a-p> <c-\><c-n><c-w>p
+tnoremap <expr> <a-h> &ft == 'fzf' ? "<a-h>" : "<c-\><c-n><c-w>h"
+tnoremap <expr> <a-j> &ft == 'fzf' ? "<a-j>" : "<c-\><c-n><c-w>j"
+tnoremap <expr> <a-k> &ft == 'fzf' ? "<a-k>" : "<c-\><c-n><c-w>k"
+tnoremap <expr> <a-l> &ft == 'fzf' ? "<a-l>" : "<c-\><c-n><c-w>l"
+tnoremap <expr> <a-p> &ft == 'fzf' ? "<a-p>" : "<c-\><c-n><c-w>p"
 xnoremap <a-h> <esc><c-w>h
 xnoremap <a-j> <esc><c-w>j
 xnoremap <a-k> <esc><c-w>k
@@ -99,22 +100,9 @@ nnoremap <a--> <c-w>_<c-w><bar>
 " 'Detach' window to new tab
 nnoremap <c-w><c-d> <c-w>T
 
-" Navigate between files in argument list
-nnoremap <silent> [a :previous <cr>
-nnoremap <silent> ]a :next <cr>
-nnoremap <silent> [A :first <cr>
-nnoremap <silent> ]A :last <cr>
-
 " Navigate between files in quickfix list
 nnoremap <silent> [z :cpfile <cr>
 nnoremap <silent> ]z :cnfile <cr>
-
-" Navigate between entries in tag matchlist
-nnoremap <silent> [t :tprevious <cr>
-nnoremap <silent> ]t :tnext <cr>
-nnoremap <silent> [T :tfirst <cr>
-nnoremap <silent> ]T :tlast <cr>
-
 
 " Use ctrl-s to save file
 nnoremap <silent> <c-s> :update<cr>
@@ -243,11 +231,6 @@ nnoremap É ?
 nnoremap è '
 nnoremap È "
 
-" Define `P()` as a global Lua function to pretty-print values
-lua _G.P = vim.print
-
-" Workaround for https://github.com/neovim/neovim/issues/31675
-lua vim.hl = vim.highlight
 
 " Abbreviations {{{1
 
