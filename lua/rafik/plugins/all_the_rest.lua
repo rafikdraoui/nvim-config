@@ -51,17 +51,19 @@ vim.keymap.set(
   end,
   { desc = "Switch repo" }
 )
-vim.keymap.set(
-  "n",
-  "<leader>pv",
-  function()
-    require("rafik.switch_repo").switch({
-      prompt = "Vim plugins",
-      search_paths = vim.api.nvim_get_runtime_file("pack", true),
-    })
-  end,
-  { desc = "Switch repo (vim plugins)" }
-)
+vim.keymap.set("n", "<leader>pv", function()
+  require("rafik.switch_repo").switch({
+    prompt = "Vim plugins",
+    search_paths = vim.tbl_map(function(path)
+      local home_rel_path = vim.fs.relpath(vim.env.HOME, path)
+      if home_rel_path then
+        return home_rel_path
+      else
+        return path
+      end
+    end, vim.api.nvim_get_runtime_file("pack", true)),
+  })
+end, { desc = "Switch repo (vim plugins)" })
 
 -- toggleterm
 vim.cmd.packadd("toggleterm.nvim")
@@ -102,7 +104,6 @@ vim.keymap.set("n", "<leader>z", "<plug>(qf_loc_toggle_stay)")
 -- vim-startuptime
 -- no 'packadd' here, because this plugin is lazy-loaded
 vim.g.startuptime_event_width = 0
-vim.g.startuptime_exe_path = vim.env.HOME .. "/.nix-profile/bin/nvim"
 
 -- vim-subversive
 vim.g.subversiveCurrentTextRegister = "s"

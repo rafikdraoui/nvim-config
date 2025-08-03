@@ -67,6 +67,8 @@ M.switch = function(opts)
     fn_transform = h.display,
     fzf_opts = h.fzf_opts(state.display_path),
     prompt = prompt .. "> ",
+    -- required to be able to use `fzf.utils.ansi_codes` in `fn_transform`
+    multiprocess = false,
   })
 end
 
@@ -129,6 +131,7 @@ h.fzf_opts = function(display_path)
     with_nth = 1
   end
   return {
+    ["--ansi"] = true,
     ["--with-nth"] = with_nth,
   }
 end

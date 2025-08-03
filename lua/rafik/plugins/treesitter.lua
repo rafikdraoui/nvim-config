@@ -4,7 +4,7 @@ vim.cmd.packadd("nvim-treesitter-textobjects")
 
 require("nvim-treesitter.configs").setup({
   parser_install_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "site"),
-  highlight = { enable = true },
+  highlight = { enable = true, disable = { "just" } },
   textobjects = {
     move = {
       enable = true,

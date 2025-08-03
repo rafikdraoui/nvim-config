@@ -7,6 +7,7 @@ local methods = vim.lsp.protocol.Methods
 --    gri: vim.lsp.buf.implementation
 --    grn: vim.lsp.buf.rename
 --    grr: vim.lsp.buf.references
+--    grt: vim.lsp.buf.type_definition
 local actions = {
   ["signature help"] = {
     method = methods.textDocument_signatureHelp,
@@ -23,11 +24,6 @@ local actions = {
     method = methods.callHierarchy_outgoingCalls,
     lhs = "gro",
     rhs = vim.lsp.buf.outgoing_calls,
-  },
-  ["type definition"] = {
-    method = methods.textDocument_typeDefinition,
-    lhs = "grt",
-    rhs = vim.lsp.buf.type_definition,
   },
   ["code action (auto-apply)"] = {
     method = methods.textDocument_codeAction,

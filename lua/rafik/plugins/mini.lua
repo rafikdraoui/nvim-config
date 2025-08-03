@@ -183,8 +183,14 @@ vim.ui.select = MiniPick.ui_select
 vim.keymap.set(
   "n",
   "<leader>c",
+  function() MiniPick.registry.diagnostic({ scope = "current" }) end,
+  { desc = "Show diagnostics of current buffer in mini picker" }
+)
+vim.keymap.set(
+  "n",
+  "<leader>C",
   MiniPick.registry.diagnostic,
-  { desc = "Show diagnostics in mini picker" }
+  { desc = "Show diagnostics of all open buffers in mini picker" }
 )
 
 -- mini-surround -------------------------------------------------------------- {{{1

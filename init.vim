@@ -33,7 +33,7 @@ set matchpairs+=«:»
 set mouse=
 set noswapfile directory=''  " disable swapfile
 set notimeout
-set relativenumber number numberwidth=1 " use relative line number, but display absolute number on current line
+set number numberwidth=1
 set scrolloff=3
 set signcolumn=yes
 set splitbelow splitright
@@ -56,6 +56,12 @@ let g:vimsyn_embed = 'l'
 " Prevent loading of netrw plugin
 let g:loaded_netrw = 1
 let g:loaded_netrwPlugin = 1
+
+" Disable remote-plugins providers
+let g:loaded_node_provider = 0
+let g:loaded_perl_provider = 0
+let g:loaded_python3_provider = 0
+let g:loaded_ruby_provider = 0
 
 colorscheme couleurs
 

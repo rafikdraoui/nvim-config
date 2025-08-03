@@ -59,6 +59,9 @@ local configs = {
     },
   },
 
+  -- https://github.com/terror/just-lsp
+  just = {},
+
   -- https://github.com/oxalica/nil
   nil_ls = {
     settings = {

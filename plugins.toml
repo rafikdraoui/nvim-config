@@ -1,11 +1,6 @@
 root = "${HOME}/.local/share/nvim/site/pack/rafik/opt"
 lockfile = "${HOME}/.local/share/nvim/plugins.lock.toml"
 
-# The following plugins are not included here because they are installed
-# through Nixpkgs:
-# - https://github.com/nvim-treesitter/nvim-treesitter
-# - https://github.com/nvim-treesitter/nvim-treesitter-refactor
-# - https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 repos = [
   "https://github.com/akinsho/toggleterm.nvim",
   "https://github.com/bfredl/nvim-miniyank",
@@ -19,6 +14,9 @@ repos = [
   "https://github.com/mfussenegger/nvim-dap",
   "https://github.com/mtdl9/vim-log-highlighting",
   "https://github.com/neovim/nvim-lspconfig",
+  "https://github.com/nvim-treesitter/nvim-treesitter",
+  "https://github.com/nvim-treesitter/nvim-treesitter-refactor",
+  "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
   "https://github.com/phelipetls/jsonpath.nvim",
   "https://github.com/rafikdraoui/couleurs.vim",
   "https://github.com/rafikdraoui/jj-diffconflicts",
@@ -27,6 +25,7 @@ repos = [
   "https://github.com/romainl/vim-qf",
   "https://github.com/simnalamburt/vim-mundo",
   "https://github.com/svermeulen/vim-subversive",
+  "https://github.com/terrastruct/d2-vim",
   "https://github.com/tpope/vim-characterize",
   "https://github.com/tpope/vim-eunuch",
   "https://github.com/tpope/vim-projectionist",
