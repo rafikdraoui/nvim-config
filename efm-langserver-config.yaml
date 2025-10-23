@@ -7,22 +7,16 @@ tools:
 
   fish-lint: &fish-lint
     lint-command: "fish --no-execute ${INPUT}"
+    lint-ignore-exit-code: true
     lint-formats:
       # Example output:
       #   file.fish (line 12): Expected keyword 'in', but found a string
       # NOTE: Using `%s` for file name because for some reason `%f` doesn't work
       - "%s (line %l): %m"
 
-  pylint: &pylint
-    lint-source: "pylint"
-    lint-command: "pylint --msg-template '{path}:{line}:{column}:{C}:{msg} [{symbol}]' ${INPUT}"
-    lint-formats:
-      # Example output:
-      #   file.py:1:2:W:Unused import os [unused-import]
-      - "%f:%l:%c:%t:%m"
-
   selene: &selene
     lint-command: "selene --quiet --config ${HOME}/.config/selene/selene.toml ${INPUT}"
+    lint-ignore-exit-code: true
     lint-formats:
       # Example output:
       #   file.lua:1:2: warning[unused_variable]: x is assigned a value, but never used
@@ -30,6 +24,7 @@ tools:
 
   shellcheck: &shellcheck
     lint-command: "shellcheck --format gcc --enable all ${INPUT}"
+    lint-ignore-exit-code: true
     lint-formats:
       # Example output:
       #   file.sh:1:2: note: Double quote to prevent globbing and word splitting. [SC2086]
@@ -37,14 +32,15 @@ tools:
 
   vint: &vint
     lint-command: "vint --no-color --enable-neovim ${INPUT}"
+    lint-ignore-exit-code: true
     lint-formats:
       # Example output:
       #   file.vim:1:2: Use the full option name `shiftwidth` instead of `sw` (see :help option-summary)
       - "%f:%l:%c: %m"
 
   yamllint: &yamllint
-    lint-source: "yamllint"
     lint-command: "yamllint --format parsable ${INPUT}"
+    lint-ignore-exit-code: true
     lint-formats:
       # Example output:
       #   file.yaml:1:2: [error] duplication of key "hello" in mapping (key-duplicates)
@@ -104,6 +100,8 @@ languages:
     - <<: *prettier
   javascriptreact:
     - <<: *prettier
+  jinja:
+    - <<: *djhtml
   json:
     - <<: *fixjson
   lua:
@@ -113,7 +111,6 @@ languages:
     - <<: *mdformat
   python:
     - <<: *black
-    - <<: *pylint
     - <<: *ruff-isort
   sh:
     - <<: *shellcheck

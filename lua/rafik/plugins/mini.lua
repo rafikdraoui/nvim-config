@@ -157,7 +157,7 @@ require("mini.operators").setup({
   sort = {
     -- Use our own custom sort operator instead to avoid surprising behaviour
     -- with linewise vs charwise motions.
-    -- c.f. https://github.com/echasnovski/mini.nvim/issues/439#issuecomment-1686896019
+    -- c.f. https://github.com/nvim-mini/mini.nvim/issues/439#issuecomment-1686896019
     prefix = "",
   },
 })
@@ -177,8 +177,6 @@ MiniPick.setup({
 })
 -- Enable extra pickers
 require("mini.extra").setup()
-
-vim.ui.select = MiniPick.ui_select
 
 vim.keymap.set(
   "n",

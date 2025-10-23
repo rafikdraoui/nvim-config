@@ -7,7 +7,6 @@ local lazy_command = function(command, plugin)
   end, { nargs = "*", bang = true, range = true })
 end
 lazy_command("StartupTime", "vim-startuptime")
-lazy_command("MundoToggle", "vim-mundo")
 
 -- Only load nvim-dap-go when a Go file is opened
 local dap_go_group = vim.api.nvim_create_augroup("dap_go_once", { clear = true })

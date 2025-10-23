@@ -69,6 +69,16 @@ end, { desc = "Switch repo (vim plugins)" })
 vim.cmd.packadd("toggleterm.nvim")
 require("toggleterm").setup({ open_mapping = [[<c-\>]] })
 
+-- undotree
+vim.cmd.packadd("undotree")
+require("undotree").setup({ float_diff = false })
+vim.keymap.set(
+  "n",
+  "cou",
+  function() require("undotree").toggle() end,
+  { desc = "Toggle undotree" }
+)
+
 -- unicode-picker
 -- no 'packadd' here, because this plugin is part of the dotfiles
 vim.keymap.set(
@@ -77,10 +87,6 @@ vim.keymap.set(
   function() require("rafik.unicode_picker").pick() end,
   { desc = "Insert Unicode character" }
 )
-
--- vim-mundo
--- no 'packadd' here, because this plugin is lazy-loaded
-vim.keymap.set("n", "cou", vim.cmd.MundoToggle, { desc = "Toggle Mundo undotree" })
 
 -- vim-projectionist
 vim.g.projectionist_heuristics = {

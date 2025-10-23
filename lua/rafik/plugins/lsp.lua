@@ -17,6 +17,7 @@ local configs = {
       "htmldjango",
       "javascript",
       "javascriptreact",
+      "jinja",
       "json",
       "lua",
       "markdown",

@@ -22,6 +22,8 @@ set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the lin
 let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
 set completeopt-=popup
 set cursorline cursorlineopt=number  " highlight current line number
+set diffopt-=linematch:40
+set exrc
 set foldlevel=99  " start unfolded by default
 set foldmethod=indent
 set grepprg=rg\ --vimgrep
@@ -63,7 +65,7 @@ let g:loaded_perl_provider = 0
 let g:loaded_python3_provider = 0
 let g:loaded_ruby_provider = 0
 
-colorscheme couleurs
+colorscheme gris
 
 
 " Mappings {{{1
@@ -200,6 +202,9 @@ nnoremap <silent> cob :execute 'set bg=' . (&bg ==# 'dark' ? 'light' : 'dark') <
 
 " Toggle colorscheme
 nnoremap <silent> cog :execute 'colo ' . (g:colors_name ==# 'couleurs' ? 'gris' : 'couleurs') <cr>
+
+" Toggle highlighting of definitions (if supported by color scheme)
+nnoremap <silent> coz :lua require("rafik.colors").toggle_definition_highlight() <cr>
 
 " Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
 tnoremap <expr> <esc> "<c-\><c-n>"
