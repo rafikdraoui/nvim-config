@@ -1,3 +1,20 @@
+-- debugprint.nvim
+vim.cmd.packadd("debugprint.nvim")
+require("debugprint").setup()
+vim.api.nvim_set_hl(0, "DebugPrintLine", { link = "Error" })
+vim.keymap.set(
+  "n",
+  "g?d",
+  vim.cmd.DeleteDebugPrints,
+  { desc = "Delete Debugprint lines" }
+)
+vim.keymap.set(
+  "n",
+  "g?q",
+  vim.cmd.DebugPrintQFList,
+  { desc = "Display Debugprint lines in quickfix list" }
+)
+
 -- git-messenger
 -- see also: after/ftplugin/gitmessengerpopup.vim
 vim.g.git_messenger_no_default_mappings = true
@@ -94,21 +111,18 @@ vim.g.projectionist_heuristics = {
     ["*.go"] = { alternate = "{}_test.go" },
     ["*_test.go"] = { type = "test", alternate = "{}.go" },
   },
-  ["*.py"] = {
-    ["*.py"] = { alternate = "test_{}.py" },
-    ["test_*.py"] = { type = "test", alternate = "{}.py" },
-  },
 }
 vim.cmd.packadd("vim-projectionist")
 
 -- vim-qf
 -- See also: after/ftplugin/qf.vim
+vim.g.qf_auto_resize = 0
 vim.cmd.packadd("vim-qf")
 vim.keymap.set("n", "<leader>q", "<plug>(qf_qf_toggle_stay)")
 vim.keymap.set("n", "<leader>z", "<plug>(qf_loc_toggle_stay)")
 
 -- vim-startuptime
--- no 'packadd' here, because this plugin is lazy-loaded
+vim.cmd.packadd("vim-startuptime")
 vim.g.startuptime_event_width = 0
 
 -- vim-subversive

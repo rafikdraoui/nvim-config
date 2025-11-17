@@ -59,5 +59,9 @@ autocmd({ "BufWritePre" }, {
 autocmd({ "ColorScheme" }, {
   desc = "Set status line custom highlights when colorscheme is changed",
   group = g,
-  callback = function() require("rafik.statusline").set_status_highlights() end,
+  callback = function()
+    require("rafik.statusline").set_status_highlights()
+    vim.api.nvim_set_hl(0, "dCursor", { bg = "#2da84f" })
+    vim.api.nvim_set_hl(0, "DebugPrintLine", { link = "Error" })
+  end,
 })

@@ -3,6 +3,7 @@ lockfile = "${HOME}/.local/share/nvim/plugins.lock.toml"
 
 repos = [
   "https://github.com/akinsho/toggleterm.nvim",
+  "https://github.com/andrewferrier/debugprint.nvim",
   "https://github.com/bfredl/nvim-miniyank",
   "https://github.com/dcampos/nvim-snippy",
   "https://github.com/dstein64/vim-startuptime",
@@ -12,6 +13,7 @@ repos = [
   "https://github.com/ludovicchabant/vim-gutentags",
   "https://github.com/lukas-reineke/lsp-format.nvim",
   "https://github.com/mfussenegger/nvim-dap",
+  "https://github.com/miroshQa/debugmaster.nvim",
   "https://github.com/mtdl9/vim-log-highlighting",
   "https://github.com/neovim/nvim-lspconfig",
   "https://github.com/nvim-mini/mini.nvim",

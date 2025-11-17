@@ -11,6 +11,9 @@ local parts = {
   -- linting
   "%2*%{v:lua.require'rafik.statusline'.lint()}%*",
 
+  -- debug mode
+  "%2*%{v:lua.require'rafik.statusline'.debugmode()}%*",
+
   -- debugging
   "%#QuickFixLine#%{v:lua.require'rafik.statusline'.debug()}%*",
 

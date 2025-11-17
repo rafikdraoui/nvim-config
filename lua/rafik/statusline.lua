@@ -39,6 +39,15 @@ M.git = function()
   return branch .. stats
 end
 
+-- Display whether we're in "debug mode" (c.f. debugmaster plugin)
+M.debugmode = function()
+  if vim.g.debug_mode_enabled then
+    return "[debugmode]"
+  else
+    return ""
+  end
+end
+
 -- Display status of running debugging session
 M.debug = function()
   local ok, dap = pcall(require, "dap")

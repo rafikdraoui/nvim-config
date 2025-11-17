@@ -4,8 +4,6 @@ setlocal listchars+=tab:\ \  " don't display tab characters in 'list' mode
 
 compiler go
 
-nnoremap <buffer> <leader>dt <cmd>lua require('dap-go').debug_test()<cr>
-
 nnoremap <silent> <buffer> <leader>k <cmd>GoDoc<cr>
 
 " Open the online documentation link for a symbol if there is one listed in

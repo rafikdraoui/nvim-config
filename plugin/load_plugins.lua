@@ -18,8 +18,8 @@ local load_plugins = function()
   end
 
   -- Load configuration for other plugins
+  -- "dap" is not included here because it is lazy-loaded
   for _, p in ipairs({
-    "dap",
     "fzf",
     "lsp",
     "mini",

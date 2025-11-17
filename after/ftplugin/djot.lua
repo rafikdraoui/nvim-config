@@ -11,7 +11,7 @@ vim.keymap.set("n", "<cr>", notes.jump, { buffer = true })
 
 vim.b.minihipatterns_config = {
   highlighters = {
-    note_link = { pattern = notes.link_pattern, group = "@markup.link.url" },
-    note_tag = { pattern = notes.tag_pattern, group = "@attribute" },
+    note_link = { pattern = notes.link_pattern, group = "@rafik.notes.link" },
+    note_tag = { pattern = notes.tag_pattern, group = "@rafik.notes.tag" },
   },
 }

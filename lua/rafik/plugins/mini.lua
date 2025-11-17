@@ -65,6 +65,7 @@ local MiniDiff = require("mini.diff")
 MiniDiff.setup({
   view = {
     style = "sign",
+    priority = 20, -- make it lower than DAP debugging signs
     signs = { add = "▍", change = "▍", delete = "▁▁" },
   },
 })
