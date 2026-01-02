@@ -59,6 +59,16 @@ MiniBracketed.setup({
   treesitter = { suffix = "" },
 })
 
+-- mini-cursorword ------------------------------------------------------------ {{{1
+require("mini.cursorword").setup()
+vim.keymap.set("n", "cov", function()
+  vim.g.minicursorword_disable = not vim.g.minicursorword_disable
+  -- Trigger highlight update
+  vim.cmd.doautocmd("CursorMoved")
+end, { desc = "Toggle mini.cursorword" })
+-- Disable by default
+vim.g.minicursorword_disable = true
+
 -- mini-diff ------------------------------------------------------------------ {{{1
 local MiniDiff = require("mini.diff")
 

@@ -48,10 +48,6 @@ tools:
 
   # Formatters
 
-  black: &black
-    format-command: "black -"
-    format-stdin: true
-
   djhtml: &djhtml
     format-command: "djhtml --tabwidth 2 -"
     format-stdin: true
@@ -72,8 +68,12 @@ tools:
     format-command: "prettierd ${INPUT}"
     format-stdin: true
 
+  python-format: &python-format
+    format-command: "python-format"
+    format-stdin: true
+
   ruff-isort: &ruff-isort
-    format-command: "ruff check --fix --select=I -"
+    format-command: "ruff check --fix --select=I --stdin-filename ${INPUT} -"
     format-stdin: true
 
   shfmt: &shfmt
@@ -110,8 +110,8 @@ languages:
   markdown:
     - <<: *mdformat
   python:
-    - <<: *black
     - <<: *ruff-isort
+    - <<: *python-format
   sh:
     - <<: *shellcheck
     - <<: *shfmt

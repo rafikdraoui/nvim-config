@@ -92,7 +92,7 @@ local configs = {
   ruff = {
     on_init = function(client)
       -- Disable formatting capabilities.
-      -- Let `black` handle it instead (via efm-langserver).
+      -- Let `python-format` script handle it instead (via efm-langserver).
       client.server_capabilities.documentFormattingProvider = false
 
       -- Disable hover capabilities. Let `pyright` handle it instead.
