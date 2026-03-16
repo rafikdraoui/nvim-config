@@ -17,6 +17,3 @@ endfunction
 setlocal includeexpr=s:IncludeExpr(v:fname)
 setlocal isfname+=:
 setlocal suffixesadd=.rs
-
-setlocal foldmethod=expr
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()

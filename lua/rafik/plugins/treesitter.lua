@@ -6,10 +6,7 @@ require("nvim-treesitter.configs").setup({
   parser_install_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "site"),
   highlight = {
     enable = true,
-    disable = {
-      "dockerfile",
-      "just",
-    },
+    disable = { "dockerfile" },
   },
   textobjects = {
     move = {

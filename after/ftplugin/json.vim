@@ -1,6 +1,3 @@
-setlocal foldmethod=expr
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
-
 function! ToggleJSONPath() abort
   if &l:winbar != ''
     setlocal winbar=

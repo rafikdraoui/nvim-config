@@ -2,6 +2,8 @@ setlocal noexpandtab
 setlocal tabstop=4 shiftwidth=4
 setlocal listchars+=tab:\ \  " don't display tab characters in 'list' mode
 
+setlocal formatoptions+=r  " insert comment leader after hitting <enter> in Insert mode
+
 compiler go
 
 nnoremap <silent> <buffer> <leader>k <cmd>GoDoc<cr>

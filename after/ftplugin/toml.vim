@@ -1,6 +1,8 @@
 " This is required for Taplo LSP to use indent properly when formatting.
 setlocal tabstop=2
 
+setlocal foldtext=TableArrayFoldText()
+
 " Custom fold text for table arrays.
 " For example, the fold text for the following table array:
 "
@@ -8,7 +10,7 @@ setlocal tabstop=2
 "     name = hello
 "     version = 1.2.3
 "
-" will be: 'package: hello'
+" will be: '[[package (hello)]]'
 function! TableArrayFoldText() abort
   if &foldmethod !=# 'expr'
     return foldtext()
@@ -20,18 +22,10 @@ function! TableArrayFoldText() abort
   " use the `name` key as the label for the folded section
   let idx = match(lines, '^name =')
   if idx == -1
-    return foldtext()
+    return getline(v:foldstart)
   endif
   let label = substitute(get(lines, idx), 'name = ', '', '')
   let label = trim(label, '"')
 
-  return header . ': ' . label
+  return '[[' . header . ' (' . label . ')]]'
 endfunction
-
-function! TableArrayFoldExpr() abort
-  return getline(v:lnum) =~? '^[[' ? '>1' : '='
-endfunction
-
-setlocal foldmethod=expr
-setlocal foldexpr=TableArrayFoldExpr()
-setlocal foldtext=TableArrayFoldText()

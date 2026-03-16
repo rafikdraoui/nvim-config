@@ -37,9 +37,6 @@ vim.keymap.set("n", "cof", function()
   print(string.format("formatting: %s", enabled))
 end, { desc = "Toggle auto-formatting" })
 
--- markdown ftplugin (from default $VIMRUNTIME)
-vim.g.markdown_folding = 1
-
 -- miniyank
 vim.cmd.packadd("nvim-miniyank")
 vim.keymap.set({ "n", "x" }, "p", "<plug>(miniyank-autoput)")
@@ -119,7 +116,7 @@ vim.cmd.packadd("vim-projectionist")
 vim.g.qf_auto_resize = 0
 vim.cmd.packadd("vim-qf")
 vim.keymap.set("n", "<leader>q", "<plug>(qf_qf_toggle_stay)")
-vim.keymap.set("n", "<leader>z", "<plug>(qf_loc_toggle_stay)")
+vim.keymap.set("n", "<leader>l", "<plug>(qf_loc_toggle_stay)")
 
 -- vim-startuptime
 vim.cmd.packadd("vim-startuptime")

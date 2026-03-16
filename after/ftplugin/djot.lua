@@ -1,8 +1,5 @@
 local notes = require("rafik.notes")
 
-vim.opt_local.foldmethod = "expr"
-vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-
 --  Disable highlighting for emphasis blocks
 vim.cmd.highlight({ "link", "@markup.italic.djot", "Normal" })
 vim.cmd.highlight({ "link", "@punctuation.delimiter.italic.djot", "Normal" })

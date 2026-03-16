@@ -65,3 +65,32 @@ autocmd({ "ColorScheme" }, {
     vim.api.nvim_set_hl(0, "DebugPrintLine", { link = "Error" })
   end,
 })
+
+autocmd({ "FileType" }, {
+  desc = "Ensure disabling of insertion of comment leader when using 'o' or 'O'",
+  group = g,
+  callback = function() vim.opt_local.formatoptions:remove("o") end,
+})
+
+local treesitter_folding_fts = {
+  "djot",
+  "go",
+  "json",
+  "just",
+  "lua",
+  "markdown",
+  "python",
+  "rust",
+  "toml",
+  "vim",
+}
+autocmd({ "FileType" }, {
+  desc = "Set tree-sitter folding options",
+  group = g,
+  callback = function(ev)
+    if vim.list_contains(treesitter_folding_fts, ev.match) then
+      vim.opt_local.foldmethod = "expr"
+      vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    end
+  end,
+})

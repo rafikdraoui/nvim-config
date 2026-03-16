@@ -47,9 +47,9 @@ M.configure = function()
     h.write_unicode_data(data)
 
     -- required to make new Lua module available immediately
-    vim.loader.disable()
+    vim.loader.enable(false)
     require("rafik.unicode_data")
-    vim.loader.enable()
+    vim.loader.enable(true)
 
     is_configured = true
   end)

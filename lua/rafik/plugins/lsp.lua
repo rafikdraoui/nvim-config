@@ -48,11 +48,8 @@ local configs = {
     settings = {
       gopls = {
         analyses = {
-          nilness = true,
-          unusedparams = true,
-          unusedvariable = true,
-          unusedwrite = true,
-          useany = true,
+          -- Disable "Incorrect or missing package comment"
+          ST1000 = false,
         },
         gofumpt = true,
         staticcheck = true,
@@ -74,29 +71,12 @@ local configs = {
     },
   },
 
-  -- https://github.com/microsoft/pyright
-  pyright = {
-    handlers = {
-      -- Filter out `HINT` diagnostics: we only want severity of `INFO` or above
-      ["textDocument/publishDiagnostics"] = function(err, result, ...)
-        result.diagnostics = vim.tbl_filter(
-          function(d) return d.severity ~= vim.diagnostic.severity.HINT end,
-          result.diagnostics
-        )
-        vim.lsp.handlers["textDocument/publishDiagnostics"](err, result, ...)
-      end,
-    },
-  },
-
   -- https://github.com/astral-sh/ruff/tree/main/crates/ruff_server
   ruff = {
     on_init = function(client)
       -- Disable formatting capabilities.
       -- Let `python-format` script handle it instead (via efm-langserver).
       client.server_capabilities.documentFormattingProvider = false
-
-      -- Disable hover capabilities. Let `pyright` handle it instead.
-      client.server_capabilities.hoverProvider = false
     end,
   },
 
@@ -105,6 +85,9 @@ local configs = {
 
   -- https://github.com/tamasfe/taplo
   taplo = {},
+
+  -- https://github.com/astral-sh/ty
+  ty = {},
 
   -- https://github.com/redhat-developer/yaml-language-server
   yamlls = {},

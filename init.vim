@@ -20,12 +20,13 @@ set breakindent  " keep indentation when wrapping lines
 set cpoptions+=n breakindentopt=sbr  " display 'showbreak' symbol within the line number column
 
 let &cedit="\<c-o>" " ...since <c-f> is shadowed by vim-rsi
-set completeopt-=popup
+set completeopt+=fuzzy,nosort completeopt-=popup
 set cursorline cursorlineopt=number  " highlight current line number
 set diffopt-=linematch:40
 set exrc
-set foldlevel=99  " start unfolded by default
+set foldlevelstart=99  " start unfolded by default
 set foldmethod=indent
+set foldtext=  " display first line of fold as fold text
 set grepprg=rg\ --vimgrep
 set helpheight=1000  " maximize help window
 set ignorecase smartcase  " case-insensitive search, unless query has capital letter
@@ -38,6 +39,7 @@ set notimeout
 set number numberwidth=1
 set scrolloff=3
 set signcolumn=yes
+set spelloptions=camel
 set splitbelow splitright
 set tagcase=smart
 set termguicolors
@@ -142,9 +144,6 @@ nmap gP "+P
 " Copy last yank to system clipboard
 nnoremap <silent> cp :ToSystemClipboard<cr>
 
-" Toggle fold
-nnoremap <space> za
-
 " Easier substitute
 nnoremap <leader>/ :%s/
 xnoremap <leader>/ :s/
@@ -232,6 +231,9 @@ inoremap ,<tab> <c-x><c-o>
 
 " Display syntax highlight group of term under cursor
 nnoremap <leader>H <cmd>Inspect<cr>
+
+" Collapse all folds except the one the cursor is in
+nnoremap <leader>z zMzv
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode

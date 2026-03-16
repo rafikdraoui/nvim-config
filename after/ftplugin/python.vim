@@ -3,19 +3,7 @@ nnoremap <buffer> <leader>db Obreakpoint()<esc>
 
 nnoremap <silent> <buffer> <leader>k <cmd>PyDoc<cr>
 
-setlocal foldmethod=expr
-setlocal foldexpr=v:lua.vim.treesitter.foldexpr()
-
-" Toggle 'treesitter' and 'indent' folding
-function s:toggle_foldmethod() abort
-  if &l:foldmethod ==# 'indent'
-    setlocal foldmethod=expr
-  else
-    setlocal foldmethod=indent
-  endif
-  setlocal foldmethod?
-endfunction
-command! -buffer ToggleFoldMethod call <sid>toggle_foldmethod()
+setlocal formatoptions+=r  " insert comment leader after hitting <enter> in Insert mode
 
 " Add various useful locations to 'path'
 let s:project_root = luaeval('require("rafik.git").root()')

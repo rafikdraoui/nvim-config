@@ -118,5 +118,4 @@ languages:
   vim:
     - <<: *vint
   yaml:
-    - <<: *prettier
     - <<: *yamllint
