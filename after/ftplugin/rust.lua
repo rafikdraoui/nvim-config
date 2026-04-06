@@ -23,5 +23,5 @@ vim.keymap.set(
   "n",
   "<leader>D",
   rust_doc_from_lsp_hover,
-  { buffer = true, desc = "Open documentation link for topic in LSP hover window" }
+  { buf = 0, desc = "Open documentation link for topic in LSP hover window" }
 )

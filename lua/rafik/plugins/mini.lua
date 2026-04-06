@@ -40,6 +40,9 @@ require("mini.ai").setup({
     inside_last = "iL",
   },
 })
+-- Remove default in/an mappings to avoid conflict with 'number' mappings
+vim.keymap.del({ "o", "x" }, "in")
+vim.keymap.del({ "o", "x" }, "an")
 
 -- mini-bracketed ------------------------------------------------------------- {{{1
 
@@ -61,8 +64,9 @@ MiniBracketed.setup({
 
 -- mini-cursorword ------------------------------------------------------------ {{{1
 require("mini.cursorword").setup()
-vim.keymap.set("n", "cov", function()
+vim.keymap.set("n", "<localleader>v", function()
   vim.g.minicursorword_disable = not vim.g.minicursorword_disable
+  print(string.format("cursorword: %s", not vim.g.minicursorword_disable))
   -- Trigger highlight update
   vim.cmd.doautocmd("CursorMoved")
 end, { desc = "Toggle mini.cursorword" })
@@ -130,7 +134,7 @@ MiniHiPatterns.setup({
 
 vim.keymap.set(
   "n",
-  "coh",
+  "<localleader>h",
   MiniHiPatterns.toggle,
   { desc = "Toggle highlighting of patterns" }
 )
@@ -185,10 +189,25 @@ MiniPick.setup({
       end,
     },
   },
+  window = {
+    -- Center window on screen
+    config = function()
+      local height = math.floor(0.618 * vim.o.lines)
+      local width = math.floor(0.618 * vim.o.columns)
+      return {
+        anchor = "NW",
+        height = height,
+        width = width,
+        row = math.floor(0.5 * (vim.o.lines - height)),
+        col = math.floor(0.5 * (vim.o.columns - width)),
+      }
+    end,
+  },
 })
 -- Enable extra pickers
 require("mini.extra").setup()
 
+vim.keymap.set("n", "<leader>rp", MiniPick.builtin.resume, { desc = "mini.pick: resume" })
 vim.keymap.set(
   "n",
   "<leader>c",

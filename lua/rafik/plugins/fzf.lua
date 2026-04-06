@@ -34,7 +34,7 @@ fzf.setup({
 
 vim.keymap.set("n", "<c-f>", fzf.git_files, { desc = "fzf: git files" })
 vim.keymap.set("n", "<c-h>", fzf.help_tags, { desc = "fzf: help tags" })
-vim.keymap.set("n", "<leader>r", fzf.resume, { desc = "fzf: resume" })
+vim.keymap.set("n", "<leader>rf", fzf.resume, { desc = "fzf: resume" })
 vim.keymap.set("n", "gr<space>", fzf.lsp_finder, { desc = "fzf: LSP info for symbol" })
 vim.keymap.set(
   "n",

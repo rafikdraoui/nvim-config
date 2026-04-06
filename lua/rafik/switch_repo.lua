@@ -1,4 +1,4 @@
-local fzf = require("fzf-lua")
+local MiniPick = require("mini.pick")
 
 local M = {}
 local h = {}
@@ -10,11 +10,11 @@ local state = {
   display_path = false,
 }
 
--- `switch` provides a fzf interface to select a git repository to work on.
+-- `switch` provides a MiniPick picker to select a git repository to work on.
 --
 -- The first screen lists candidate repositories. Pressing `<tab>` toggles the
 -- display of the full path of the repository (which can be fuzzy-searched on).
--- After selecting one, the `git_files` fzf-lua command is invoked on it.
+-- After selecting one, the `git_files` built-in picker is invoked on it.
 --
 -- It takes an optional `opts` table with keys `prompt`, `root`, and
 -- `search_paths`, all of which are optional.
@@ -52,32 +52,52 @@ M.switch = function(opts)
   local root = opts.root or vim.env.HOME
   local search_paths = opts.search_paths or {}
 
-  local cmd = h.make_command(root, search_paths)
-  fzf.fzf_exec(cmd, {
-    actions = {
-      -- select repo and fuzzy-search its files
-      default = function(selected) h.act(selected[1], root) end,
-
-      -- toggle display of full paths
-      tab = {
-        function() state.display_path = not state.display_path end,
-        function() fzf.resume({ fzf_opts = h.fzf_opts(state.display_path) }) end,
+  local cmd = h.command(root, search_paths)
+  MiniPick.builtin.cli({ command = cmd }, {
+    source = {
+      name = prompt,
+      cwd = root,
+      show = h.show,
+      choose = h.choose,
+    },
+    mappings = {
+      toggle_preview = "",
+      toggle_display_path = {
+        char = "<tab>",
+        func = function() state.display_path = not state.display_path end,
       },
     },
-    fn_transform = h.display,
-    fzf_opts = h.fzf_opts(state.display_path),
-    prompt = prompt .. "> ",
-    -- required to be able to use `fzf.utils.ansi_codes` in `fn_transform`
-    multiprocess = false,
   })
 end
 
 -- Helpers --------------------------------------------------------------------
 
--- `make_command` returns the `fd` command used to list all git repositories
+h.show = function(buf_id, items_to_show, query)
+  local items = vim.tbl_map(function(path)
+    local basename = vim.fs.basename(path)
+    if state.display_path then
+      return string.format("%s (%s)", basename, path)
+    else
+      return basename
+    end
+  end, items_to_show)
+  return MiniPick.default_show(buf_id, items, query)
+end
+
+-- `choose` triggers the built-in `git_files` picker for the selected item,
+-- which should be the path to a Git repository.
+h.choose = function(item)
+  local repo_path = vim.fs.abspath(item)
+  local repo_name = vim.fs.basename(repo_path)
+  MiniPick.builtin.files({ tool = "git" }, {
+    source = { cwd = repo_path, name = repo_name, show = MiniPick.default_show },
+  })
+end
+
+-- `command` returns the `fd` command used to list all git repositories
 -- under the given `search_paths` in `root`. If `search_paths` is empty , then
 -- it lists all git repositories under `root`.
-h.make_command = function(root, search_paths)
+h.command = function(root, search_paths)
   local cmd = {
     "fd",
     ".git", -- file name pattern to search for
@@ -95,57 +115,7 @@ h.make_command = function(root, search_paths)
   -- e.g. `/home/user/hello/.git` -> `/home/user/hello`
   table.insert(cmd, { "--exec", "echo", "{//}" })
 
-  return vim.iter(cmd):flatten():join(" ")
-end
-
--- `act` changes the local current working directory to the repository
--- corresponding to the selection, and triggers the built-in `git_files`
--- fzf-lua action for it.
---
--- `selection` will always be the full "<basename> <path>" entry, regardless of
--- the value of `state.display_path`.
-h.act = function(selection, root)
-  local basename, path = unpack(vim.split(selection, " "))
-  if not path then
-    vim.notify("Invalid selection: " .. selection, vim.log.levels.ERROR)
-    return
-  end
-
-  if not vim.startswith(path, root) then
-    path = string.format("%s/%s", root, path)
-  end
-  vim.cmd.lcd(path)
-  fzf.git_files({ cwd = path, prompt = basename .. "> " })
-end
-
--- `fzf_opts` returns the the appropriate options for fzf depending on whether
--- display_path is true or false.
---
--- If `display_path` is true, then we disable the `with_nth` option, so that it
--- shows the whole entries with their paths. Otherwise, we set it to 1, to
--- indicate that we only want to use the first (space-delimited) "field" of the
--- entries (i.e. the base names of the repositories).
-h.fzf_opts = function(display_path)
-  local with_nth = false
-  if not display_path then
-    with_nth = 1
-  end
-  return {
-    ["--ansi"] = true,
-    ["--with-nth"] = with_nth,
-  }
-end
-
--- `display` takes the file path of a git repository, and renders it as
--- "<basename> <path>", where the base name is emphasized and the path is
--- muted.
-h.display = function(path)
-  local basename = vim.fs.basename(path)
-  return string.format(
-    "%s %s",
-    fzf.utils.ansi_codes.bold(basename),
-    fzf.utils.ansi_codes.grey(path)
-  )
+  return vim.iter(cmd):flatten():totable()
 end
 
 return M

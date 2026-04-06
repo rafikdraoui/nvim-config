@@ -1,7 +1,10 @@
 " vim: foldmethod=marker
 
-" speed up loading of lua modules
+" Speed up loading of lua modules
 lua vim.loader.enable()
+
+" Enable experimental UI
+lua require("vim._core.ui2").enable({})
 
 " Define `P()` as a global Lua function to pretty-print values
 lua _G.P = vim.print
@@ -37,6 +40,7 @@ set mouse=
 set noswapfile directory=''  " disable swapfile
 set notimeout
 set number numberwidth=1
+set pumheight=15
 set scrolloff=3
 set signcolumn=yes
 set spelloptions=camel
@@ -46,12 +50,6 @@ set termguicolors
 set title
 set updatetime=1000
 set wildmode=longest:full,full
-
-" Use dedicated directory for spelling word list files. It needs to be the
-" "first directory in 'runtimepath' that is writable", according to the
-" documentation of 'spellfile'.
-let spellfiles_rtp = stdpath('data') .. '/spellfiles'
-let &runtimepath=printf('%s,%s', spellfiles_rtp , &runtimepath)
 
 " Allow syntax highlighting of embedded lua in vimscript files
 " c.f. $VIMRUNTIME/syntax/vim.vim
@@ -68,6 +66,8 @@ let g:loaded_python3_provider = 0
 let g:loaded_ruby_provider = 0
 
 colorscheme gris
+" TODO: remove after https://github.com/neovim/neovim/issues/38777 is fixed
+hi clear MsgArea
 
 
 " Mappings {{{1
@@ -76,8 +76,17 @@ let g:mapleader = ','
 
 " Buffers
 nnoremap <leader><leader> <c-^>
-nnoremap <leader>b :ls<cr>:b<space>
-nnoremap <leader>B :ls<cr>:sb<space>
+lua <<EOF
+  vim.keymap.set("n", "<leader>b", function()
+    vim.cmd.ls()
+    vim.fn.feedkeys(":b ", "t")
+    end, {desc = "Select opened buffer"})
+
+  vim.keymap.set("n", "<leader>B", function()
+    vim.cmd.ls()
+    vim.fn.feedkeys(":sb ", "t")
+  end, {desc = "Select opened buffer and load in new split"})
+EOF
 " close quickfix window before `bdelete`, to avoid prematurely quitting vim
 " (cf. g:qf_auto_quit)
 nnoremap <silent> <leader><bs> :cclose <bar> :lclose <bar> :bdelete<cr>
@@ -184,26 +193,26 @@ nnoremap zs :echo "sort" <bar> set opfunc=v:lua.require'rafik.opfunc'.sort<cr>g@
 xnoremap <silent> zs :<c-u>lua require("rafik.opfunc").sort(vim.fn.visualmode())<cr>
 
 " Toggle spellcheck and spelllang
-nnoremap <silent> cos :set spell! <cr>
-nnoremap <silent> col :execute 'setlocal spelllang=' . (&spelllang ==# 'en' ? 'fr' : 'en') <cr>
+nnoremap <silent> <localleader>s :set spell! <cr>
+nnoremap <silent> <localleader>l :execute 'setlocal spelllang=' . (&spelllang ==# 'en' ? 'fr' : 'en') <cr>
 
 " Toggle cursorline highlighting
-nnoremap <silent> coc <cmd>execute 'set cursorlineopt=' . (&culopt ==# 'number' ? 'both' : 'number')<cr>
+nnoremap <silent> <localleader>c <cmd>execute 'set cursorlineopt=' . (&culopt ==# 'number' ? 'both' : 'number')<cr>
 
 " Toggle wrap
-nnoremap <silent> cow :set wrap! <bar> set wrap? <cr>
+nnoremap <silent> <localleader>w :set wrap! <bar> set wrap? <cr>
 
 " Toggle relativenumber
-nnoremap <silent> con :set relativenumber!<cr>
+nnoremap <silent> <localleader>n :set relativenumber!<cr>
 
 " Toggle dark/light background
-nnoremap <silent> cob :execute 'set bg=' . (&bg ==# 'dark' ? 'light' : 'dark') <cr>
+nnoremap <silent> <localleader>b :execute 'set bg=' . (&bg ==# 'dark' ? 'light' : 'dark') <cr>
 
 " Toggle colorscheme
-nnoremap <silent> cog :execute 'colo ' . (g:colors_name ==# 'couleurs' ? 'gris' : 'couleurs') <cr>
+nnoremap <silent> <localleader>g :execute 'colo ' . (g:colors_name ==# 'couleurs' ? 'gris' : 'couleurs') <cr>
 
 " Toggle highlighting of definitions (if supported by color scheme)
-nnoremap <silent> coz :lua require("rafik.colors").toggle_definition_highlight() <cr>
+nnoremap <silent> <localleader>z :lua require("rafik.colors").toggle_definition_highlight() <cr>
 
 " Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
 tnoremap <expr> <esc> "<c-\><c-n>"

@@ -5,18 +5,17 @@ vim.api.nvim_set_hl(0, "DebugPrintLine", { link = "Error" })
 vim.keymap.set(
   "n",
   "g?d",
-  vim.cmd.DeleteDebugPrints,
+  function() vim.cmd.Debugprint("delete") end,
   { desc = "Delete Debugprint lines" }
 )
 vim.keymap.set(
   "n",
   "g?q",
-  vim.cmd.DebugPrintQFList,
+  function() vim.cmd.Debugprint("qflist") end,
   { desc = "Display Debugprint lines in quickfix list" }
 )
 
 -- git-messenger
--- see also: after/ftplugin/gitmessengerpopup.vim
 vim.g.git_messenger_no_default_mappings = true
 vim.g.git_messenger_always_into_popup = true
 vim.cmd.packadd("git-messenger.vim")
@@ -31,7 +30,7 @@ vim.cmd.packadd("vim-gutentags")
 vim.cmd.packadd("lsp-format.nvim")
 local lsp_format = require("lsp-format")
 lsp_format.setup()
-vim.keymap.set("n", "cof", function()
+vim.keymap.set("n", "<localleader>f", function()
   vim.cmd.FormatToggle()
   local enabled = not lsp_format.disabled
   print(string.format("formatting: %s", enabled))
@@ -52,6 +51,9 @@ vim.keymap.set(
   require("rafik.notes").edit,
   { desc = "Edit/create/search notes" }
 )
+
+-- python ftplugin (from default $VIMRUNTIME)
+vim.g.no_python_maps = true
 
 -- switch-repo
 -- no 'packadd' here, because this plugin is part of the dotfiles
@@ -83,13 +85,12 @@ end, { desc = "Switch repo (vim plugins)" })
 vim.cmd.packadd("toggleterm.nvim")
 require("toggleterm").setup({ open_mapping = [[<c-\>]] })
 
--- undotree
-vim.cmd.packadd("undotree")
-require("undotree").setup({ float_diff = false })
+-- undotree (from default $VIMRUNTIME)
+vim.cmd.packadd("nvim.undotree")
 vim.keymap.set(
   "n",
-  "cou",
-  function() require("undotree").toggle() end,
+  "<localleader>u",
+  function() vim.cmd.Undotree() end,
   { desc = "Toggle undotree" }
 )
 

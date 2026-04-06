@@ -7,4 +7,5 @@
 ; Highlight `breakpoint()` debugger calls as errors
 ((call
   function: (identifier) @error)
-  (#eq? @error "breakpoint"))
+  (#eq? @error "breakpoint")
+  (#set! priority 200))

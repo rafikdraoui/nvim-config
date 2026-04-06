@@ -8,6 +8,7 @@ local methods = vim.lsp.protocol.Methods
 --    grn: vim.lsp.buf.rename
 --    grr: vim.lsp.buf.references
 --    grt: vim.lsp.buf.type_definition
+--    grx: vim.lsp.codelens.run
 local actions = {
   ["signature help"] = {
     method = methods.textDocument_signatureHelp,
@@ -32,18 +33,26 @@ local actions = {
   },
   ["format (async)"] = {
     method = methods.textDocument_formatting,
-    lhs = "grx",
+    lhs = "grf",
     rhs = function() vim.lsp.buf.format({ async = true }) end,
   },
-  ["refresh code lenses"] = {
+  ["toggle code lenses"] = {
     method = methods.textDocument_codeLens,
-    lhs = "grL",
-    rhs = vim.lsp.codelens.refresh,
+    lhs = "<localleader>L",
+    rhs = function() vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled()) end,
   },
-  ["run code lens"] = {
-    method = methods.textDocument_codeLens,
-    lhs = "grl",
-    rhs = vim.lsp.codelens.run,
+  ["toggle semantic tokens highlights"] = {
+    method = methods.textDocument_semanticTokens_full,
+    lhs = "<localleader>T",
+    rhs = function()
+      vim.lsp.semantic_tokens.enable(not vim.lsp.semantic_tokens.is_enabled())
+      print(
+        string.format(
+          "semantic tokens highlight: %s",
+          vim.lsp.semantic_tokens.is_enabled()
+        )
+      )
+    end,
   },
 }
 
@@ -51,12 +60,7 @@ local set_mappings = function(client)
   for action, data in pairs(actions) do
     if client:supports_method(data.method) then
       local modes = data.modes or { "n" }
-      vim.keymap.set(
-        modes,
-        data.lhs,
-        data.rhs,
-        { buffer = true, desc = "LSP: " .. action }
-      )
+      vim.keymap.set(modes, data.lhs, data.rhs, { buf = 0, desc = "LSP: " .. action })
     end
   end
 end
@@ -78,8 +82,5 @@ vim.api.nvim_create_autocmd({ "LspAttach" }, {
         lsp_format.on_attach(client)
       end
     end
-
-    -- disable semantic tokens highlighting
-    client.server_capabilities.semanticTokensProvider = nil
   end,
 })

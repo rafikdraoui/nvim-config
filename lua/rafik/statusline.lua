@@ -71,12 +71,8 @@ end
 -- as StatusLine, but with reversed foreground and background, and the addition
 -- of the bold attribute.
 M.set_status_highlights = function()
-  local hl = vim.api.nvim_get_hl_by_name("StatusLine", true)
-  local attrs = { fg = hl.foreground, bg = hl.background, bold = true }
-
-  local extend = function(tbl1, tbl2) return vim.tbl_extend("force", tbl1, tbl2) end
-  vim.api.nvim_set_hl(0, "User1", extend(attrs, { reverse = hl.reverse }))
-  vim.api.nvim_set_hl(0, "User2", extend(attrs, { reverse = not hl.reverse }))
+  vim.api.nvim_set_hl(0, "User1", { bold = true, update = true })
+  vim.api.nvim_set_hl(0, "User2", { bold = true, reverse = true, update = true })
 end
 
 return M

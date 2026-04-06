@@ -1,6 +1,3 @@
-" This is required for Taplo LSP to use indent properly when formatting.
-setlocal tabstop=2
-
 setlocal foldtext=TableArrayFoldText()
 
 " Custom fold text for table arrays.

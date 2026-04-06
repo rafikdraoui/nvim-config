@@ -8,8 +8,10 @@ M.toggle_definition_highlight = function()
 
   if current_hl.link == "RafikDefinition" then
     vim.cmd("hi! link @rafik.definition Identifier")
+    print("definition highlight: off")
   else
     vim.cmd("hi! link @rafik.definition RafikDefinition")
+    print("definition highlight: on")
   end
 end
 

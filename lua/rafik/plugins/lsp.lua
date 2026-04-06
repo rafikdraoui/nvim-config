@@ -42,7 +42,7 @@ local configs = {
         vim.notify("Cannot determine module name: " .. mod, vim.log.levels.ERROR)
       else
         client.config.settings.gopls["local"] = mod
-        client.notify("workspace/didChangeConfiguration")
+        client:notify("workspace/didChangeConfiguration")
       end
     end,
     settings = {
@@ -83,8 +83,8 @@ local configs = {
   -- https://github.com/tailwindlabs/tailwindcss-intellisense
   tailwindcss = {},
 
-  -- https://github.com/tamasfe/taplo
-  taplo = {},
+  -- https://github.com/tombi-toml/tombi
+  tombi = {},
 
   -- https://github.com/astral-sh/ty
   ty = {},

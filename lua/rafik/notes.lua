@@ -1,57 +1,78 @@
-local fzf = require("fzf-lua")
+local MiniPick = require("mini.pick")
 
 local M = {}
 local h = {}
 
-M.edit = function(root, query)
+M.edit = function(root)
   root = h.ensure_root(root)
-
-  local exact_match = false
-  fzf.files({
-    cwd = root,
-    cwd_prompt = false,
-    header = false,
-    prompt = "Notes> ",
-    query = query,
-    actions = {
-      -- edit or create note
-      ["default"] = function(selected, opts)
-        if #selected > 0 then
-          fzf.actions.file_edit_or_qf(selected, opts)
-        else
-          h.create_note_from_query(root)
-        end
-      end,
-
-      -- toggle exact matching
-      ["ctrl-e"] = {
-        function() exact_match = not exact_match end,
-        function() fzf.resume({ fzf_opts = { ["--exact"] = exact_match } }) end,
+  MiniPick.builtin.files({ tool = "fd" }, {
+    source = {
+      name = "Notes",
+      cwd = root,
+      show = MiniPick.default_show,
+    },
+    mappings = {
+      choose = "", -- override with "edit_or_create"
+      edit_or_create = {
+        char = "<cr>",
+        func = function()
+          local selected = MiniPick.get_picker_matches().current
+          if selected then
+            MiniPick.default_choose(selected)
+          else
+            h.create_note_from_query(root)
+          end
+          return true
+        end,
       },
-
-      -- create new note with name set to the current query
-      ["ctrl-o"] = function() h.create_note_from_query(root) end,
-
-      -- switch to search mode
-      ["ctrl-s"] = function() M.search(root, h.query()) end,
+      toggle_exact_matching = {
+        char = "<c-e>",
+        func = function()
+          local query = MiniPick.get_picker_query()
+          if query[1] == "'" then
+            table.remove(query, 1)
+          else
+            table.insert(query, 1, "'")
+          end
+          MiniPick.set_picker_query(query)
+        end,
+      },
+      create_new_note_from_query = {
+        char = "<c-o>",
+        func = function()
+          h.create_note_from_query(root)
+          return true
+        end,
+      },
+      search_mode = {
+        char = "<c-/>",
+        func = function()
+          local query = MiniPick.get_picker_query()
+          M.search(root)
+          vim.defer_fn(function() MiniPick.set_picker_query(query) end, 100)
+        end,
+      },
     },
   })
 end
 
-M.search = function(root, query)
+M.search = function(root)
   root = h.ensure_root()
-
-  fzf.live_grep_native({
-    cwd = root,
-    prompt = "Search notes> ",
-    query = query,
-    fzf_opts = {
-      -- exclude file names from search
-      ["--nth"] = "2..",
+  MiniPick.builtin.grep_live({ tool = "rg" }, {
+    source = {
+      name = "Search notes",
+      cwd = root,
+      show = MiniPick.default_show,
     },
-    actions = {
-      -- switch to edit mode
-      ["ctrl-s"] = function() M.edit(root, h.query()) end,
+    mappings = {
+      edit_mode = {
+        char = "<c-/>",
+        func = function()
+          local query = MiniPick.get_picker_query()
+          M.edit(root)
+          vim.defer_fn(function() MiniPick.set_picker_query(query) end, 100)
+        end,
+      },
     },
   })
 end
@@ -91,12 +112,16 @@ h.ensure_root = function(root)
   return root
 end
 
-h.query = fzf.get_last_query
-
 h.create_note_from_query = function(root)
-  local filename = h.query()
-  local path = vim.fs.joinpath(root, filename)
-  vim.cmd.edit(path)
+  local query = MiniPick.get_picker_query()
+  if #query == 0 then
+    return true
+  end
+  local name = vim.fn.join(query, "")
+  local path = vim.fs.joinpath(root, name)
+
+  local win_id = MiniPick.get_picker_state().windows.target
+  vim.api.nvim_win_call(win_id, function() vim.cmd.edit(path) end)
 end
 
 h.target_at_cursor = function(pattern)

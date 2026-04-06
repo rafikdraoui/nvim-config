@@ -36,7 +36,7 @@ autocmd({ "TermEnter" }, {
   desc = "Set statuline for toggleterm terminals",
   pattern = "term://*toggleterm#*",
   group = g,
-  callback = function() vim.opt_local.statusline = "%1*terminal " .. vim.b.toggle_number end,
+  callback = function() vim.opt_local.statusline = "%2*terminal " .. vim.b.toggle_number end,
 })
 
 autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
@@ -64,6 +64,13 @@ autocmd({ "ColorScheme" }, {
     vim.api.nvim_set_hl(0, "dCursor", { bg = "#2da84f" })
     vim.api.nvim_set_hl(0, "DebugPrintLine", { link = "Error" })
   end,
+})
+
+-- TODO: remove after https://github.com/neovim/neovim/issues/38777 is fixed
+autocmd({ "ColorScheme" }, {
+  desc = "Clear MsgArea highlight to avoid crashes with ui2",
+  group = g,
+  callback = function() vim.cmd([[hi clear MsgArea]]) end,
 })
 
 autocmd({ "FileType" }, {

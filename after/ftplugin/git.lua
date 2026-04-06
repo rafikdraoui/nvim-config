@@ -6,4 +6,4 @@ vim.keymap.set({ "n", "x" }, "<cr>", function()
   else
     vim.api.nvim_feedkeys(vim.keycode("<cr>"), "n", false)
   end
-end, { buffer = true, desc = "Show git info at cursor" })
+end, { buf = 0, desc = "Show git info at cursor" })

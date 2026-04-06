@@ -1,60 +1,72 @@
 vim.cmd.packadd("nvim-treesitter")
+vim.cmd.packadd("nvim-treesitter-context")
 vim.cmd.packadd("nvim-treesitter-locals")
 vim.cmd.packadd("nvim-treesitter-textobjects")
 
-require("nvim-treesitter.configs").setup({
-  parser_install_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "site"),
-  highlight = {
-    enable = true,
-    disable = { "dockerfile" },
-  },
-  textobjects = {
-    move = {
-      enable = true,
-      goto_next_start = {
-        ["]f"] = "@function.outer",
-        ["]]"] = "@class.outer",
-      },
-      goto_next_end = {
-        ["]F"] = "@function.outer",
-        ["]["] = "@class.outer",
-      },
-      goto_previous_start = {
-        ["[f"] = "@function.outer",
-        ["[["] = "@class.outer",
-      },
-      goto_previous_end = {
-        ["[F"] = "@function.outer",
-        ["[]"] = "@class.outer",
-      },
-    },
-  },
+-- Enable tree-sitter when opening a file for a supported language
+local installed_parsers = require("nvim-treesitter").get_installed()
+local filetypes = {}
+for _, parser in ipairs(installed_parsers) do
+  for _, ft in ipairs(vim.treesitter.language.get_filetypes(parser)) do
+    table.insert(filetypes, ft)
+  end
+end
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = filetypes,
+  group = vim.api.nvim_create_augroup("nvim-treesitter-filetypes", { clear = true }),
+  desc = "Start tree-sitter for supported filetypes",
+  callback = function(ev) vim.treesitter.start(ev.buf) end,
 })
 
-vim.keymap.set(
-  "n",
-  "g:",
-  function() print(require("nvim-treesitter").statusline()) end,
-  { desc = "Display current position in parse tree" }
-)
+-- Add mappings to navigate to next/previous function/class
+local ts_move_map = function(lhs, method, target)
+  vim.keymap.set(
+    { "n", "x", "o" },
+    lhs,
+    function() require("nvim-treesitter-textobjects.move")[method](target, "textobjects") end,
+    { desc = string.format("%s %s", method, target) }
+  )
+end
+ts_move_map("]f", "goto_next_start", "@function.outer")
+ts_move_map("[f", "goto_previous_start", "@function.outer")
+ts_move_map("]F", "goto_next_end", "@function.outer")
+ts_move_map("[F", "goto_previous_end", "@function.outer")
+ts_move_map("]]", "goto_next_start", "@class.outer")
+ts_move_map("[[", "goto_previous_start", "@class.outer")
 
+-- Add mapping to toggle tree-sitter highlighting
+local ts_toggle = function()
+  local bufnr = vim.fn.bufnr()
+  local active = vim.treesitter.highlighter.active[bufnr]
+  if active then
+    vim.treesitter.stop()
+  else
+    vim.treesitter.start()
+  end
+  print(string.format("tree-sitter highlight: %s", not active))
+end
 vim.keymap.set(
   "n",
-  "cot",
-  function() vim.cmd.TSBufToggle("highlight") end,
+  "<localleader>t",
+  ts_toggle,
   { desc = "Toggle tree-sitter highlighting" }
 )
 
--- Add grammar for Jujutsu's commit messages filetype
-local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-parser_config.jjdescription = {
-  install_info = {
-    url = "https://github.com/kareigu/tree-sitter-jjdescription.git",
-    files = { "src/parser.c" },
-    branch = "dev",
-  },
-  filetype = "jj",
-}
+-- Install additional parsers
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TSUpdate",
+  desc = "Install custom tree-sitter parsers",
+  group = vim.api.nvim_create_augroup("nvim-treesitter-custom", { clear = true }),
+  callback = function()
+    require("nvim-treesitter.parsers").d2 = {
+      install_info = {
+        url = "https://github.com/ravsii/tree-sitter-d2",
+        revision = "ffb66ce4c801a1e37ed145ebd5eca1ea8865e00f",
+        queries = "queries",
+      },
+    }
+  end,
+})
 
 -- Go to next/previous local usage of variable under the cursor.
 -- Depends on `nvim-treesitter-locals`.
@@ -117,3 +129,13 @@ vim.keymap.set(
   function() goto_adjacent_usage(-1) end,
   { desc = "Jump to previous usage of variable under the cursor" }
 )
+
+require("treesitter-context").setup({
+  enable = false, -- disable by default
+  multiline_threshold = 1, -- only show one line per context
+})
+vim.keymap.set("n", "<localleader>i", function()
+  local ts_context = require("treesitter-context")
+  ts_context.toggle()
+  print(string.format("tree-sitter context: %s", ts_context.enabled()))
+end, { desc = "Toggle treesitter-context" })

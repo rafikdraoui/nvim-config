@@ -15,12 +15,11 @@ vim.diagnostic.config({
   virtual_text = true,
 })
 
-vim.keymap.set(
-  "n",
-  "cod",
-  function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
-  { desc = "Toggle display of diagnostics" }
-)
+vim.keymap.set("n", "<localleader>d", function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+  print(string.format("diagnostics: %s", vim.diagnostic.is_enabled()))
+end, { desc = "Toggle display of diagnostics" })
+
 vim.keymap.set(
   "n",
   "<leader>e",

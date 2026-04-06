@@ -4,7 +4,7 @@ local notes = require("rafik.notes")
 vim.cmd.highlight({ "link", "@markup.italic.djot", "Normal" })
 vim.cmd.highlight({ "link", "@punctuation.delimiter.italic.djot", "Normal" })
 
-vim.keymap.set("n", "<cr>", notes.jump, { buffer = true })
+vim.keymap.set("n", "<cr>", notes.jump, { buf = 0 })
 
 vim.b.minihipatterns_config = {
   highlighters = {
