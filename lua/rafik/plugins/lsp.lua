@@ -1,6 +1,11 @@
 vim.cmd.packadd("nvim-lspconfig")
 
 local configs = {
+  -- https://github.com/hrsh7th/vscode-langservers-extracted
+  cssls = {
+    init_options = { provideFormatter = false },
+  },
+
   -- https://github.com/mattn/efm-langserver
   efm = {
     cmd = {
@@ -51,6 +56,7 @@ local configs = {
           -- Disable "Incorrect or missing package comment"
           ST1000 = false,
         },
+        completeFunctionCalls = false,
         gofumpt = true,
         staticcheck = true,
       },
@@ -67,9 +73,13 @@ local configs = {
         formatting = {
           command = { "alejandra" },
         },
+        nix = { flake = { autoArchive = false } },
       },
     },
   },
+
+  -- https://github.com/bellini666/pytest-language-server
+  pytest_language_server = {},
 
   -- https://github.com/astral-sh/ruff/tree/main/crates/ruff_server
   ruff = {

@@ -33,7 +33,7 @@ lsp_format.setup()
 vim.keymap.set("n", "<localleader>f", function()
   vim.cmd.FormatToggle()
   local enabled = not lsp_format.disabled
-  print(string.format("formatting: %s", enabled))
+  vim.notify(string.format("formatting: %s", enabled))
 end, { desc = "Toggle auto-formatting" })
 
 -- miniyank
@@ -48,7 +48,7 @@ vim.keymap.set("", "<c-n>", "<plug>(miniyank-cycleback)")
 vim.keymap.set(
   "n",
   "<leader>n",
-  require("rafik.notes").edit,
+  function() require("rafik.notes").edit() end,
   { desc = "Edit/create/search notes" }
 )
 
@@ -87,12 +87,7 @@ require("toggleterm").setup({ open_mapping = [[<c-\>]] })
 
 -- undotree (from default $VIMRUNTIME)
 vim.cmd.packadd("nvim.undotree")
-vim.keymap.set(
-  "n",
-  "<localleader>u",
-  function() vim.cmd.Undotree() end,
-  { desc = "Toggle undotree" }
-)
+vim.keymap.set("n", "<localleader>u", vim.cmd.Undotree, { desc = "Toggle undotree" })
 
 -- unicode-picker
 -- no 'packadd' here, because this plugin is part of the dotfiles

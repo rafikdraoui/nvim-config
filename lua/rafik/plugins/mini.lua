@@ -66,7 +66,7 @@ MiniBracketed.setup({
 require("mini.cursorword").setup()
 vim.keymap.set("n", "<localleader>v", function()
   vim.g.minicursorword_disable = not vim.g.minicursorword_disable
-  print(string.format("cursorword: %s", not vim.g.minicursorword_disable))
+  vim.notify(string.format("cursorword: %s", not vim.g.minicursorword_disable))
   -- Trigger highlight update
   vim.cmd.doautocmd("CursorMoved")
 end, { desc = "Toggle mini.cursorword" })
@@ -188,12 +188,24 @@ MiniPick.setup({
         vim.api.nvim_input("<a-cr>") -- choose marked
       end,
     },
+    toggle_exact_matching = {
+      char = "<c-e>",
+      func = function()
+        local query = MiniPick.get_picker_query()
+        if query[1] == "'" then
+          table.remove(query, 1)
+        else
+          table.insert(query, 1, "'")
+        end
+        MiniPick.set_picker_query(query)
+      end,
+    },
   },
   window = {
     -- Center window on screen
     config = function()
       local height = math.floor(0.618 * vim.o.lines)
-      local width = math.floor(0.618 * vim.o.columns)
+      local width = math.min(math.floor(0.75 * vim.o.columns), 100)
       return {
         anchor = "NW",
         height = height,
@@ -204,10 +216,12 @@ MiniPick.setup({
     end,
   },
 })
+vim.api.nvim_set_hl(0, "MiniPickNormal", { bold = true, update = true })
+
 -- Enable extra pickers
 require("mini.extra").setup()
 
-vim.keymap.set("n", "<leader>rp", MiniPick.builtin.resume, { desc = "mini.pick: resume" })
+vim.keymap.set("n", "<leader>r", MiniPick.builtin.resume, { desc = "mini.pick: resume" })
 vim.keymap.set(
   "n",
   "<leader>c",
@@ -219,6 +233,27 @@ vim.keymap.set(
   "<leader>C",
   MiniPick.registry.diagnostic,
   { desc = "Show diagnostics of all open buffers in mini picker" }
+)
+
+vim.keymap.set(
+  "n",
+  "<c-f>",
+  function() require("rafik.pickers").files() end,
+  { desc = "pick: files" }
+)
+
+vim.keymap.set(
+  "n",
+  "<c-h>",
+  function() require("rafik.pickers").helptags() end,
+  { desc = "pick: vim help tag" }
+)
+
+vim.keymap.set(
+  "n",
+  "<leader>pd",
+  function() require("rafik.pickers").dotfiles() end,
+  { desc = "pick: dotfiles" }
 )
 
 -- mini-surround -------------------------------------------------------------- {{{1

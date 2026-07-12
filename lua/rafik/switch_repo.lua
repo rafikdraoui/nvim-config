@@ -61,7 +61,7 @@ M.switch = function(opts)
       choose = h.choose,
     },
     mappings = {
-      toggle_preview = "",
+      toggle_preview = "", -- override with "toggle_display_path"
       toggle_display_path = {
         char = "<tab>",
         func = function() state.display_path = not state.display_path end,

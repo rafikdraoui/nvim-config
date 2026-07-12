@@ -25,18 +25,6 @@ M.edit = function(root)
           return true
         end,
       },
-      toggle_exact_matching = {
-        char = "<c-e>",
-        func = function()
-          local query = MiniPick.get_picker_query()
-          if query[1] == "'" then
-            table.remove(query, 1)
-          else
-            table.insert(query, 1, "'")
-          end
-          MiniPick.set_picker_query(query)
-        end,
-      },
       create_new_note_from_query = {
         char = "<c-o>",
         func = function()

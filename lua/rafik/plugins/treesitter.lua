@@ -43,7 +43,7 @@ local ts_toggle = function()
   else
     vim.treesitter.start()
   end
-  print(string.format("tree-sitter highlight: %s", not active))
+  vim.notify(string.format("tree-sitter highlight: %s", not active))
 end
 vim.keymap.set(
   "n",
@@ -137,5 +137,5 @@ require("treesitter-context").setup({
 vim.keymap.set("n", "<localleader>i", function()
   local ts_context = require("treesitter-context")
   ts_context.toggle()
-  print(string.format("tree-sitter context: %s", ts_context.enabled()))
+  vim.notify(string.format("tree-sitter context: %s", ts_context.enabled()))
 end, { desc = "Toggle treesitter-context" })

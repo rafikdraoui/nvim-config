@@ -7,7 +7,6 @@ repos = [
   "https://github.com/bfredl/nvim-miniyank",
   "https://github.com/dcampos/nvim-snippy",
   "https://github.com/dstein64/vim-startuptime",
-  "https://github.com/ibhagwan/fzf-lua",
   "https://github.com/leoluz/nvim-dap-go",
   "https://github.com/ludovicchabant/vim-gutentags",
   "https://github.com/lukas-reineke/lsp-format.nvim",

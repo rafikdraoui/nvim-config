@@ -66,13 +66,6 @@ autocmd({ "ColorScheme" }, {
   end,
 })
 
--- TODO: remove after https://github.com/neovim/neovim/issues/38777 is fixed
-autocmd({ "ColorScheme" }, {
-  desc = "Clear MsgArea highlight to avoid crashes with ui2",
-  group = g,
-  callback = function() vim.cmd([[hi clear MsgArea]]) end,
-})
-
 autocmd({ "FileType" }, {
   desc = "Ensure disabling of insertion of comment leader when using 'o' or 'O'",
   group = g,

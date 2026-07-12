@@ -17,7 +17,7 @@ vim.diagnostic.config({
 
 vim.keymap.set("n", "<localleader>d", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
-  print(string.format("diagnostics: %s", vim.diagnostic.is_enabled()))
+  vim.notify(string.format("diagnostics: %s", vim.diagnostic.is_enabled()))
 end, { desc = "Toggle display of diagnostics" })
 
 vim.keymap.set(

@@ -66,8 +66,6 @@ let g:loaded_python3_provider = 0
 let g:loaded_ruby_provider = 0
 
 colorscheme gris
-" TODO: remove after https://github.com/neovim/neovim/issues/38777 is fixed
-hi clear MsgArea
 
 
 " Mappings {{{1
@@ -76,17 +74,8 @@ let g:mapleader = ','
 
 " Buffers
 nnoremap <leader><leader> <c-^>
-lua <<EOF
-  vim.keymap.set("n", "<leader>b", function()
-    vim.cmd.ls()
-    vim.fn.feedkeys(":b ", "t")
-    end, {desc = "Select opened buffer"})
-
-  vim.keymap.set("n", "<leader>B", function()
-    vim.cmd.ls()
-    vim.fn.feedkeys(":sb ", "t")
-  end, {desc = "Select opened buffer and load in new split"})
-EOF
+nnoremap <leader>b :ls<cr>:b<space>
+nnoremap <leader>B :ls<cr>:sb<space>
 " close quickfix window before `bdelete`, to avoid prematurely quitting vim
 " (cf. g:qf_auto_quit)
 nnoremap <silent> <leader><bs> :cclose <bar> :lclose <bar> :bdelete<cr>
@@ -97,11 +86,11 @@ nnoremap <a-j> <c-w>j
 nnoremap <a-k> <c-w>k
 nnoremap <a-l> <c-w>l
 nnoremap <a-p> <c-w>p
-tnoremap <expr> <a-h> &ft == 'fzf' ? "<a-h>" : "<c-\><c-n><c-w>h"
-tnoremap <expr> <a-j> &ft == 'fzf' ? "<a-j>" : "<c-\><c-n><c-w>j"
-tnoremap <expr> <a-k> &ft == 'fzf' ? "<a-k>" : "<c-\><c-n><c-w>k"
-tnoremap <expr> <a-l> &ft == 'fzf' ? "<a-l>" : "<c-\><c-n><c-w>l"
-tnoremap <expr> <a-p> &ft == 'fzf' ? "<a-p>" : "<c-\><c-n><c-w>p"
+tnoremap <a-h> <c-\><c-n><c-w>h
+tnoremap <a-j> <c-\><c-n><c-w>j
+tnoremap <a-k> <c-\><c-n><c-w>k
+tnoremap <a-l> <c-\><c-n><c-w>l
+tnoremap <a-p> <c-\><c-n><c-w>p
 xnoremap <a-h> <esc><c-w>h
 xnoremap <a-j> <esc><c-w>j
 xnoremap <a-k> <esc><c-w>k
@@ -211,8 +200,11 @@ nnoremap <silent> <localleader>b :execute 'set bg=' . (&bg ==# 'dark' ? 'light' 
 " Toggle colorscheme
 nnoremap <silent> <localleader>g :execute 'colo ' . (g:colors_name ==# 'couleurs' ? 'gris' : 'couleurs') <cr>
 
+" Toggle highlighting of return statements (if supported by color scheme)
+nnoremap <silent> <localleader>z :lua require("rafik.colors").toggle_return_highlight() <cr>
+
 " Toggle highlighting of definitions (if supported by color scheme)
-nnoremap <silent> <localleader>z :lua require("rafik.colors").toggle_definition_highlight() <cr>
+nnoremap <silent> <localleader>Z :lua require("rafik.colors").toggle_definition_highlight() <cr>
 
 " Use <esc> to exit terminal mode (and alt-[ to send escape to terminal)
 tnoremap <expr> <esc> "<c-\><c-n>"
@@ -243,6 +235,9 @@ nnoremap <leader>H <cmd>Inspect<cr>
 
 " Collapse all folds except the one the cursor is in
 nnoremap <leader>z zMzv
+
+" Restart Neovim, preserving existing buffers
+nnoremap <leader>R <cmd>mksession! /tmp/session.vim <bar> restart source /tmp/session.vim<cr>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode
