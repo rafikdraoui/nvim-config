@@ -93,6 +93,15 @@ end, {
   complete = "tag",
 })
 
+command("AstGrep", function(opts)
+  -- Replace literal "\n" in pattern with actual new line
+  local pattern = opts.args:gsub([[\n]], "\n")
+  require("rafik.astgrep").run(pattern)
+end, {
+  desc = "Use ast-grep to search for a pattern",
+  nargs = "+",
+})
+
 command("Sed", function(opts)
   local pattern = opts.fargs[1]
   local repl = opts.fargs[2]

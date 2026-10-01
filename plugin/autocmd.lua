@@ -53,7 +53,11 @@ autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
 autocmd({ "BufWritePre" }, {
   desc = "Trim whitespace on save",
   group = g,
-  command = "TrimWhitespace",
+  callback = function()
+    if vim.b.trim_whitespace_on_save ~= false then
+      vim.cmd.TrimWhitespace()
+    end
+  end,
 })
 
 autocmd({ "ColorScheme" }, {

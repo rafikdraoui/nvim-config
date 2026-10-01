@@ -170,7 +170,7 @@ nnoremap * /\<<c-r>=expand('<cword>')<cr>\><cr>
 nnoremap # ?\<<c-r>=expand('<cword>')<cr>\><cr>
 
 nnoremap <leader>s :Grep<space>
-nnoremap <leader>S :Grep!<space>
+nnoremap <leader>S :AstGrep<space>
 
 " Search operator
 nnoremap <silent> gs :set opfunc=v:lua.require'rafik.opfunc'.search<cr>g@
@@ -237,7 +237,7 @@ nnoremap <leader>H <cmd>Inspect<cr>
 nnoremap <leader>z zMzv
 
 " Restart Neovim, preserving existing buffers
-nnoremap <leader>R <cmd>mksession! /tmp/session.vim <bar> restart source /tmp/session.vim<cr>
+nnoremap <leader>R <cmd>restart<cr>
 
 " Map some keys on the French-Canadian keyboard to their English (quasi)
 " equivalents in normal mode

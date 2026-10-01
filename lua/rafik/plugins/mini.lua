@@ -256,6 +256,19 @@ vim.keymap.set(
   { desc = "pick: dotfiles" }
 )
 
+-- Override `vim.paste` when MiniPick pickers are active to support "streaming
+-- paste" from the system clipboard.
+local mini_pick_paste = function(paste)
+  local non_streaming_paste = require("rafik.paste").force_non_streaming(paste)
+  return function(lines, phase)
+    if not MiniPick.is_picker_active() then
+      return paste(lines, phase)
+    end
+    return non_streaming_paste(lines, phase)
+  end
+end
+vim.paste = mini_pick_paste(vim.paste)
+
 -- mini-surround -------------------------------------------------------------- {{{1
 require("mini.surround").setup({
   custom_surroundings = {

@@ -90,6 +90,9 @@ local configs = {
     end,
   },
 
+  -- https://github.com/rust-lang/rust-analyzer
+  rust_analyzer = {},
+
   -- https://github.com/tailwindlabs/tailwindcss-intellisense
   tailwindcss = {},
 
